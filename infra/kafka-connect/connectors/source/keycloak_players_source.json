@@ -1,0 +1,22 @@
+{
+  "name": "keycloak-players-source-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "players-keycloak-postgres",
+    "database.port": "5432",
+    "database.user": "players_keycloak_db_user",
+    "database.password": "players_keycloak_db_user_password",
+    "database.dbname": "players_keycloak_db",
+    "database.server.name": "postgres",
+    "table.include.list": "public.user_entity",
+    "topic.prefix": "db",
+    "transforms": "unwrap",
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": "false",
+    "topic.creation.default.partitions": 2,
+    "topic.creation.default.replication.factor": 3,
+    "plugin.name": "pgoutput",
+    "message.key.columns": "public.player:id",
+    "tasks.max": "1"
+  }
+}

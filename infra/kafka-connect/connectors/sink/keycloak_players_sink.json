@@ -1,0 +1,26 @@
+{
+    "name": "keycloak-players-sink-connector",
+    "config": {
+        "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+        "table.name.format": "public.player",
+        "connection.url": "jdbc:postgresql://players-postgres:5432/players_db",
+        "connection.user": "players_db_user",
+        "connection.password": "players_db_user_password",
+        "connection.ds.pool.size": 5,
+        "topics": "db.public.user_entity",
+        "auto.create": "true",
+        "insert.mode": "upsert",
+        "pk.mode" : "record_key",
+        "transforms": "TimestampConverterCreated,ReplaceFieldKey,ReplaceFieldValue",
+        "transforms.TimestampConverterCreated.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+        "transforms.TimestampConverterCreated.field": "created_timestamp",
+        "transforms.TimestampConverterCreated.format": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+        "transforms.TimestampConverterCreated.target.type": "Timestamp",
+        "transforms.ReplaceFieldKey.type": "org.apache.kafka.connect.transforms.ReplaceField$Key",
+        "transforms.ReplaceFieldKey.renames": "id:keycloak_id",
+        "transforms.ReplaceFieldValue.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
+        "transforms.ReplaceFieldValue.renames": "id:keycloak_id,username:login",
+        "transforms.ReplaceFieldValue.blacklist": "email_constraint,email_verified,federation_link,service_account_client_link,not_before",
+        "tasks.max": "1"
+    }
+}

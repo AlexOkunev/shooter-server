@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.players.protobuf;
+
+option java_multiple_files = true;
+
+import "shooter-players/datatypes.proto";
+
+service ShooterPlayersServiceAPI {
+  rpc GetPlayer(GetPlayerRequest) returns (GetPlayerResponse);
+  rpc GetPlayers(GetPlayersRequest) returns (GetPlayersResponse);
+}

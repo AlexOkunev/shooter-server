@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.players.protobuf;
+
+option java_multiple_files = true;
+
+import "shooter-players/common.proto";
+
+message PlayerInfo {
+  int32 playerId = 1;
+  string email = 2;
+  string firstName = 3;
+  string lastName = 4;
+  string login = 5;
+  int64 createdTimestamp = 6;
+}
+
+message PlayerInfoListPage {
+  repeated PlayerInfo data = 1;
+  int32 totalCount = 2;
+}
+
+message GetPlayersRequest {
+  common.PaginationRequest paginationRequest = 1;
+  PlayersFilter filter = 2;
+}
+
+message PlayersFilter {
+  optional string login = 1;
+  optional string email = 2;
+  optional bool  enabled = 3;
+}
+
+message GetPlayersResponse {
+  oneof response {
+    PlayerInfoListPage page = 1;
+    common.Error error = 2;
+  }
+}
+
+message GetPlayerRequest {
+  int32 playerId = 1;
+}
+
+message GetPlayerResponse {
+  oneof response {
+    PlayerInfo player = 1;
+    common.Error error = 2;
+  }
+}

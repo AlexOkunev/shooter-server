@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: shooter-players-grpc-server
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/players_db
+    username: players_db_user
+    password: players_db_user_password
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+          order_inserts: true
+          order_updates: true
+          fetch_size: 400
+        generate_statistics: true
+        format_sql: true
+        default_schema: public
+
+  flyway:
+    schemas: public
+    url: jdbc:postgresql://localhost:5433/players_db
+    user: players_db_user
+    password: players_db_user_password
+
+grpc:
+  port: 6565
+  shutdownGrace: 30
+
+#TODO!!! use env. this profile to local
