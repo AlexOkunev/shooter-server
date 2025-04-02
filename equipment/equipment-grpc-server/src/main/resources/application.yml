@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: equipment-grpc-server
+
+  datasource:
+    url: jdbc:postgresql://localhost:5434/equipment_db
+    username: equipment_db_user
+    password: equipment_db_user_password
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+          order_inserts: true
+          order_updates: true
+          fetch_size: 400
+        generate_statistics: true
+        format_sql: true
+        default_schema: public
+
+  flyway:
+    schemas: public
+    url: jdbc:postgresql://localhost:5434/equipment_db
+    user: equipment_db_user
+    password: equipment_db_user_password
+
+grpc:
+  port: 6566
+  shutdownGrace: 30
+  enable-reflection: true

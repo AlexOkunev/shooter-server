@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment;
+
+option java_multiple_files = true;
+
+enum AttachmentType {
+  SCOPE = 0;
+  SUPPRESSOR = 1;
+  DAMPER = 2;
+}
+
+message AttachmentReducedInfo {
+  int32 id = 1;
+  bool enabled = 2;
+  string name = 3;
+  AttachmentType type = 4;
+  AttachmentEffect effect = 5;
+}
+
+/**
+  Использование <...>Rate. Пусть у оружия задан параметр a.
+  coeff = (100 + rate)/100;
+  a' = a * coeff
+ */
+message AttachmentEffect {
+  int32 soundLoudnessRate = 1;
+  int32 maxZoomRate = 2;
+  int32 blowBackRate = 3;
+  int32 laserMaxDistanceMeters = 4;
+  int32 bulletSpeedRate = 5;
+}

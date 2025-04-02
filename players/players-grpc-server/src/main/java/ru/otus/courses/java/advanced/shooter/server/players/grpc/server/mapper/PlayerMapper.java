@@ -30,6 +30,8 @@ public class PlayerMapper {
             builder.setCreatedTimestamp(player.getCreatedTimestamp().toInstant().toEpochMilli());
         }
 
+        builder.setEnabled(player.getEnabled());
+
         return builder.build();
     }
 }

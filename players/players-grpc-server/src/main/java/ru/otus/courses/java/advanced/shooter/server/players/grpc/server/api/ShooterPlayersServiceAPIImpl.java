@@ -8,17 +8,17 @@ import ru.otus.courses.java.advanced.shooter.server.players.protobuf.*;
 
 @GRpcService
 @RequiredArgsConstructor
-public class ShooterPlayersServicePrivateAPIImpl extends ShooterPlayersServicePrivateAPIGrpc.ShooterPlayersServicePrivateAPIImplBase {
+public class ShooterPlayersServiceAPIImpl extends ShooterPlayersServiceAPIGrpc.ShooterPlayersServiceAPIImplBase {
     private final PlayerService playerService;
 
     @Override
-    public void getPlayer(GetPlayerRequest request, StreamObserver<GetPlayerResponse> responseObserver) {
+    public void getPlayer(GetPlayerRequest request, StreamObserver<PlayerInfo> responseObserver) {
         responseObserver.onNext(playerService.getPlayer(request));
         responseObserver.onCompleted();
     }
 
     @Override
-    public void getPlayers(GetPlayersRequest request, StreamObserver<GetPlayersResponse> responseObserver) {
+    public void getPlayers(GetPlayersRequest request, StreamObserver<PlayerInfoListPage> responseObserver) {
         responseObserver.onNext(playerService.getPlayers(request));
         responseObserver.onCompleted();
     }

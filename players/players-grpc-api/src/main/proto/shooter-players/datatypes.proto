@@ -12,39 +12,27 @@ message PlayerInfo {
   string firstName = 3;
   string lastName = 4;
   string login = 5;
-  int64 createdTimestamp = 6;
+  bool enabled = 6;
+  int64 createdTimestamp = 7;
 }
 
 message PlayerInfoListPage {
   repeated PlayerInfo data = 1;
-  int32 totalCount = 2;
+  int64 totalCount = 2;
 }
 
 message GetPlayersRequest {
-  common.PaginationRequest paginationRequest = 1;
-  PlayersFilter filter = 2;
+  optional common.PaginationRequest paginationRequest = 1;
+  optional PlayersFilter filter = 2;
 }
 
 message PlayersFilter {
   optional string login = 1;
   optional string email = 2;
   optional bool  enabled = 3;
-}
-
-message GetPlayersResponse {
-  oneof response {
-    PlayerInfoListPage page = 1;
-    common.Error error = 2;
-  }
+  repeated int32 playerId = 4;
 }
 
 message GetPlayerRequest {
   int32 playerId = 1;
-}
-
-message GetPlayerResponse {
-  oneof response {
-    PlayerInfo player = 1;
-    common.Error error = 2;
-  }
 }

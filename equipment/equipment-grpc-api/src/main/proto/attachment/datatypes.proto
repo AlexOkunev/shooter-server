@@ -1,0 +1,66 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment;
+
+option java_multiple_files = true;
+
+import "common.proto";
+
+import "gun/datatypes.proto";
+import "attachment/imported_datatypes.proto";
+
+message AttachmentInfo {
+  int32 id = 1;
+  bool enabled = 2;
+  string name = 3;
+  AttachmentType type = 4;
+  AttachmentEffect effect = 5;
+  repeated gun.GunReducedInfo compatibleGuns = 6;
+  int64 createdTimestamp = 7;
+  int64 updatedTimestamp = 8;
+}
+
+message AttachmentInfoListPage {
+  repeated AttachmentInfo data = 1;
+  int64 totalCount = 2;
+}
+
+message AttachmentWritableData {
+  bool enabled = 1;
+  string name = 2;
+  AttachmentType type = 3;
+  AttachmentEffect effect = 4;
+  repeated int32 compatibleGunIds = 5;
+}
+
+message CreateAttachmentRequest {
+  AttachmentWritableData data = 1;
+}
+
+message UpdateAttachmentRequest {
+  int32 attachmentId = 1;
+  optional AttachmentWritableData data = 2;
+}
+
+message GetAttachmentRequest {
+  int32 attachmentId = 1;
+}
+
+message GetEnabledAttachmentRequest {
+  int32 attachmentId = 1;
+}
+
+message GetAttachmentsRequest {
+  optional common.PaginationRequest paginationRequest = 1;
+  optional AttachmentsFilter filter = 2;
+  optional common.RelatedEntitiesInclusionMode compatibleGunsInclusionMode = 3;
+}
+
+message AttachmentsFilter {
+  optional bool enabled = 1;
+  optional string name = 2;
+  optional AttachmentType type = 3;
+  repeated int32 compatibleGunId = 4;
+  optional bool onlyEnabledCompatibleGuns = 5;
+  repeated int32 attachmentId = 6;
+}

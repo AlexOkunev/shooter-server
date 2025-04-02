@@ -4,14 +4,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.entity.Player;
+import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.exception.ObjectNotFoundException;
 import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.mapper.PlayerMapper;
 import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.repository.PlayerRepository;
 import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.specifications.PlayerSpecifications;
+import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.util.ValidationUtils;
 import ru.otus.courses.java.advanced.shooter.server.players.protobuf.*;
-import ru.otus.courses.java.advanced.shooter.server.players.protobuf.common.Common;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,36 +26,29 @@ public class PlayerServiceImpl implements PlayerService {
     private final PlayerMapper playerMapper;
 
     @Override
-    public GetPlayerResponse getPlayer(GetPlayerRequest request) {
-        GetPlayerResponse.Builder responseBuilder = GetPlayerResponse.newBuilder();
-
-        playerRepository.findByPlayerId(request.getPlayerId())
-                .ifPresentOrElse(
-                        player -> responseBuilder.setPlayer(playerMapper.toResponse(player)),
-                        () -> responseBuilder.setError(
-                                Common.Error.newBuilder()
-                                        .setErrorType(Common.Error.ErrorType.DATA_NOT_FOUND)
-                                        .setMessage("Player '%d' not found".formatted(request.getPlayerId()))
-                                        .build()));
-
-        return responseBuilder.build();
+    public PlayerInfo getPlayer(GetPlayerRequest request) {
+        return playerRepository.findByPlayerId(request.getPlayerId())
+                .map(playerMapper::toResponse)
+                .orElseThrow(() -> new ObjectNotFoundException("Player with id '%d' not found".formatted(request.getPlayerId())));
     }
 
     @Override
-    public GetPlayersResponse getPlayers(GetPlayersRequest request) {
+    public PlayerInfoListPage getPlayers(GetPlayersRequest request) {
+        if (request.hasPaginationRequest()) {
+            ValidationUtils.validatePaginationRequest(request.getPaginationRequest());
+        }
+
         Specification<Player> specification = getPlayerSpecification(request);
 
         Pageable pageable = request.hasPaginationRequest()
-                ? PageRequest.of(request.getPaginationRequest().getPage(), request.getPaginationRequest().getCount())
-                : PageRequest.of(0, 10);
+                ? PageRequest.of(request.getPaginationRequest().getPage(), request.getPaginationRequest().getCount(), Sort.by(Sort.Direction.ASC, Player.Fields.playerId))
+                : PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, Player.Fields.playerId));
 
         Page<Player> playersPage = playerRepository.findAll(specification, pageable);
 
-        return GetPlayersResponse.newBuilder()
-                .setPage(PlayerInfoListPage.newBuilder()
-                        .addAllData(playersPage.map(playerMapper::toResponse))
-                        .setTotalCount(playersPage.getTotalPages())
-                        .build())
+        return PlayerInfoListPage.newBuilder()
+                .addAllData(playersPage.map(playerMapper::toResponse))
+                .setTotalCount(playersPage.getTotalElements())
                 .build();
     }
 
@@ -76,6 +71,10 @@ public class PlayerServiceImpl implements PlayerService {
 
         if (playersFilter.hasEnabled()) {
             specifications.add(PlayerSpecifications.byEnabled(playersFilter.getEnabled()));
+        }
+
+        if (playersFilter.getPlayerIdCount() > 0) {
+            specifications.add(PlayerSpecifications.byPlayerIds(playersFilter.getPlayerIdList()));
         }
 
         return specifications;

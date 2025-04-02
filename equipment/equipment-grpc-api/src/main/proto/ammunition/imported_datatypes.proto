@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition;
+
+option java_multiple_files = true;
+
+message AmmunitionReducedInfo {
+  int32 id = 1;
+  bool enabled = 2;
+  string name = 3;
+  int32 speed = 4;
+  int32 damageMeanValue = 5;
+  int32 damageVariance = 6;
+}

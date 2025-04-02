@@ -1,12 +1,12 @@
 package ru.otus.courses.java.advanced.shooter.server.players.grpc.server.service;
 
 import ru.otus.courses.java.advanced.shooter.server.players.protobuf.GetPlayerRequest;
-import ru.otus.courses.java.advanced.shooter.server.players.protobuf.GetPlayerResponse;
 import ru.otus.courses.java.advanced.shooter.server.players.protobuf.GetPlayersRequest;
-import ru.otus.courses.java.advanced.shooter.server.players.protobuf.GetPlayersResponse;
+import ru.otus.courses.java.advanced.shooter.server.players.protobuf.PlayerInfo;
+import ru.otus.courses.java.advanced.shooter.server.players.protobuf.PlayerInfoListPage;
 
 public interface PlayerService {
-    GetPlayerResponse getPlayer(GetPlayerRequest request);
+    PlayerInfo getPlayer(GetPlayerRequest request);
 
-    GetPlayersResponse getPlayers(GetPlayersRequest request);
+    PlayerInfoListPage getPlayers(GetPlayersRequest request);
 }

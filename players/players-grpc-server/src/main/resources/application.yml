@@ -31,5 +31,4 @@ spring:
 grpc:
   port: 6565
   shutdownGrace: 30
-
-#TODO!!! use env. this profile to local
+  enable-reflection: true

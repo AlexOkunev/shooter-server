@@ -33,6 +33,22 @@ services:
     networks:
       - shooter-network
 
+  equipment-postgres:
+    image: postgres:16.2
+    volumes:
+      - equipment-postgres-data:/var/lib/postgresql/data
+      - ./infra/postgres/custom-config.conf:/etc/postgresql/postgresql.conf
+    environment:
+      POSTGRES_DB: equipment_db
+      POSTGRES_USER: equipment_db_user
+      POSTGRES_PASSWORD: equipment_db_user_password
+      POSTGRES_PORT: 5432
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    ports:
+      - "5434:5432"
+    networks:
+      - shooter-network
+
   players-keycloak:
     image: quay.io/keycloak/keycloak:23.0.6
     command: [ "start-dev", "--http-port=7777" ]
@@ -199,6 +215,8 @@ volumes:
   players-keycloak-postgres-data:
     driver: local
   players-postgres-data:
+    driver: local
+  equipment-postgres-data:
     driver: local
   zk-log:
     driver: local

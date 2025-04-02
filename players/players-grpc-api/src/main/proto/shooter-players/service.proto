@@ -6,11 +6,7 @@ option java_multiple_files = true;
 
 import "shooter-players/datatypes.proto";
 
-service ShooterPlayersServicePublicAPI {
-  rpc GetPlayer(GetPlayerRequest) returns (GetPlayerResponse);
-}
-
-service ShooterPlayersServicePrivateAPI {
-  rpc GetPlayer(GetPlayerRequest) returns (GetPlayerResponse);
-  rpc GetPlayers(GetPlayersRequest) returns (GetPlayersResponse);
+service ShooterPlayersServiceAPI {
+  rpc GetPlayer(GetPlayerRequest) returns (PlayerInfo);
+  rpc GetPlayers(GetPlayersRequest) returns (PlayerInfoListPage);
 }

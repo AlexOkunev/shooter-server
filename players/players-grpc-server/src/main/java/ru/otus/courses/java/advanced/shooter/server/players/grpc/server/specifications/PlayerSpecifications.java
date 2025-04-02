@@ -20,6 +20,9 @@ public class PlayerSpecifications {
         return (root, query, builder) ->
                 builder.equal(root.get(Player.Fields.enabled), enabled);
     }
-}
 
-//TODO!!! make case insensitive
+    public static Specification<Player> byPlayerIds(Iterable<Integer> playerIds) {
+        return (root, query, builder) ->
+                builder.in(root.get(Player.Fields.playerId)).value(playerIds);
+    }
+}
