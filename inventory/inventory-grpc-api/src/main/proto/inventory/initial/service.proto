@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.initial;
+
+option java_multiple_files = true;
+
+import "inventory/initial/datatypes.proto";
+import "google/protobuf/empty.proto";
+
+service InitialPlayerInventoryServiceAPI {
+  rpc GetInitialPlayerInventory(GetInitialPlayerInventoryRequest) returns (InitialPlayerInventoryItemsPage);
+  rpc ModifyInitialPlayerInventory(ModifyInitialPlayerInventoryRequest) returns (google.protobuf.Empty);
+}

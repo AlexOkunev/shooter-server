@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.log;
+
+option java_multiple_files = true;
+
+import "common.proto";
+import "inventory/datatypes.proto";
+
+enum OperationType {
+  ADMIN_GIVE = 0;
+  ADMIN_TAKE_AWAY = 1;
+  SPEND = 2;
+  BUY = 3;
+  GIVE_AWARD = 4;
+  SELL = 5;
+  HOLD = 6;
+}
+
+message PlayerInventoryLogEntry {
+  int32 playerId = 1;
+  EquipmentType equipmentType = 2;
+  int32 equipmentId = 3;
+  OperationType operationType = 4;
+  int32 amountBefore = 5;
+  int32 amountAfter = 6;
+  int32 heldAmountBefore = 7;
+  int32 heldAmountAfter = 8;
+  int64 timestamp = 9;
+}
+
+message PlayerInventoryLogPage {
+  repeated PlayerInventoryLogEntry data = 1;
+  int64 totalCount = 2;
+}
+
+message GetPlayerInventoryLogRequest {
+  optional common.PaginationRequest paginationRequest = 1;
+  int32 playerId = 2;
+}

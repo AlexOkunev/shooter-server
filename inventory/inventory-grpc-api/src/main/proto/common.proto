@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.common;
+
+message PaginationRequest {
+  int32 count = 1;
+  int32 page = 2;
+}
+
+enum RelatedEntitiesInclusionMode {
+  DONT_INCLUDE = 0;
+  INCLUDE_ONLY_ENABLED = 1;
+  INCLUDE_ALL = 2;
+}

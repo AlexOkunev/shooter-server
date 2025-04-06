@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.log;
+
+option java_multiple_files = true;
+
+import "inventory/log/datatypes.proto";
+
+service PlayerInventoryLogServiceAPI {
+  rpc GetPlayerInventoryLog(GetPlayerInventoryLogRequest) returns (PlayerInventoryLogPage);
+}

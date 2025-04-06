@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.initial;
+
+option java_multiple_files = true;
+
+import "common.proto";
+import "inventory/datatypes.proto";
+
+message InitialPlayerInventoryItemInfo {
+  EquipmentType equipmentType = 1;
+  int32 equipmentId = 2;
+  int32 amount = 3;
+  bool enabled = 4;
+  int64 createdTimestamp = 5;
+  int64 updatedTimestamp = 6;
+  int32 version = 7;
+}
+
+message InitialPlayerInventoryItemsPage {
+  repeated InitialPlayerInventoryItemInfo data = 1;
+  int64 totalCount = 2;
+}
+
+message GetInitialPlayerInventoryRequest {
+  optional common.PaginationRequest paginationRequest = 1;
+  optional Filter filter = 2;
+
+  message Filter {
+    bool enabled = 1;
+  }
+}
+
+message InitialPlayerInventoryItemRequest {
+  EquipmentType equipmentType = 1;
+  int32 equipmentId = 2;
+  int32 amount = 3;
+  bool enabled = 4;
+  int32 version = 5;
+}
+
+message ModifyInitialPlayerInventoryRequest {
+  repeated InitialPlayerInventoryItemRequest items = 1;
+}

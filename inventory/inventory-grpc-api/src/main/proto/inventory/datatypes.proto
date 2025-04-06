@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory;
+
+option java_multiple_files = true;
+
+import "common.proto";
+
+enum EquipmentType {
+  GUN = 0;
+  GRENADE = 1;
+  ATTACHMENT = 2;
+  AMMUNITION = 3;
+}
+
+message PlayerInventoryItemInfo {
+  EquipmentType equipmentType = 1;
+  int32 equipmentId = 2;
+  int32 amount = 3;
+}
+
+message PlayerInventoryItemsPage {
+  repeated PlayerInventoryItemInfo data = 1;
+  int64 totalCount = 2;
+}
+
+message GetPlayerInventoryRequest {
+  optional common.PaginationRequest paginationRequest = 1;
+  int32 playerId = 2;
+  repeated EquipmentType types = 3;
+}
+
+message InitializePlayerInventoryRequest {
+  int32 playerId = 1;
+}
+
+message PlayerEquipmentOperationRequest {
+  int32 playerId = 1;
+  EquipmentType equipmentType = 2;
+  int32 equipmentId = 3;
+  int32 amount = 4;
+}
