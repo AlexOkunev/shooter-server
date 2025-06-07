@@ -4,24 +4,25 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.InvalidRequestException;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.validation.ValidationUtils;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Ammunition;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Attachment;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Gun;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.exception.InvalidRequestException;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.exception.ObjectNotFoundException;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.GunMapper;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.PaginationInfoMapper;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.repository.AmmunitionRepository;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.repository.AttachmentRepository;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.repository.GunRepository;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.service.GunService;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.specifications.GunSpecifications;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.util.PaginationUtils;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.util.ValidationUtils;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.*;
 
 import java.util.ArrayList;
@@ -34,8 +35,13 @@ public class GunServiceImpl implements GunService {
 
     private final GunMapper gunMapper;
 
+    private final PaginationInfoMapper paginationInfoMapper;
+
     private final AmmunitionRepository ammunitionRepository;
+
     private final AttachmentRepository attachmentRepository;
+
+    private static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.ASC, Gun.Fields.id);
 
     @Override
     @Transactional(readOnly = true)
@@ -143,8 +149,8 @@ public class GunServiceImpl implements GunService {
 
         Specification<Gun> specification = getSpecification(request.getFilter());
         Pageable pageable = request.hasPaginationRequest() ?
-                PaginationUtils.getPageable(request.getPaginationRequest(), Sort.by(Sort.Direction.ASC, Gun.Fields.id)) :
-                PaginationUtils.getPageable(0, 10, Sort.by(Sort.Direction.ASC, Gun.Fields.id));
+                PageRequest.of(request.getPaginationRequest().getPage(), request.getPaginationRequest().getCount(), DEFAULT_SORT) :
+                PageRequest.of(0, 10, DEFAULT_SORT);
 
         Page<Gun> data = gunRepository.findAll(specification, pageable);
 
@@ -156,7 +162,7 @@ public class GunServiceImpl implements GunService {
 
         return GunInfoListPage.newBuilder()
                 .addAllData(mappedData)
-                .setTotalCount(data.getTotalElements())
+                .setPaginationInfo(paginationInfoMapper.toResponse(data))
                 .build();
     }
 

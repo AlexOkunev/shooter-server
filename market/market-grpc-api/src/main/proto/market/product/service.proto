@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.market.protobuf.product;
+
+option java_multiple_files = true;
+
+import "market/product/datatypes.proto";
+import "google/protobuf/empty.proto";
+
+service ProductServiceAPI {
+  rpc GetProduct(GetProductRequest) returns (ProductInfo);
+  rpc GetProducts(GetProductsRequest) returns (ProductInfoListPage);
+  rpc CreateProduct(CreateProductRequest) returns (ProductInfo);
+  rpc UpdateProduct(UpdateProductRequest) returns (ProductInfo);
+}

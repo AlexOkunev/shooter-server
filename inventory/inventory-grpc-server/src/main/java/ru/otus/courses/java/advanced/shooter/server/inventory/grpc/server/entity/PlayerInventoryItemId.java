@@ -3,7 +3,7 @@ package ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entit
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.EquipmentType;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.InventoryEquipmentType;
 
 @Data
 @NoArgsConstructor
@@ -11,7 +11,7 @@ import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumer
 public class PlayerInventoryItemId {
     private int playerId;
 
-    private EquipmentType equipmentType;
+    private InventoryEquipmentType equipmentType;
 
     private int equipmentId;
 }

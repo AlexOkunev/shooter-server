@@ -7,8 +7,8 @@ import org.lognet.springboot.grpc.recovery.GRpcExceptionHandler;
 import org.lognet.springboot.grpc.recovery.GRpcExceptionScope;
 import org.lognet.springboot.grpc.recovery.GRpcServiceAdvice;
 import org.springframework.dao.DataIntegrityViolationException;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.exception.InvalidRequestException;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.exception.ObjectNotFoundException;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.InvalidRequestException;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
 
 @Slf4j
 @GRpcServiceAdvice

@@ -3,19 +3,20 @@ package ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.servi
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.InvalidRequestException;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.validation.ValidationUtils;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Grenade;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.exception.InvalidRequestException;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.exception.ObjectNotFoundException;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.GrenadeMapper;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.PaginationInfoMapper;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.repository.GrenadeRepository;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.service.GrenadeService;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.specifications.GrenadeSpecifications;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.util.PaginationUtils;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.util.ValidationUtils;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.*;
 
 import java.util.ArrayList;
@@ -27,6 +28,10 @@ public class GrenadeServiceImpl implements GrenadeService {
     private final GrenadeRepository grenadeRepository;
 
     private final GrenadeMapper grenadeMapper;
+
+    private final PaginationInfoMapper paginationInfoMapper;
+
+    private static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.ASC, Grenade.Fields.id);
 
     @Override
     public GrenadeInfo getGrenadeInfo(int grenadeId) {
@@ -103,14 +108,14 @@ public class GrenadeServiceImpl implements GrenadeService {
 
         Specification<Grenade> specification = getSpecification(request.getFilter());
         Pageable pageable = request.hasPaginationRequest() ?
-                PaginationUtils.getPageable(request.getPaginationRequest(), Sort.by(Sort.Direction.ASC, Grenade.Fields.id)) :
-                PaginationUtils.getPageable(0, 10, Sort.by(Sort.Direction.ASC, Grenade.Fields.id));
+                PageRequest.of(request.getPaginationRequest().getPage(), request.getPaginationRequest().getCount(), DEFAULT_SORT) :
+                PageRequest.of(0, 10, DEFAULT_SORT);
 
         Page<Grenade> data = grenadeRepository.findAll(specification, pageable);
 
         return GrenadeInfoListPage.newBuilder()
                 .addAllData(data.map(grenadeMapper::toResponse))
-                .setTotalCount(data.getTotalElements())
+                .setPaginationInfo(paginationInfoMapper.toResponse(data))
                 .build();
     }
 

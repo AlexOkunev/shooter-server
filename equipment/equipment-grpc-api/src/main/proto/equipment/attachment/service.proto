@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment;
+
+option java_multiple_files = true;
+
+import "equipment/attachment/datatypes.proto";
+
+service AttachmentServiceAPI {
+  rpc GetAttachment(GetAttachmentRequest) returns (AttachmentInfo);
+  rpc GetEnabledAttachment(GetEnabledAttachmentRequest) returns (AttachmentInfo);
+  rpc GetAttachments(GetAttachmentsRequest) returns (AttachmentInfoListPage);
+  rpc CreateAttachment(CreateAttachmentRequest) returns (AttachmentInfo);
+  rpc UpdateAttachment(UpdateAttachmentRequest) returns (AttachmentInfo);
+}

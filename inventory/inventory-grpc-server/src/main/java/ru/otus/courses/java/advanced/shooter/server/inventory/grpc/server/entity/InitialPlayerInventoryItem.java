@@ -6,8 +6,8 @@ import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.converter.EquipmentTypeConverter;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.EquipmentType;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.converter.InventoryEquipmentTypeConverter;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.InventoryEquipmentType;
 
 import java.time.ZonedDateTime;
 
@@ -19,8 +19,8 @@ import java.time.ZonedDateTime;
 public class InitialPlayerInventoryItem {
     @Id
     @Column(name = "equipment_type")
-    @Convert(converter = EquipmentTypeConverter.class)
-    private EquipmentType equipmentType;
+    @Convert(converter = InventoryEquipmentTypeConverter.class)
+    private InventoryEquipmentType equipmentType;
 
     @Id
     @Column(name = "equipment_id")

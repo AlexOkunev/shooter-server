@@ -5,11 +5,9 @@ import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.PlayerInventoryLogEntry;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.OperationType;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.annotation.ConvertTimestampToMs;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.annotation.SetTimestamp;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, uses = {OperationTypeMapper.class, EquipmentTypeMapper.class})
 public interface PlayerInventoryLogEntryMapper {
-    @SetTimestamp
     @Mappings({
             @Mapping(target = PlayerInventoryLogEntry.Fields.operationType, expression = "java(ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.OperationType.ADMIN_GIVE)"),
             @Mapping(target = PlayerInventoryLogEntry.Fields.amountBefore, constant = "0"),
@@ -19,7 +17,6 @@ public interface PlayerInventoryLogEntryMapper {
     })
     PlayerInventoryLogEntry toEntityInitialize(PlayerInventoryItem source);
 
-    @SetTimestamp
     @Mappings({
             @Mapping(target = PlayerInventoryLogEntry.Fields.amountBefore, source = PlayerInventoryItem.Fields.amount),
             @Mapping(target = PlayerInventoryLogEntry.Fields.heldAmountBefore, source = PlayerInventoryItem.Fields.heldAmount)

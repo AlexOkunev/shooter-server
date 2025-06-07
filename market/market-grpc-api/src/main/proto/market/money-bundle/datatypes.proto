@@ -1,0 +1,57 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.market.protobuf.money.bundle;
+
+option java_multiple_files = true;
+
+import "common/common.proto";
+
+message MoneyBundleInfo {
+  int32 id = 1;
+  int32 currencyId = 2;
+  int32 currencyAmount = 3;
+  int32 rublesPrice = 4;
+  bool enabled = 5;
+  int64 createdTimestamp = 6;
+  int64 updatedTimestamp = 7;
+  int32 version = 8;
+}
+
+message MoneyBundleInfoListPage {
+  repeated MoneyBundleInfo data = 1;
+  common.protobuf.PaginationInfo paginationInfo = 2;
+}
+
+message GetMoneyBundleRequest {
+  int32 id = 1;
+}
+
+message GetMoneyBundlesRequest {
+  optional common.protobuf.PaginationRequest paginationRequest = 1;
+  optional Filter filter = 2;
+
+  message Filter {
+    repeated int32 ids = 1;
+    optional bool enabled = 2;
+    optional bool currencyEnabled = 3;
+    optional bool currencyCanBeTraded = 4;
+    repeated int32 currencyIds = 5;
+  }
+}
+
+message CreateMoneyBundleRequest {
+  MoneyBundleWritableData data = 1;
+}
+
+message UpdateMoneyBundleRequest {
+  int32 id = 1;
+  MoneyBundleWritableData data = 2;
+  int32 version = 3;
+}
+
+message MoneyBundleWritableData {
+  int32 currencyId = 1;
+  int32 currencyAmount = 2;
+  int32 rublesPrice = 3;
+  bool enabled = 4;
+}

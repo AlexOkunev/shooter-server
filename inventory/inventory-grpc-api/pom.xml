@@ -25,6 +25,16 @@
 
     <dependencies>
         <dependency>
+            <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+            <artifactId>common-grpc-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+            <artifactId>equipment-shared-contract</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
             <version>${jakarta.annotation.api.version}</version>

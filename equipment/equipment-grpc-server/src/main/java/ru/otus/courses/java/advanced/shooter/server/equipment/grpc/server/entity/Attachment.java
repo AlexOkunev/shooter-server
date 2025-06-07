@@ -6,7 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.UpdateTimestamp;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.AttachmentType;
 
 import java.time.ZonedDateTime;
@@ -62,10 +64,12 @@ public class Attachment {
     private List<Gun> enabledCompatibleGuns;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @CreationTimestamp
     @Column(name = "created_timestamp")
     private ZonedDateTime createdTimestamp;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @UpdateTimestamp
     @Column(name = "updated_timestamp")
     private ZonedDateTime updatedTimestamp;
 }

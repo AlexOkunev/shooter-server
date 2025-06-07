@@ -5,9 +5,10 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.converter.EquipmentTypeConverter;
+import org.hibernate.annotations.CreationTimestamp;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.converter.InventoryEquipmentTypeConverter;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.converter.OperationTypeConverter;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.EquipmentType;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.InventoryEquipmentType;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.OperationType;
 
 import java.time.ZonedDateTime;
@@ -27,13 +28,13 @@ public class PlayerInventoryLogEntry {
     @NotNull
     private Integer playerId;
 
+    @NotNull
     @Column(name = "equipment_type")
-    @Convert(converter = EquipmentTypeConverter.class)
-    @NotNull
-    private EquipmentType equipmentType;
+    @Convert(converter = InventoryEquipmentTypeConverter.class)
+    private InventoryEquipmentType equipmentType;
 
-    @Column(name = "equipment_id")
     @NotNull
+    @Column(name = "equipment_id")
     private Integer equipmentId;
 
     @Column(name = "operation_type")
@@ -60,7 +61,8 @@ public class PlayerInventoryLogEntry {
     @Column(name = "held_amount_after")
     private Integer heldAmountAfter;
 
-    @NotNull
     @Column(name = "created_timestamp")
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime timestamp;
 }

@@ -29,12 +29,12 @@ spring:
     password: inventory_db_user_password
 
 grpc:
-  port: 6567
+  port: 6568
   shutdownGrace: 30
   enable-reflection: true
 
-equipment-service:
-  page-size: 100
-  grpc-server:
-    host: localhost
-    port: 6566
+# TODO SET NORMAL
+reference-data-caching:
+  data-page-size: 10
+  refresh-rate-seconds: 200000
+  scheduled-refresh-cache-enabled: true

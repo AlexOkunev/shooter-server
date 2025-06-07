@@ -4,30 +4,24 @@ package ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventor
 
 option java_multiple_files = true;
 
-import "common.proto";
-
-enum EquipmentType {
-  GUN = 0;
-  GRENADE = 1;
-  ATTACHMENT = 2;
-  AMMUNITION = 3;
-}
+import "common/common.proto";
+import "equipment-shared-contract/contract.proto";
 
 message PlayerInventoryItemInfo {
-  EquipmentType equipmentType = 1;
+  equipment.contract.EquipmentType equipmentType = 1;
   int32 equipmentId = 2;
   int32 amount = 3;
 }
 
 message PlayerInventoryItemsPage {
   repeated PlayerInventoryItemInfo data = 1;
-  int64 totalCount = 2;
+  common.protobuf.PaginationInfo paginationInfo = 2;
 }
 
 message GetPlayerInventoryRequest {
-  optional common.PaginationRequest paginationRequest = 1;
+  optional common.protobuf.PaginationRequest paginationRequest = 1;
   int32 playerId = 2;
-  repeated EquipmentType types = 3;
+  repeated equipment.contract.EquipmentType types = 3;
 }
 
 message InitializePlayerInventoryRequest {
@@ -36,7 +30,7 @@ message InitializePlayerInventoryRequest {
 
 message PlayerEquipmentOperationRequest {
   int32 playerId = 1;
-  EquipmentType equipmentType = 2;
+  equipment.contract.EquipmentType equipmentType = 2;
   int32 equipmentId = 3;
   int32 amount = 4;
 }

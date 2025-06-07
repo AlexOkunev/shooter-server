@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition;
+
+option java_multiple_files = true;
+
+import "equipment/ammunition/datatypes.proto";
+
+service AmmunitionServiceAPI {
+  rpc GetAmmunition(GetAmmunitionRequest) returns (AmmunitionInfo);
+  rpc GetEnabledAmmunition(GetEnabledAmmunitionRequest) returns (AmmunitionInfo);
+  rpc GetAmmunitionList(GetAmmunitionListRequest) returns (AmmunitionInfoListPage);
+  rpc CreateAmmunition(CreateAmmunitionRequest) returns (AmmunitionInfo);
+  rpc UpdateAmmunition(UpdateAmmunitionRequest) returns (AmmunitionInfo);
+}

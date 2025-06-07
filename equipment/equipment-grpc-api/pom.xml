@@ -41,6 +41,11 @@
             <artifactId>grpc-netty</artifactId>
             <version>${io.grpc.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+            <artifactId>common-grpc-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

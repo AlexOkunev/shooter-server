@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade;
+
+option java_multiple_files = true;
+
+import "equipment/grenade/datatypes.proto";
+
+service GrenadeServiceAPI {
+  rpc GetGrenade(GetGrenadeRequest) returns (GrenadeInfo);
+  rpc GetEnabledGrenade(GetEnabledGrenadeRequest) returns (GrenadeInfo);
+  rpc GetGrenades(GetGrenadesRequest) returns (GrenadeInfoListPage);
+  rpc CreateGrenade(CreateGrenadeRequest) returns (GrenadeInfo);
+  rpc UpdateGrenade(UpdateGrenadeRequest) returns (GrenadeInfo);
+}

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.market.protobuf.account;
+
+option java_multiple_files = true;
+
+import "market/account/datatypes.proto";
+import "google/protobuf/empty.proto";
+
+service PlayerAccountServiceAPI {
+  rpc GetPlayerAccount(GetPlayerAccountRequest) returns (PlayerAccountItemsPage);
+  rpc InitializePlayerAccount(InitializePlayerAccountRequest) returns (google.protobuf.Empty);
+  rpc GiveCurrency(PlayerCurrencyOperationRequest) returns (PlayerAccountItemInfo);
+  rpc TakeAwayCurrency(PlayerCurrencyOperationRequest) returns (PlayerAccountItemInfo);
+}

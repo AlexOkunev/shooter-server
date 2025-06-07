@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.converter.EquipmentTypeConverter;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.EquipmentType;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.converter.InventoryEquipmentTypeConverter;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.InventoryEquipmentType;
 
 @Data
 @Entity
@@ -19,8 +19,8 @@ public class PlayerInventoryItem {
 
     @Id
     @Column(name = "equipment_type")
-    @Convert(converter = EquipmentTypeConverter.class)
-    private EquipmentType equipmentType;
+    @Convert(converter = InventoryEquipmentTypeConverter.class)
+    private InventoryEquipmentType equipmentType;
 
     @Id
     @Column(name = "equipment_id")

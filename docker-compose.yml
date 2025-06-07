@@ -65,6 +65,22 @@ services:
     networks:
       - shooter-network
 
+  market-postgres:
+    image: postgres:16.2
+    volumes:
+      - market-postgres-data:/var/lib/postgresql/data
+      - ./infra/postgres/custom-config.conf:/etc/postgresql/postgresql.conf
+    environment:
+      POSTGRES_DB: market_db
+      POSTGRES_USER: market_db_user
+      POSTGRES_PASSWORD: market_db_user_password
+      POSTGRES_PORT: 5432
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    ports:
+      - "5436:5432"
+    networks:
+      - shooter-network
+
   players-keycloak:
     image: quay.io/keycloak/keycloak:23.0.6
     command: [ "start-dev", "--http-port=7777" ]
@@ -235,6 +251,8 @@ volumes:
   equipment-postgres-data:
     driver: local
   inventory-postgres-data:
+    driver: local
+  market-postgres-data:
     driver: local
   zk-log:
     driver: local

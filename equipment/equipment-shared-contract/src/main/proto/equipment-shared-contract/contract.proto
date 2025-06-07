@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.equipment.contract;
+
+option java_multiple_files = true;
+
+enum EquipmentType {
+  UNKNOWN = 0;
+  GUN = 1;
+  GRENADE = 2;
+  ATTACHMENT = 3;
+  AMMUNITION = 4;
+}

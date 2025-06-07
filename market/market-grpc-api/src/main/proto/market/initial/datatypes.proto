@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.market.protobuf.initial;
+
+option java_multiple_files = true;
+
+import "common/common.proto";
+
+message InitialPlayerAccountItemInfo {
+  int32 currencyId = 1;
+  int32 amount = 2;
+  bool enabled = 3;
+  int64 createdTimestamp = 4;
+  int64 updatedTimestamp = 5;
+  int32 version = 6;
+}
+
+message InitialPlayerAccountItemsPage {
+  repeated InitialPlayerAccountItemInfo data = 1;
+  common.protobuf.PaginationInfo paginationInfo = 2;
+}
+
+message GetInitialPlayerAccountRequest {
+  optional common.protobuf.PaginationRequest paginationRequest = 1;
+  optional Filter filter = 2;
+
+  message Filter {
+    optional bool enabled = 1;
+  }
+}
+
+message InitialPlayerAccountItemRequest {
+  int32 currencyId = 1;
+  int32 amount = 2;
+  bool enabled = 3;
+  int32 version = 4;
+}
+
+message ModifyInitialPlayerAccountRequest {
+  repeated InitialPlayerAccountItemRequest items = 1;
+}

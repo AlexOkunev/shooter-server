@@ -25,7 +25,29 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <shooter.common.version>1.0</shooter.common.version>
+        <equipment.shared.contract.version>1.0</equipment.shared.contract.version>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+                <artifactId>common-utils</artifactId>
+                <version>${shooter.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+                <artifactId>common-grpc-api</artifactId>
+                <version>${shooter.common.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+                <artifactId>equipment-shared-contract</artifactId>
+                <version>${equipment.shared.contract.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <build>
         <plugins>

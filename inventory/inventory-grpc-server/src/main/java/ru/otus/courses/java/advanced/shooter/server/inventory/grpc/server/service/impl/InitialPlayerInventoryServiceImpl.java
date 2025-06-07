@@ -3,22 +3,24 @@ package ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.servi
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.InvalidRequestException;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.validation.ValidationUtils;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.cache.base.ReferenceEquipmentCacheService;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.InitialPlayerInventoryItem;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.InitialPlayerInventoryItemId;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.exception.InvalidRequestException;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.ReferenceEquipmentId;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.EquipmentTypeMapper;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.InitialPlayerInventoryItemMapper;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.PaginationInfoMapper;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.repository.InitialPlayerInventoryItemRepository;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.service.EquipmentCacheService;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.service.InitialPlayerInventoryService;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.specification.InitialPlayerInventorySpecifications;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.util.PaginationUtils;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.util.ValidationUtils;
 import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.initial.GetInitialPlayerInventoryRequest;
 import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.initial.InitialPlayerInventoryItemRequest;
 import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.initial.InitialPlayerInventoryItemsPage;
@@ -36,11 +38,13 @@ public class InitialPlayerInventoryServiceImpl implements InitialPlayerInventory
 
     private final EquipmentTypeMapper equipmentTypeMapper;
 
+    private final PaginationInfoMapper paginationInfoMapper;
+
     private final InitialPlayerInventoryItemRepository initialPlayerInventoryItemRepository;
 
-    private final EquipmentCacheService equipmentCacheService;
+    private final ReferenceEquipmentCacheService equipmentCacheService;
 
-    private final Sort defaultSort = Sort.by(
+    private static final Sort DEFAULT_SORT = Sort.by(
             Sort.Order.asc(InitialPlayerInventoryItem.Fields.equipmentType),
             Sort.Order.asc(InitialPlayerInventoryItem.Fields.equipmentId)
     );
@@ -54,14 +58,14 @@ public class InitialPlayerInventoryServiceImpl implements InitialPlayerInventory
         Specification<InitialPlayerInventoryItem> specification = getSpecification(request);
 
         Pageable pageable = request.hasPaginationRequest() ?
-                PaginationUtils.getPageable(request.getPaginationRequest(), defaultSort) :
-                PaginationUtils.getPageable(0, 10, defaultSort);
+                PageRequest.of(request.getPaginationRequest().getPage(), request.getPaginationRequest().getCount(), DEFAULT_SORT) :
+                PageRequest.of(0, 10, DEFAULT_SORT);
 
         Page<InitialPlayerInventoryItem> data = initialPlayerInventoryItemRepository.findAll(specification, pageable);
 
         return InitialPlayerInventoryItemsPage.newBuilder()
                 .addAllData(data.map(initialPlayerInventoryItemMapper::toResponse))
-                .setTotalCount(data.getTotalElements())
+                .setPaginationInfo(paginationInfoMapper.toResponse(data))
                 .build();
     }
 
@@ -122,11 +126,9 @@ public class InitialPlayerInventoryServiceImpl implements InitialPlayerInventory
                 });
 
         request.getItemsList().stream()
-                .filter(item ->
-                        equipmentCacheService.getOptionalFromCache(
-                                        equipmentTypeMapper.toEntity(item.getEquipmentType()),
-                                        item.getEquipmentId())
-                                .isEmpty())
+                .filter(item -> equipmentCacheService.getById(
+                                new ReferenceEquipmentId(item.getEquipmentId(), equipmentTypeMapper.toEntity(item.getEquipmentType())))
+                        .isEmpty())
                 .findFirst()
                 .ifPresent(item -> {
                     throw new InvalidRequestException("Item %s (ID = %d) not found".formatted(item.getEquipmentType().name(), item.getEquipmentId()));

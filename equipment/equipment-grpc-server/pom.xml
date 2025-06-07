@@ -83,6 +83,11 @@
             <artifactId>commons-collections4</artifactId>
             <version>${commons.collections.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+            <artifactId>common-utils</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

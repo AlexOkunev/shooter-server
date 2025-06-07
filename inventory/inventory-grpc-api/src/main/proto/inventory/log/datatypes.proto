@@ -4,8 +4,9 @@ package ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventor
 
 option java_multiple_files = true;
 
-import "common.proto";
+import "common/common.proto";
 import "inventory/datatypes.proto";
+import "equipment-shared-contract/contract.proto";
 
 enum OperationType {
   ADMIN_GIVE = 0;
@@ -19,7 +20,7 @@ enum OperationType {
 
 message PlayerInventoryLogEntry {
   int32 playerId = 1;
-  EquipmentType equipmentType = 2;
+  equipment.contract.EquipmentType equipmentType = 2;
   int32 equipmentId = 3;
   OperationType operationType = 4;
   int32 amountBefore = 5;
@@ -31,10 +32,10 @@ message PlayerInventoryLogEntry {
 
 message PlayerInventoryLogPage {
   repeated PlayerInventoryLogEntry data = 1;
-  int64 totalCount = 2;
+  common.protobuf.PaginationInfo paginationInfo = 2;
 }
 
 message GetPlayerInventoryLogRequest {
-  optional common.PaginationRequest paginationRequest = 1;
+  optional common.protobuf.PaginationRequest paginationRequest = 1;
   int32 playerId = 2;
 }
