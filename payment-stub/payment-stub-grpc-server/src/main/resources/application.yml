@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: market-grpc-server
+
+  datasource:
+    url: jdbc:postgresql://localhost:5437/payment_stub_db
+    username: payment_stub_db_user
+    password: payment_stub_db_user_password
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        jdbc:
+          batch_size: 100
+          order_inserts: true
+          order_updates: true
+          fetch_size: 400
+        generate_statistics: false
+        format_sql: true
+        default_schema: public
+
+  flyway:
+    schemas: public
+    url: jdbc:postgresql://localhost:5437/payment_stub_db
+    user: payment_stub_db_user
+    password: payment_stub_db_user_password
+
+grpc:
+  port: 6568
+  shutdownGrace: 30
+  enable-reflection: true
+

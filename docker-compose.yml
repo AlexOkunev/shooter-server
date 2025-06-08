@@ -81,6 +81,22 @@ services:
     networks:
       - shooter-network
 
+  payment-stub-postgres:
+    image: postgres:16.2
+    volumes:
+      - payment-stub-postgres-data:/var/lib/postgresql/data
+      - ./infra/postgres/custom-config.conf:/etc/postgresql/postgresql.conf
+    environment:
+      POSTGRES_DB: payment_stub_db
+      POSTGRES_USER: payment_stub_db_user
+      POSTGRES_PASSWORD: payment_stub_db_user_password
+      POSTGRES_PORT: 5432
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    ports:
+      - "5437:5432"
+    networks:
+      - shooter-network
+
   players-keycloak:
     image: quay.io/keycloak/keycloak:23.0.6
     command: [ "start-dev", "--http-port=7777" ]
@@ -253,6 +269,8 @@ volumes:
   inventory-postgres-data:
     driver: local
   market-postgres-data:
+    driver: local
+  payment-stub-postgres-data:
     driver: local
   zk-log:
     driver: local

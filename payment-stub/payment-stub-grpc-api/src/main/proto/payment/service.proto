@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.payment.protobuf;
+
+option java_multiple_files = true;
+
+import "payment/datatypes.proto";
+import "google/protobuf/empty.proto";
+
+service PaymentServiceAPI {
+  rpc CreatePayment(CreatePaymentRequest) returns (CreatePaymentResponse);
+}
