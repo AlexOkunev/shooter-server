@@ -1,6 +1,7 @@
 package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -13,19 +14,26 @@ import ru.otus.courses.java.advanced.shooter.server.common.utils.validation.Vali
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.cache.base.MoneyBundleCacheService;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.MoneyBundle;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.MoneyBundleTrade;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.MoneyBundleTradePayment;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.PlayerAccount;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.enumeration.MoneyBundleTradeStatus;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.MoneyBundleTradeMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.MoneyBundleTradeStatusMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.PaginationInfoMapper;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.PaymentStubRequestMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.MoneyBundleTradeRepository;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.PlayerAccountRepository;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service.MoneyBundleTradeService;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.specification.MoneyBundleTradeSpecifications;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.*;
+import ru.otus.courses.java.advanced.shooter.server.payment.protobuf.CreatePaymentRequest;
+import ru.otus.courses.java.advanced.shooter.server.payment.protobuf.CreatePaymentResponse;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static ru.otus.courses.java.advanced.shooter.server.payment.protobuf.PaymentServiceAPIGrpc.PaymentServiceAPIBlockingStub;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +50,10 @@ public class MoneyBundleTradeServiceImpl implements MoneyBundleTradeService {
     private final MoneyBundleTradeMapper moneyBundleTradeMapper;
 
     private final MoneyBundleTradeStatusMapper moneyBundleTradeStatusMapper;
+
+    private final PaymentStubRequestMapper paymentStubRequestMapper;
+
+    private final ObjectFactory<PaymentServiceAPIBlockingStub> paymentServiceAPIBlockingStub;
 
     private static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.ASC, MoneyBundleTrade.Fields.id);
 
@@ -92,6 +104,28 @@ public class MoneyBundleTradeServiceImpl implements MoneyBundleTradeService {
                 .addAllData(data.map(moneyBundleTradeMapper::toResponse))
                 .setPaginationInfo(paginationInfoMapper.toResponse(data))
                 .build();
+    }
+
+    @Override
+    public MoneyBundleTradeInfo makeMoneyBundleTradePayment(MakeMoneyBundleTradePaymentRequest request) {
+        MoneyBundleTrade trade = moneyBundleTradeRepository.findByIdAndPlayerId(request.getTradeId(), request.getPlayerId())
+                .orElseThrow(() -> new ObjectNotFoundException("Money bundle trade with id '%d' and player id '%d' not found"
+                        .formatted(request.getTradeId(), request.getPlayerId())));
+
+        if (trade.getStatus() != MoneyBundleTradeStatus.CREATED) {
+            throw new InvalidRequestException("Money bundle trade with id '%d' has incorrect status".formatted(request.getTradeId()));
+        }
+
+        CreatePaymentRequest paymentRequest = paymentStubRequestMapper.toRequest(trade, request.getPlayerEmail());
+        CreatePaymentResponse paymentResponse = paymentServiceAPIBlockingStub.getObject().createPayment(paymentRequest);
+
+        MoneyBundleTradePayment moneyBundleTradePayment = paymentStubRequestMapper.toPayment(paymentResponse);
+
+        trade.setPayment(moneyBundleTradePayment);
+        trade.setStatus(MoneyBundleTradeStatus.PAYMENT_PENDING);
+        trade = moneyBundleTradeRepository.save(trade);
+
+        return moneyBundleTradeMapper.toResponse(trade);
     }
 
     private Specification<MoneyBundleTrade> getSpecification(GetMoneyBundleTradesRequest.Filter filter) {

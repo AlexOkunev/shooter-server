@@ -10,15 +10,9 @@ import java.util.Arrays;
 public enum MoneyBundleTradeStatus {
     UNKNOWN(-1),
     CREATED(0),
-    PAYMENT_SESSION_WAIT(1),
-    PAYMENT_SESSION_CREATED(2),
-    PAYMENT_PENDING(3),
-    PAYMENT_DONE(4),
-    MONEY_ISSUE_WAIT(5),
-    MONEY_ISSUE_PENDING(6),
-    MONEY_ISSUE_DONE(7),
-    SUCCEEDED(8),
-    FAILED(9);
+    PAYMENT_PENDING(1),
+    SUCCEEDED(2),
+    FAILED(3);
 
     private final int code;
 

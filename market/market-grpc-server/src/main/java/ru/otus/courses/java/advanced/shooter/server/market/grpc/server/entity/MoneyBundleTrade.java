@@ -74,5 +74,15 @@ public class MoneyBundleTrade {
     @NotNull
     @Column(name = "uuid")
     private UUID uuid;
+
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = MoneyBundleTradePayment.Fields.session, column = @Column(name = "payment_session")),
+            @AttributeOverride(name = MoneyBundleTradePayment.Fields.publicToken, column = @Column(name = "payment_public_token")),
+            @AttributeOverride(name = MoneyBundleTradePayment.Fields.uuid, column = @Column(name = "payment_uuid")),
+            @AttributeOverride(name = MoneyBundleTradePayment.Fields.startTimestamp, column = @Column(name = "payment_start_timestamp")),
+            @AttributeOverride(name = MoneyBundleTradePayment.Fields.finishTimestamp, column = @Column(name = "payment_finish_timestamp"))
+    })
+    private MoneyBundleTradePayment payment;
 }
 

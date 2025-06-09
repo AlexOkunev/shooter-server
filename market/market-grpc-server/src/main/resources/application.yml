@@ -33,6 +33,11 @@ grpc:
   shutdownGrace: 30
   enable-reflection: true
 
+payment-stub-grpc:
+  host: localhost
+  port: 6568
+  deadline-ms: 2000
+
 # TODO SET NORMAL
 reference-data-caching:
   data-page-size: 10

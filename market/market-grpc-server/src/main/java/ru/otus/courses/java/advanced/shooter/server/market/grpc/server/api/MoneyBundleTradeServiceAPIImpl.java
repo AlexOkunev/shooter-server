@@ -28,4 +28,10 @@ public class MoneyBundleTradeServiceAPIImpl extends MoneyBundleTradeServiceAPIGr
         responseObserver.onNext(moneyBundleTradeService.getMoneyBundleTrades(request));
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void makeMoneyBundleTradePayment(MakeMoneyBundleTradePaymentRequest request, StreamObserver<MoneyBundleTradeInfo> responseObserver) {
+        responseObserver.onNext(moneyBundleTradeService.makeMoneyBundleTradePayment(request));
+        responseObserver.onCompleted();
+    }
 }

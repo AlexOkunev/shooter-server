@@ -21,15 +21,9 @@ enum ProductTradeStatus {
 
 enum MoneyBundleTradeStatus {
   MBT_CREATED = 0;
-  MBT_PAYMENT_SESSION_WAIT = 1;
-  MBT_PAYMENT_SESSION_CREATED = 2;
-  MBT_PAYMENT_PENDING = 3;
-  MBT_PAYMENT_DONE = 4;
-  MBT_MONEY_ISSUE_WAIT = 5;
-  MBT_MONEY_ISSUE_PENDING = 6;
-  MBT_MONEY_ISSUE_DONE = 7;
-  MBT_SUCCEEDED = 8;
-  MBT_FAILED = 9;
+  MBT_PAYMENT_PENDING = 1;
+  MBT_SUCCEEDED = 2;
+  MBT_FAILED = 3;
 }
 
 message CreateProductTradeRequest {
@@ -87,11 +81,26 @@ message MoneyBundleTradeInfo {
   int64 updatedTimestamp = 8;
   MoneyBundleTradeStatus status = 9;
   string uuid = 10;
+  optional PaymentInfo paymentInfo = 11;
+
+  message PaymentInfo {
+    string session = 1;
+    string publicToken = 2;
+    string uuid = 3;
+    int64 startTimestamp = 4;
+    optional int64 finishTimestamp = 5;
+  }
 }
 
 message CreateMoneyBundleTradeRequest {
   int32 playerId = 1;
   int32 moneyBundleId = 2;
+}
+
+message MakeMoneyBundleTradePaymentRequest {
+  int32 playerId = 1;
+  string playerEmail = 2;
+  int32 tradeId = 3;
 }
 
 message MoneyBundleTradeInfoListPage {

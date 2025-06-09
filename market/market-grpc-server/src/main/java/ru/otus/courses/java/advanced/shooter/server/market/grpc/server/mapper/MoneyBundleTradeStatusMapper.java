@@ -12,13 +12,7 @@ import java.util.List;
 public interface MoneyBundleTradeStatusMapper {
 
     @ValueMapping(target = "CREATED", source = "MBT_CREATED")
-    @ValueMapping(target = "PAYMENT_SESSION_WAIT", source = "MBT_PAYMENT_SESSION_WAIT")
-    @ValueMapping(target = "PAYMENT_SESSION_CREATED", source = "MBT_PAYMENT_SESSION_CREATED")
     @ValueMapping(target = "PAYMENT_PENDING", source = "MBT_PAYMENT_PENDING")
-    @ValueMapping(target = "PAYMENT_DONE", source = "MBT_PAYMENT_DONE")
-    @ValueMapping(target = "MONEY_ISSUE_WAIT", source = "MBT_MONEY_ISSUE_WAIT")
-    @ValueMapping(target = "MONEY_ISSUE_PENDING", source = "MBT_MONEY_ISSUE_PENDING")
-    @ValueMapping(target = "MONEY_ISSUE_DONE", source = "MBT_MONEY_ISSUE_DONE")
     @ValueMapping(target = "SUCCEEDED", source = "MBT_SUCCEEDED")
     @ValueMapping(target = "FAILED", source = "MBT_FAILED")
     @ValueMapping(target = MappingConstants.THROW_EXCEPTION, source = "UNRECOGNIZED")

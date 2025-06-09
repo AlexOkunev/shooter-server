@@ -9,6 +9,7 @@ import "google/protobuf/empty.proto";
 
 service MoneyBundleTradeServiceAPI {
   rpc CreateMoneyBundleTrade(CreateMoneyBundleTradeRequest) returns (MoneyBundleTradeInfo);
+  rpc MakeMoneyBundleTradePayment(MakeMoneyBundleTradePaymentRequest) returns (MoneyBundleTradeInfo);
   rpc GetMoneyBundleTrade(GetMoneyBundleTradeRequest) returns (MoneyBundleTradeInfo);
   rpc GetMoneyBundleTrades(GetMoneyBundleTradesRequest) returns (MoneyBundleTradeInfoListPage);
 }

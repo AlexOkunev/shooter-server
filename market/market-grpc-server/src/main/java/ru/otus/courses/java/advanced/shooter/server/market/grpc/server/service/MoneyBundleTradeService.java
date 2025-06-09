@@ -8,4 +8,6 @@ public interface MoneyBundleTradeService {
     MoneyBundleTradeInfo getMoneyBundleTrade(GetMoneyBundleTradeRequest request);
 
     MoneyBundleTradeInfoListPage getMoneyBundleTrades(GetMoneyBundleTradesRequest request);
+
+    MoneyBundleTradeInfo makeMoneyBundleTradePayment(MakeMoneyBundleTradePaymentRequest request);
 }
