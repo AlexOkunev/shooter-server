@@ -53,6 +53,12 @@
         </dependency>
 
         <dependency>
+            <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+            <artifactId>payment-stub-common</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>

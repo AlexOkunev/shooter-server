@@ -49,6 +49,16 @@
             </dependency>
             <dependency>
                 <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+                <artifactId>payment-stub-kafka-types</artifactId>
+                <version>${shooter.payment-stub.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+                <artifactId>payment-stub-common</artifactId>
+                <version>${shooter.payment-stub.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
                 <artifactId>equipment-shared-contract</artifactId>
                 <version>${equipment.shared.contract.version}</version>
             </dependency>

@@ -20,7 +20,3 @@ public class PaymentServiceAPIImpl extends PaymentServiceAPIGrpc.PaymentServiceA
         responseObserver.onCompleted();
     }
 }
-
-//TODO!!! у платежа хранить uuid, он уникальный для идемпотентности.
-// TODO!!!в маркете хранить таблицу обработанных сообщений, указывать даты.
-// TODO!!! в покупках хранить id сессии и уид платежа

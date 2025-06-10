@@ -10,7 +10,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         jdbc:
@@ -28,6 +28,22 @@ spring:
     user: market_db_user
     password: market_db_user_password
 
+  kafka:
+    bootstrap-servers: localhost:9091,localhost:9092,localhost:9093
+    consumer:
+      key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      properties:
+        schema.registry.url: http://localhost:8081
+        specific.avro.reader: true
+    producer:
+      key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      properties:
+        schema.registry.url: http://localhost:8081
+    listener:
+      ack-mode: record
+
 grpc:
   port: 6567
   shutdownGrace: 30
@@ -37,6 +53,10 @@ payment-stub-grpc:
   host: localhost
   port: 6568
   deadline-ms: 2000
+
+payment-kafka:
+  topic: db.payment.public.payment_processed_message_outbox
+  group-id: market-payment-processed-message-consumer-test-3
 
 # TODO SET NORMAL
 reference-data-caching:

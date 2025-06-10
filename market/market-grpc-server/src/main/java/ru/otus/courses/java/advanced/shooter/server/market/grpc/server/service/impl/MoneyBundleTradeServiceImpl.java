@@ -29,7 +29,6 @@ import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.*;
 import ru.otus.courses.java.advanced.shooter.server.payment.protobuf.CreatePaymentRequest;
 import ru.otus.courses.java.advanced.shooter.server.payment.protobuf.CreatePaymentResponse;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 

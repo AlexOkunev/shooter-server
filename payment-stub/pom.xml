@@ -17,7 +17,9 @@
 
     <modules>
         <module>payment-stub-grpc-api</module>
+        <module>payment-stub-common</module>
         <module>payment-stub-grpc-server</module>
+        <module>payment-stub-kafka-types</module>
     </modules>
 
     <properties>

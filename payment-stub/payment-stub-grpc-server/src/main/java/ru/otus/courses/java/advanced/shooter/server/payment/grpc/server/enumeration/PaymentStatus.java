@@ -2,15 +2,16 @@ package ru.otus.courses.java.advanced.shooter.server.payment.grpc.server.enumera
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import ru.otus.courses.java.advanced.shooter.server.payment.common.PaymentStatusCodes;
 
 import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
 public enum PaymentStatus {
-    PROCESSING(0),
-    SUCCEEDED(1),
-    FAILED(2);
+    PROCESSING(PaymentStatusCodes.PROCESSING_CODE),
+    SUCCEEDED(PaymentStatusCodes.SUCCESS_CODE),
+    FAILED(PaymentStatusCodes.FAILED_CODE);
 
     private final int code;
 

@@ -1,0 +1,16 @@
+{
+  "type": "record",
+  "name": "ProcessedPaymentMessageKey",
+  "namespace": "ru.otus.courses.java.advanced.shooter.server.payment.outbox",
+  "fields": [
+    {
+      "name": "id",
+      "type": {
+        "type": "int",
+        "connect.default": 0
+      },
+      "default": 0
+    }
+  ],
+  "connect.name": "ru.otus.courses.java.advanced.shooter.server.payment.outbox.ProcessedPaymentMessageKey"
+}

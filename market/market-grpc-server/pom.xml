@@ -22,6 +22,7 @@
         <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
         <commons.collections.version>4.4</commons.collections.version>
         <equipment.api.version>1.0</equipment.api.version>
+        <avro.serializer.version>7.6.0</avro.serializer.version>
     </properties>
 
     <dependencies>
@@ -30,7 +31,10 @@
             <artifactId>common-utils</artifactId>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.github.lognet</groupId>
@@ -53,6 +57,27 @@
             <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
             <artifactId>market-grpc-api</artifactId>
             <version>${revision}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+            <artifactId>payment-stub-kafka-types</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+            <artifactId>payment-stub-grpc-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+            <artifactId>payment-stub-common</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-avro-serializer</artifactId>
+            <version>${avro.serializer.version}</version>
         </dependency>
 
         <dependency>
@@ -181,5 +206,12 @@
             </plugin>
         </plugins>
     </build>
+
+    <repositories>
+        <repository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </repository>
+    </repositories>
 
 </project>
