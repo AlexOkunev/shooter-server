@@ -56,4 +56,5 @@ message CurrenciesFilter {
   optional bool canBeBought = 3;
   optional bool canBeGivenAsAward = 4;
   repeated int32 currencyId = 5;
+  optional int64 updatedAfter = 6;
 }

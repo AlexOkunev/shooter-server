@@ -62,4 +62,5 @@ message AttachmentsFilter {
   repeated int32 compatibleGunId = 4;
   optional bool onlyEnabledCompatibleGuns = 5;
   repeated int32 attachmentId = 6;
+  optional int64 updatedAfter = 7;
 }

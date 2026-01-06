@@ -57,4 +57,5 @@ message GrenadesFilter {
   optional bool enabled = 1;
   optional string name = 2;
   repeated int32 grenadeId = 3;
+  optional int64 updatedAfter = 4;
 }

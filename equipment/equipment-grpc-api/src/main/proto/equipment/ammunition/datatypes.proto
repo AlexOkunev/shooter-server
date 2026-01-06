@@ -63,4 +63,5 @@ message AmmunitionFilter {
   repeated int32 compatibleGunId = 3;
   optional bool onlyEnabledCompatibleGuns = 4;
   repeated int32 ammunitionId = 5;
+  optional int64 updatedAfter = 6;
 }
