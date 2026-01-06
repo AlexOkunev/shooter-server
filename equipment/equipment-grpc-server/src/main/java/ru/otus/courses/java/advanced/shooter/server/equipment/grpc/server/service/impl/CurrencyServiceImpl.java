@@ -1,24 +1,22 @@
 package ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.service.impl;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.InvalidRequestException;
+import org.springframework.validation.annotation.Validated;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
-import ru.otus.courses.java.advanced.shooter.server.common.utils.validation.ValidationUtils;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.CurrencyFilterParams;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.CurrencySavedData;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Currency;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.CurrencyMapper;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.PaginationInfoMapper;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.domain.CurrencyMapper;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.repository.CurrencyRepository;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.service.CurrencyService;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.specifications.CurrencySpecifications;
-import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,106 +24,69 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Validated //TODO!!! check validation
 public class CurrencyServiceImpl implements CurrencyService {
     private final CurrencyRepository currencyRepository;
-
     private final CurrencyMapper currencyMapper;
 
-    private final PaginationInfoMapper paginationInfoMapper;
-
-    private static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.ASC, Currency.Fields.id);
-
     @Override
-    public CurrencyInfo getCurrencyInfo(int currencyId) {
+    public Currency getCurrency(int currencyId) {
         return currencyRepository.findById(currencyId)
-                .map(currencyMapper::toResponse)
                 .orElseThrow(() -> new ObjectNotFoundException("Currency with id '%d' not found".formatted(currencyId)));
     }
 
     @Override
-    public CurrencyInfo getEnabledCurrencyInfo(int currencyId) {
+    public Currency getEnabledCurrency(int currencyId) {
         return currencyRepository.findByIdAndEnabled(currencyId, true)
-                .map(currencyMapper::toResponse)
                 .orElseThrow(() -> new ObjectNotFoundException("Currency with id '%d' not found".formatted(currencyId)));
     }
 
     @Override
-    public CurrencyInfo createCurrency(CreateCurrencyRequest request) {
-        if (!request.hasData()) {
-            throw new InvalidRequestException("Data must not be empty");
-        }
-
-        validateCurrencyWritableData(request.getData());
-
-        Currency currency = currencyMapper.toEntity(request.getData());
-        currency = currencyRepository.save(currency);
-
-        return currencyMapper.toResponse(currency);
-    }
-
-    private void validateCurrencyWritableData(CurrencyWritableData data) {
-        if (StringUtils.isBlank(data.getName())) {
-            throw new InvalidRequestException("Name cannot be blank or null");
-        }
+    public Currency createCurrency(@Valid @NotNull CurrencySavedData currencySavedData) {
+        Currency currency = currencyMapper.toEntity(currencySavedData);
+        return currencyRepository.save(currency);
     }
 
     @Override
-    public CurrencyInfo updateCurrency(UpdateCurrencyRequest request) {
-        Currency currency = currencyRepository.findById(request.getCurrencyId())
-                .orElseThrow(() -> new ObjectNotFoundException("Currency with id '%d' not found".formatted(request.getCurrencyId())));
+    public Currency updateCurrency(int currencyId, @NotNull @Valid CurrencySavedData currencySavedData) {
+        Currency currency = currencyRepository.findById(currencyId)
+                .orElseThrow(() -> new ObjectNotFoundException("Currency with id '%d' not found".formatted(currencyId)));
 
-        if (!request.hasData()) {
-            return currencyMapper.toResponse(currency);
-        }
-
-        validateCurrencyWritableData(request.getData());
-
-        currencyMapper.updateCurrency(currency, request.getData());
-        currency = currencyRepository.save(currency);
-
-        return currencyMapper.toResponse(currency);
+        currencyMapper.updateCurrency(currency, currencySavedData);
+        return currencyRepository.save(currency);
     }
 
     @Override
-    public CurrencyInfoListPage getCurrencies(GetCurrenciesRequest request) {
-        if (request.hasPaginationRequest()) {
-            ValidationUtils.validatePaginationRequest(request.getPaginationRequest());
-        }
-
-        Specification<Currency> specification = getSpecification(request.getFilter());
-        Pageable pageable = request.hasPaginationRequest() ?
-                PageRequest.of(request.getPaginationRequest().getPage(), request.getPaginationRequest().getCount(), DEFAULT_SORT) :
-                PageRequest.of(0, 10, DEFAULT_SORT);
-
-        Page<Currency> data = currencyRepository.findAll(specification, pageable);
-
-        return CurrencyInfoListPage.newBuilder()
-                .addAllData(data.map(currencyMapper::toResponse))
-                .setPaginationInfo(paginationInfoMapper.toResponse(data))
-                .build();
+    public Page<Currency> getCurrencies(@NotNull CurrencyFilterParams filterParams, @NotNull Pageable pageable) {
+        Specification<Currency> specification = getSpecification(filterParams);
+        return currencyRepository.findAll(specification, pageable);
     }
 
-    private static Specification<Currency> getSpecification(CurrenciesFilter filter) {
+    private static Specification<Currency> getSpecification(CurrencyFilterParams filterParams) {
         List<Specification<Currency>> specifications = new ArrayList<>();
 
-        if (filter.hasEnabled()) {
-            specifications.add(CurrencySpecifications.byEnabled(filter.getEnabled()));
+        if (filterParams.getEnabled() != null) {
+            specifications.add(CurrencySpecifications.byEnabled(filterParams.getEnabled()));
         }
 
-        if (filter.hasName()) {
-            specifications.add(CurrencySpecifications.byNameStartsWith(filter.getName()));
+        if (filterParams.getName() != null) {
+            specifications.add(CurrencySpecifications.byNameStartsWith(filterParams.getName()));
         }
 
-        if (filter.hasCanBeBought()) {
-            specifications.add(CurrencySpecifications.byCanBeBought(filter.getCanBeBought()));
+        if (filterParams.getCanBeBought() != null) {
+            specifications.add(CurrencySpecifications.byCanBeBought(filterParams.getCanBeBought()));
         }
 
-        if (filter.hasCanBeGivenAsAward()) {
-            specifications.add(CurrencySpecifications.byCanBeGivenAsAward(filter.getCanBeGivenAsAward()));
+        if (filterParams.getCanBeGivenAsAward() != null) {
+            specifications.add(CurrencySpecifications.byCanBeGivenAsAward(filterParams.getCanBeGivenAsAward()));
         }
 
-        if (filter.getCurrencyIdCount() > 0) {
-            specifications.add(CurrencySpecifications.byCurrencyIds(filter.getCurrencyIdList()));
+        if (!filterParams.getCurrencyIds().isEmpty()) {
+            specifications.add(CurrencySpecifications.byCurrencyIds(filterParams.getCurrencyIds()));
+        }
+
+        if (filterParams.getUpdatedAfter() != null) {
+            specifications.add(CurrencySpecifications.byUpdatedAfter(filterParams.getUpdatedAfter()));
         }
 
         return Specification.allOf(specifications);

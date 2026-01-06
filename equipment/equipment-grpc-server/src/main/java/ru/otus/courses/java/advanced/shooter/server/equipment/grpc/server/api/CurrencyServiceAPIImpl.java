@@ -3,6 +3,13 @@ package ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.api;
 import io.grpc.stub.StreamObserver;
 import lombok.RequiredArgsConstructor;
 import org.lognet.springboot.grpc.GRpcService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.PaginationInfoMapper;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.CurrencyFilterParams;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.CurrencySavedData;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Currency;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.proto.CurrencyMapper;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.service.CurrencyService;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.*;
 
@@ -10,34 +17,55 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.
 @RequiredArgsConstructor
 public class CurrencyServiceAPIImpl extends CurrencyServiceAPIGrpc.CurrencyServiceAPIImplBase {
     private final CurrencyService currencyService;
+    private final CurrencyMapper currencyProtoMapper;
+    private final PaginationInfoMapper paginationInfoMapper;
 
     @Override
     public void getCurrency(GetCurrencyRequest request, StreamObserver<CurrencyInfo> responseObserver) {
-        responseObserver.onNext(currencyService.getCurrencyInfo(request.getCurrencyId()));
+        Currency currency = currencyService.getCurrency(request.getCurrencyId());
+        CurrencyInfo response = currencyProtoMapper.toResponse(currency);
+        responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
     @Override
     public void getEnabledCurrency(GetEnabledCurrencyRequest request, StreamObserver<CurrencyInfo> responseObserver) {
-        responseObserver.onNext(currencyService.getEnabledCurrencyInfo(request.getCurrencyId()));
+        Currency currency = currencyService.getEnabledCurrency(request.getCurrencyId());
+        CurrencyInfo response = currencyProtoMapper.toResponse(currency);
+        responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
     @Override
     public void getCurrencies(GetCurrenciesRequest request, StreamObserver<CurrencyInfoListPage> responseObserver) {
-        responseObserver.onNext(currencyService.getCurrencies(request));
+        CurrencyFilterParams currencyFilterParams = currencyProtoMapper.toFilterParams(request);
+        Pageable pageable = currencyProtoMapper.toPageable(request);
+        Page<Currency> data = currencyService.getCurrencies(currencyFilterParams, pageable);
+
+        CurrencyInfoListPage response = CurrencyInfoListPage.newBuilder()
+                .addAllData(currencyProtoMapper.toResponseList(data))
+                .setPaginationInfo(paginationInfoMapper.toResponse(data))
+                .build();
+
+        responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
     @Override
     public void createCurrency(CreateCurrencyRequest request, StreamObserver<CurrencyInfo> responseObserver) {
-        responseObserver.onNext(currencyService.createCurrency(request));
+        CurrencySavedData currencySavedData = currencyProtoMapper.toSavedData(request);
+        Currency currency = currencyService.createCurrency(currencySavedData);
+        CurrencyInfo response = currencyProtoMapper.toResponse(currency);
+        responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 
     @Override
     public void updateCurrency(UpdateCurrencyRequest request, StreamObserver<CurrencyInfo> responseObserver) {
-        responseObserver.onNext(currencyService.updateCurrency(request));
+        CurrencySavedData currencySavedData = currencyProtoMapper.toSavedData(request);
+        Currency currency = currencyService.updateCurrency(request.getCurrencyId(), currencySavedData);
+        CurrencyInfo response = currencyProtoMapper.toResponse(currency);
+        responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
 }

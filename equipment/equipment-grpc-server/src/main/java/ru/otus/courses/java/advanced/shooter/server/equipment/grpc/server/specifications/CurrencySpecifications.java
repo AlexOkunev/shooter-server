@@ -4,6 +4,8 @@ import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Currency;
 
+import java.time.ZonedDateTime;
+
 @UtilityClass
 public class CurrencySpecifications {
     public static Specification<Currency> byNameStartsWith(String name) {
@@ -29,5 +31,10 @@ public class CurrencySpecifications {
     public static Specification<Currency> byCurrencyIds(Iterable<Integer> currencyIds) {
         return (root, query, builder) ->
                 builder.in(root.get(Currency.Fields.id)).value(currencyIds);
+    }
+
+    public static Specification<Currency> byUpdatedAfter(ZonedDateTime updatedAfter) {
+        return (root, query, builder) ->
+                builder.greaterThanOrEqualTo(root.get(Currency.Fields.updatedTimestamp), updatedAfter);
     }
 }
