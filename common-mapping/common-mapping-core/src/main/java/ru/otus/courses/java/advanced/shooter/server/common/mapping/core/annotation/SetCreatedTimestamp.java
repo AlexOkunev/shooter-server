@@ -6,6 +6,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.CLASS)
-@Mapping(target = "createdTimestamp", expression = "java(dateMapper.now())")
+@Mapping(
+        target = "createdTimestamp",
+        expression = "java(java.time.ZonedDateTime.now(java.time.ZoneOffset.UTC))"
+)
 public @interface SetCreatedTimestamp {
 }

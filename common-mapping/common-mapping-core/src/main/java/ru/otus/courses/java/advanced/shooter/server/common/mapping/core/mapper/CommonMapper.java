@@ -5,7 +5,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 import org.mapstruct.Named;
 
-@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(
+        componentModel = MappingConstants.ComponentModel.SPRING
+)
 public interface CommonMapper {
     interface NamedMethods {
         String NAMED_TRIM = "trim";

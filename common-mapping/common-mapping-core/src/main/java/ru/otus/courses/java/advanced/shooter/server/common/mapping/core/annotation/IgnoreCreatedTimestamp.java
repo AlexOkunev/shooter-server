@@ -7,8 +7,8 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.CLASS)
 @Mapping(
-        target = "updatedTimestamp",
-        expression = "java(java.time.ZonedDateTime.now(java.time.ZoneOffset.UTC))"
+        target = "createdTimestamp",
+        ignore = true
 )
-public @interface SetUpdatedTimestamp {
+public @interface IgnoreCreatedTimestamp {
 }
