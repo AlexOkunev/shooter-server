@@ -1,6 +1,7 @@
 package ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.handle;
 
 import io.grpc.Status;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.lognet.springboot.grpc.recovery.GRpcExceptionHandler;
@@ -22,6 +23,20 @@ public class ExceptionHandler {
 
     @GRpcExceptionHandler
     public Status handleException(InvalidRequestException e, GRpcExceptionScope scope) {
+        return Status.INVALID_ARGUMENT
+                .withDescription("Invalid request")
+                .augmentDescription(e.getMessage());
+    }
+
+    @GRpcExceptionHandler
+    public Status handleException(IllegalArgumentException e, GRpcExceptionScope scope) {
+        return Status.INVALID_ARGUMENT
+                .withDescription("Invalid request")
+                .augmentDescription(e.getMessage());
+    }
+
+    @GRpcExceptionHandler
+    public Status handleException(ConstraintViolationException e, GRpcExceptionScope scope) {
         return Status.INVALID_ARGUMENT
                 .withDescription("Invalid request")
                 .augmentDescription(e.getMessage());

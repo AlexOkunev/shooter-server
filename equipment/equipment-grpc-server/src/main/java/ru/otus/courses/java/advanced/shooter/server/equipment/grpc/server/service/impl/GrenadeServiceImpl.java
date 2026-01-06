@@ -1,137 +1,85 @@
 package ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.service.impl;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.InvalidRequestException;
+import org.springframework.validation.annotation.Validated;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
-import ru.otus.courses.java.advanced.shooter.server.common.utils.validation.ValidationUtils;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.GrenadeFilterParams;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.GrenadeSavedData;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Grenade;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.GrenadeMapper;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.PaginationInfoMapper;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.domain.GrenadeMapper;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.repository.GrenadeRepository;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.service.GrenadeService;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.specifications.GrenadeSpecifications;
-import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
+@Validated
 public class GrenadeServiceImpl implements GrenadeService {
     private final GrenadeRepository grenadeRepository;
-
     private final GrenadeMapper grenadeMapper;
 
-    private final PaginationInfoMapper paginationInfoMapper;
-
-    private static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.ASC, Grenade.Fields.id);
-
     @Override
-    public GrenadeInfo getGrenadeInfo(int grenadeId) {
+    public Grenade getGrenade(int grenadeId) {
         return grenadeRepository.findById(grenadeId)
-                .map(grenadeMapper::toResponse)
                 .orElseThrow(() -> new ObjectNotFoundException("Grenade with id '%d' not found".formatted(grenadeId)));
     }
 
     @Override
-    public GrenadeInfo getEnabledGrenadeInfo(int grenadeId) {
+    public Grenade getEnabledGrenade(int grenadeId) {
         return grenadeRepository.findByIdAndEnabled(grenadeId, true)
-                .map(grenadeMapper::toResponse)
                 .orElseThrow(() -> new ObjectNotFoundException("Grenade with id '%d' not found".formatted(grenadeId)));
     }
 
     @Override
-    public GrenadeInfo createGrenade(CreateGrenadeRequest request) {
-        if (!request.hasData()) {
-            throw new InvalidRequestException("Data must not be empty");
-        }
-
-        validateGrenadeWritableData(request.getData());
-
-        Grenade grenade = grenadeMapper.toEntity(request.getData());
-        grenade = grenadeRepository.save(grenade);
-
-        return grenadeMapper.toResponse(grenade);
-    }
-
-    private void validateGrenadeWritableData(GrenadeWritableData data) {
-        if (StringUtils.isBlank(data.getName())) {
-            throw new InvalidRequestException("Name cannot be blank or null");
-        }
-
-        if (data.getBlastDamageRadiusMeters() < 0) {
-            throw new InvalidRequestException("Blast damage radius cannot be less than 0");
-        }
-
-        if (data.getMaxBlastDamageHP() < 0) {
-            throw new InvalidRequestException("Max blast damage hp cannot be less than 0");
-        }
-
-        if (data.getMaxBlindTimeMs() < 0) {
-            throw new InvalidRequestException("Max blind time ms cannot be less than 0");
-        }
-
-        if (data.getMaxDeafTimeMs() < 0) {
-            throw new InvalidRequestException("Max deaf time ms cannot be less than 0");
-        }
+    public Grenade createGrenade(@Valid @NotNull GrenadeSavedData data) {
+        Grenade grenade = grenadeMapper.toEntity(data);
+        return grenadeRepository.save(grenade);
     }
 
     @Override
-    public GrenadeInfo updateGrenade(UpdateGrenadeRequest request) {
-        Grenade grenade = grenadeRepository.findById(request.getGrenadeId())
-                .orElseThrow(() -> new ObjectNotFoundException("Grenade with id '%d' not found".formatted(request.getGrenadeId())));
+    public Grenade updateGrenade(int grenadeId, @Valid @NotNull GrenadeSavedData data) {
+        Grenade grenade = grenadeRepository.findById(grenadeId)
+                .orElseThrow(() -> new ObjectNotFoundException("Grenade with id '%d' not found".formatted(grenadeId)));
 
-        if (!request.hasData()) {
-            return grenadeMapper.toResponse(grenade);
-        }
+        grenadeMapper.updateGrenade(grenade, data);
 
-        validateGrenadeWritableData(request.getData());
-
-        grenadeMapper.updateGrenade(grenade, request.getData());
-        grenade = grenadeRepository.save(grenade);
-
-        return grenadeMapper.toResponse(grenade);
+        return grenadeRepository.save(grenade);
     }
 
     @Override
-    public GrenadeInfoListPage getGrenades(GetGrenadesRequest request) {
-        if (request.hasPaginationRequest()) {
-            ValidationUtils.validatePaginationRequest(request.getPaginationRequest());
-        }
-
-        Specification<Grenade> specification = getSpecification(request.getFilter());
-        Pageable pageable = request.hasPaginationRequest() ?
-                PageRequest.of(request.getPaginationRequest().getPage(), request.getPaginationRequest().getCount(), DEFAULT_SORT) :
-                PageRequest.of(0, 10, DEFAULT_SORT);
-
-        Page<Grenade> data = grenadeRepository.findAll(specification, pageable);
-
-        return GrenadeInfoListPage.newBuilder()
-                .addAllData(data.map(grenadeMapper::toResponse))
-                .setPaginationInfo(paginationInfoMapper.toResponse(data))
-                .build();
+    public Page<Grenade> getGrenades(@NotNull GrenadeFilterParams filterParams, @NotNull Pageable pageable) {
+        Specification<Grenade> specification = getSpecification(filterParams);
+        return grenadeRepository.findAll(specification, pageable);
     }
 
-    private static Specification<Grenade> getSpecification(GrenadesFilter filter) {
+    private static Specification<Grenade> getSpecification(GrenadeFilterParams filter) {
         List<Specification<Grenade>> specifications = new ArrayList<>();
 
-        if (filter.hasEnabled()) {
+        if (filter.getEnabled() != null) {
             specifications.add(GrenadeSpecifications.byEnabled(filter.getEnabled()));
         }
 
-        if (filter.hasName()) {
+        if (filter.getName() != null) {
             specifications.add(GrenadeSpecifications.byNameStartsWith(filter.getName()));
         }
 
-        if (filter.getGrenadeIdCount() > 0) {
-            specifications.add(GrenadeSpecifications.byGrenadeIds(filter.getGrenadeIdList()));
+        if (!filter.getGrenadeIds().isEmpty()) {
+            specifications.add(GrenadeSpecifications.byGrenadeIds(filter.getGrenadeIds()));
+        }
+
+        if (filter.getUpdatedAfter() != null) {
+            specifications.add(GrenadeSpecifications.byUpdatedAfter(filter.getUpdatedAfter()));
         }
 
         return Specification.allOf(specifications);

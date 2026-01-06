@@ -1,16 +1,22 @@
 package ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.service;
 
-import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.GrenadeFilterParams;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.GrenadeSavedData;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Grenade;
 
 public interface GrenadeService {
 
-    GrenadeInfo getGrenadeInfo(int grenadeId);
+    Grenade getGrenade(int grenadeId);
 
-    GrenadeInfo getEnabledGrenadeInfo(int grenadeId);
+    Grenade getEnabledGrenade(int grenadeId);
 
-    GrenadeInfo createGrenade(CreateGrenadeRequest request);
+    Grenade createGrenade(@Valid @NotNull GrenadeSavedData data);
 
-    GrenadeInfo updateGrenade(UpdateGrenadeRequest request);
+    Grenade updateGrenade(int grenadeId, @Valid @NotNull GrenadeSavedData data);
 
-    GrenadeInfoListPage getGrenades(GetGrenadesRequest request);
+    Page<Grenade> getGrenades(@NotNull GrenadeFilterParams filterParams, @NotNull Pageable pageable);
 }
