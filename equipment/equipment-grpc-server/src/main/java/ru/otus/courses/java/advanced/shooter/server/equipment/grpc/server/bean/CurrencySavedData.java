@@ -9,12 +9,16 @@ import lombok.experimental.FieldNameConstants;
 @Builder
 @FieldNameConstants
 public class CurrencySavedData {
-    boolean enabled;
+
+    @Builder.Default
+    boolean enabled = true;
 
     @NotBlank(message = "Currency name cannot be blank or null")
     String name;
 
-    boolean canBeBought;
+    @Builder.Default
+    boolean canBeBought = true;
 
-    boolean canBeGivenAsAward;
+    @Builder.Default
+    boolean canBeGivenAsAward = true;
 }

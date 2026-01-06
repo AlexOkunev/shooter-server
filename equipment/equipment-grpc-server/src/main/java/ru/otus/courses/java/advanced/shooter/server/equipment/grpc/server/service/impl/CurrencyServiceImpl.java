@@ -24,7 +24,7 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Validated //TODO!!! check validation
+@Validated
 public class CurrencyServiceImpl implements CurrencyService {
     private final CurrencyRepository currencyRepository;
     private final CurrencyMapper currencyMapper;
@@ -53,6 +53,7 @@ public class CurrencyServiceImpl implements CurrencyService {
                 .orElseThrow(() -> new ObjectNotFoundException("Currency with id '%d' not found".formatted(currencyId)));
 
         currencyMapper.updateCurrency(currency, currencySavedData);
+
         return currencyRepository.save(currency);
     }
 

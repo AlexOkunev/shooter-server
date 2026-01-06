@@ -9,7 +9,7 @@ import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.P
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.CurrencyFilterParams;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.CurrencySavedData;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Currency;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.proto.CurrencyMapper;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.proto.CurrencyProtoMapper;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.service.CurrencyService;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.*;
 
@@ -17,7 +17,7 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.
 @RequiredArgsConstructor
 public class CurrencyServiceAPIImpl extends CurrencyServiceAPIGrpc.CurrencyServiceAPIImplBase {
     private final CurrencyService currencyService;
-    private final CurrencyMapper currencyProtoMapper;
+    private final CurrencyProtoMapper currencyProtoMapper;
     private final PaginationInfoMapper paginationInfoMapper;
 
     @Override

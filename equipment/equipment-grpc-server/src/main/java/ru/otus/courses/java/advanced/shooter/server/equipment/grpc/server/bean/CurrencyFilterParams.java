@@ -11,6 +11,7 @@ import java.util.Set;
 @Builder
 @FieldNameConstants
 public class CurrencyFilterParams {
+
     Boolean enabled;
     String name;
     Boolean canBeBought;

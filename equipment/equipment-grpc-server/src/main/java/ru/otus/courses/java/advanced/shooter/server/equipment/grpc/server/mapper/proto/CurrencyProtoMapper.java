@@ -24,7 +24,7 @@ import java.util.List;
                 CommonMapper.class
         }
 )
-public abstract class CurrencyMapper {
+public abstract class CurrencyProtoMapper {
     private static final class ProtoFields {
         static final String NAME = "name";
         static final String CURRENCY_ID = "currencyId";
