@@ -25,9 +25,6 @@ import java.util.List;
         }
 )
 public abstract class GrenadeProtoMapper {
-    private static final class ProtoFields {
-        static final String NAME = "source.name";
-    }
 
     public abstract GrenadeInfo toResponse(Grenade source);
 

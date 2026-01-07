@@ -5,6 +5,8 @@ import org.springframework.data.jpa.domain.Specification;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Ammunition;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Gun;
 
+import java.time.ZonedDateTime;
+
 @UtilityClass
 public class AmmunitionSpecifications {
     public static Specification<Ammunition> byNameStartsWith(String name) {
@@ -33,5 +35,10 @@ public class AmmunitionSpecifications {
     public static Specification<Ammunition> byAmmunitionIds(Iterable<Integer> ammunitionIds) {
         return (root, query, builder) ->
                 builder.in(root.get(Ammunition.Fields.id)).value(ammunitionIds);
+    }
+
+    public static Specification<Ammunition> byUpdatedAfter(ZonedDateTime updatedAfter) {
+        return (root, query, builder) ->
+                builder.greaterThanOrEqualTo(root.get(Ammunition.Fields.updatedTimestamp), updatedAfter);
     }
 }

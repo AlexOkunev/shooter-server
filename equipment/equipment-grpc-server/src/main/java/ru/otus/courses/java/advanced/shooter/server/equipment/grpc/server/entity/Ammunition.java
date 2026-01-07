@@ -1,16 +1,17 @@
 package ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity;
 
 import jakarta.persistence.*;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
-import org.hibernate.annotations.*;
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "ammunition")
@@ -47,7 +48,7 @@ public class Ammunition {
     @JoinTable(name = "ammunition_compatible_gun",
             joinColumns = @JoinColumn(name = "ammunition_id"), inverseJoinColumns = @JoinColumn(name = "gun_id"),
             foreignKey = @ForeignKey(name = "fk_ammunition"), inverseForeignKey = @ForeignKey(name = "fk_gun"))
-    private List<Gun> compatibleGuns;
+    private Set<Gun> compatibleGuns;
 
     @ManyToMany
     @BatchSize(size = 100)
@@ -55,7 +56,7 @@ public class Ammunition {
             joinColumns = @JoinColumn(name = "ammunition_id"), inverseJoinColumns = @JoinColumn(name = "gun_id"),
             foreignKey = @ForeignKey(name = "fk_ammunition"), inverseForeignKey = @ForeignKey(name = "fk_gun"))
     @SQLRestriction("enabled = true")
-    private List<Gun> enabledCompatibleGuns;
+    private Set<Gun> enabledCompatibleGuns;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)

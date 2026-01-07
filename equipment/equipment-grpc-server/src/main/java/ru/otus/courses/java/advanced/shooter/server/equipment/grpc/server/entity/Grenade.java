@@ -1,7 +1,6 @@
 package ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Data;
@@ -35,7 +34,7 @@ public class Grenade {
 
     @PositiveOrZero
     @Column(name = "max_blast_damage_hp")
-    private Integer maxBlastDamageHP;
+    private Integer maxBlastDamageHp;
 
     @PositiveOrZero
     @Column(name = "max_blind_time_ms")

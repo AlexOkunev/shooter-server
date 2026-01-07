@@ -44,11 +44,6 @@
             </dependency>
             <dependency>
                 <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
-                <artifactId>common-grpc-api</artifactId>
-                <version>${shooter.common.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
                 <artifactId>common-mapping-starter</artifactId>
                 <version>${shooter.common-mapping.version}</version>
             </dependency>

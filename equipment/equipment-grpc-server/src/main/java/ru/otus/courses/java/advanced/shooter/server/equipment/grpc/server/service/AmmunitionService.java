@@ -1,16 +1,27 @@
 package ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.service;
 
-import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.AmmunitionFilterParams;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.AmmunitionSavedData;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.RelatedEntitiesInclusionMode;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Ammunition;
 
 public interface AmmunitionService {
 
-    AmmunitionInfo getAmmunitionInfo(int ammunitionId);
+    Ammunition getAmmunition(int ammunitionId);
 
-    AmmunitionInfo getEnabledAmmunitionInfo(int ammunitionId);
+    Ammunition getEnabledAmmunition(int ammunitionId);
 
-    AmmunitionInfo createAmmunition(CreateAmmunitionRequest request);
+    Ammunition createAmmunition(@Valid @NotNull AmmunitionSavedData data);
 
-    AmmunitionInfo updateAmmunition(UpdateAmmunitionRequest request);
+    Ammunition updateAmmunition(int ammunitionId, @Valid @NotNull AmmunitionSavedData data);
 
-    AmmunitionInfoListPage getAmmunitionList(GetAmmunitionListRequest request);
+    Page<Ammunition> getAmmunitionList(
+            @NotNull AmmunitionFilterParams filterParams,
+            @NotNull Pageable pageable,
+            @NotNull RelatedEntitiesInclusionMode relatedEntitiesInclusionMode
+    );
 }

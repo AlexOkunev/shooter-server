@@ -27,7 +27,6 @@ import java.util.List;
 public abstract class CurrencyProtoMapper {
     private static final class ProtoFields {
         static final String NAME = "name";
-        static final String CURRENCY_ID = "currencyId";
     }
 
     public abstract CurrencyInfo toResponse(Currency source);
@@ -78,9 +77,5 @@ public abstract class CurrencyProtoMapper {
     )
     protected abstract CurrencySavedData toSavedDataInternal(CurrencyWritableData source);
 
-    @Mapping(
-            target = CurrencyFilterParams.Fields.currencyIds,
-            source = ProtoFields.CURRENCY_ID
-    )
     protected abstract CurrencyFilterParams toFilterParamsInternal(CurrenciesFilter filter);
 }
