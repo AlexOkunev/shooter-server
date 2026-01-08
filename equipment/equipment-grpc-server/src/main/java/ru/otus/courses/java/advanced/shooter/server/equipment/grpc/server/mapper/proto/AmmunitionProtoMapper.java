@@ -10,7 +10,6 @@ import ru.otus.courses.java.advanced.shooter.server.common.protobuf.RelatedEntit
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.AmmunitionFilterParams;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.AmmunitionSavedData;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Ammunition;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.GunReducedMapper;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.*;
 
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.List;
         nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         uses = {
-                GunReducedMapper.class,
+                GunReducedProtoMapper.class,
                 DateMapper.class,
                 CommonMapper.class
         }

@@ -9,12 +9,13 @@ import "equipment/attachment/imported_datatypes.proto";
 import "common/common.proto";
 
 enum GunType {
-  PISTOL = 0;
-  SUBMACHINE_GUN = 1;
-  ASSAULT_RIFLE = 2;
-  SCATTERSHOT = 3;
-  MACHINE_GUN = 4;
-  PRECISION_RIFLE = 5;
+  GUN_TYPE_UNSPECIFIED = 0;
+  PISTOL = 1;
+  SUBMACHINE_GUN = 2;
+  ASSAULT_RIFLE = 3;
+  SCATTERSHOT = 4;
+  MACHINE_GUN = 5;
+  PRECISION_RIFLE = 6;
 }
 
 message GunInfo {

@@ -10,7 +10,6 @@ import ru.otus.courses.java.advanced.shooter.server.common.protobuf.RelatedEntit
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.AttachmentFilterParams;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.AttachmentSavedData;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Attachment;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.GunReducedMapper;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.*;
 
 import java.util.List;
@@ -23,7 +22,7 @@ import java.util.List;
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         uses = {
                 DateMapper.class,
-                GunReducedMapper.class,
+                GunReducedProtoMapper.class,
                 CommonMapper.class,
                 AttachmentEffectProtoMapper.class,
                 AttachmentTypeProtoMapper.class

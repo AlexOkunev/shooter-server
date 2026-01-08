@@ -7,8 +7,8 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.A
 @Converter
 public class AttachmentTypeConverter implements AttributeConverter<AttachmentType, Integer> {
     @Override
-    public Integer convertToDatabaseColumn(AttachmentType moneyBundleTradeStatus) {
-        return moneyBundleTradeStatus.getCode();
+    public Integer convertToDatabaseColumn(AttachmentType attachmentType) {
+        return attachmentType.getCode();
     }
 
     @Override

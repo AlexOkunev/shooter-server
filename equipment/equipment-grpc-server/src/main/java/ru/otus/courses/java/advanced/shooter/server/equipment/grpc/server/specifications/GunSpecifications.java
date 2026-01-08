@@ -2,8 +2,10 @@ package ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.speci
 
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.GunType;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Gun;
-import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.GunType;
+
+import java.time.ZonedDateTime;
 
 @UtilityClass
 public class GunSpecifications {
@@ -25,5 +27,10 @@ public class GunSpecifications {
     public static Specification<Gun> byGunIds(Iterable<Integer> gunIds) {
         return (root, query, builder) ->
                 builder.in(root.get(Gun.Fields.id)).value(gunIds);
+    }
+
+    public static Specification<Gun> byUpdatedAfter(ZonedDateTime updatedAfter) {
+        return (root, query, builder) ->
+                builder.greaterThanOrEqualTo(root.get(Gun.Fields.updatedTimestamp), updatedAfter);
     }
 }

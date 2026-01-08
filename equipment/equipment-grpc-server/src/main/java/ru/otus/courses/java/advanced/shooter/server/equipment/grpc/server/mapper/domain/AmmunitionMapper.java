@@ -8,7 +8,6 @@ import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.D
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.AmmunitionSavedData;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Ammunition;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Gun;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.GunReducedMapper;
 
 import java.util.List;
 
@@ -19,7 +18,6 @@ import java.util.List;
         nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         uses = {
-                GunReducedMapper.class,
                 DateMapper.class,
                 CommonMapper.class
         }
