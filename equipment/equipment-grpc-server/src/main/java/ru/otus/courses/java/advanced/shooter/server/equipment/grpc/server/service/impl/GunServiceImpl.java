@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.PaginationInfoMapper;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.InvalidRequestException;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.validation.ValidationUtils;
@@ -17,7 +18,6 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Attachment;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Gun;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.GunMapper;
-import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.mapper.PaginationInfoMapper;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.repository.AmmunitionRepository;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.repository.AttachmentRepository;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.repository.GunRepository;
@@ -25,6 +25,9 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.servic
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.specifications.GunSpecifications;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.*;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -181,10 +184,17 @@ public class GunServiceImpl implements GunService {
             specifications.add(GunSpecifications.byType(filter.getType()));
         }
 
-        if (filter.getGunIdCount() > 0) {
-            specifications.add(GunSpecifications.byGunIds(filter.getGunIdList()));
+        if (filter.getGunIdsCount() > 0) {
+            specifications.add(GunSpecifications.byGunIds(filter.getGunIdsList()));
+        }
+
+        if (filter.hasUpdatedAfter()) {
+            ZonedDateTime updatedAfter = Instant.ofEpochMilli(filter.getUpdatedAfter()).atZone(ZoneOffset.UTC);
+            specifications.add(GunSpecifications.byUpdatedAfter(updatedAfter));
         }
 
         return Specification.allOf(specifications);
     }
 }
+
+//TODO optimize queries with related entities. maybe use hibernate. maybe entity graph. remember about cartesian

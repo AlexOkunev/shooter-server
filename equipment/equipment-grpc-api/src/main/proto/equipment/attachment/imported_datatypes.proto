@@ -5,9 +5,10 @@ package ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachme
 option java_multiple_files = true;
 
 enum AttachmentType {
-  SCOPE = 0;
-  SUPPRESSOR = 1;
-  DAMPER = 2;
+  ATTACHMENT_TYPE_UNSPECIFIED = 0;
+  SCOPE = 1;
+  SUPPRESSOR = 2;
+  DAMPER = 3;
 }
 
 message AttachmentReducedInfo {

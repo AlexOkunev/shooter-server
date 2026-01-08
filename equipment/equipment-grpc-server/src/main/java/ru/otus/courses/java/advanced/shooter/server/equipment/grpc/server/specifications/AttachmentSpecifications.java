@@ -2,9 +2,11 @@ package ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.speci
 
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.AttachmentType;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Attachment;
 import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity.Gun;
-import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.AttachmentType;
+
+import java.time.ZonedDateTime;
 
 @UtilityClass
 public class AttachmentSpecifications {
@@ -39,5 +41,10 @@ public class AttachmentSpecifications {
     public static Specification<Attachment> byAttachmentIds(Iterable<Integer> attachmentIds) {
         return (root, query, builder) ->
                 builder.in(root.get(Attachment.Fields.id)).value(attachmentIds);
+    }
+
+    public static Specification<Attachment> byUpdatedAfter(ZonedDateTime updatedAfter) {
+        return (root, query, builder) ->
+                builder.greaterThanOrEqualTo(root.get(Attachment.Fields.updatedTimestamp), updatedAfter);
     }
 }

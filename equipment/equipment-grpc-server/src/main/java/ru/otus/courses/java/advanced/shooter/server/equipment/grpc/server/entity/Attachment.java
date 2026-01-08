@@ -9,10 +9,11 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.annotations.UpdateTimestamp;
-import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.AttachmentType;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.bean.AttachmentType;
+import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.converter.AttachmentTypeConverter;
 
 import java.time.ZonedDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "attachment")
@@ -34,7 +35,7 @@ public class Attachment {
 
     @NotNull
     @Column(name = "type")
-    @Enumerated(EnumType.ORDINAL)
+    @Convert(converter = AttachmentTypeConverter.class)
     private AttachmentType type;
 
     @NotNull
@@ -53,7 +54,7 @@ public class Attachment {
     @JoinTable(name = "attachment_compatible_gun",
             joinColumns = @JoinColumn(name = "attachment_id"), inverseJoinColumns = @JoinColumn(name = "gun_id"),
             foreignKey = @ForeignKey(name = "fk_attachment"), inverseForeignKey = @ForeignKey(name = "fk_gun"))
-    private List<Gun> compatibleGuns;
+    private Set<Gun> compatibleGuns;
 
     @ManyToMany
     @BatchSize(size = 100)
@@ -61,7 +62,7 @@ public class Attachment {
             joinColumns = @JoinColumn(name = "attachment_id"), inverseJoinColumns = @JoinColumn(name = "gun_id"),
             foreignKey = @ForeignKey(name = "fk_attachment"), inverseForeignKey = @ForeignKey(name = "fk_gun"))
     @SQLRestriction("enabled = true")
-    private List<Gun> enabledCompatibleGuns;
+    private Set<Gun> enabledCompatibleGuns;
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreationTimestamp

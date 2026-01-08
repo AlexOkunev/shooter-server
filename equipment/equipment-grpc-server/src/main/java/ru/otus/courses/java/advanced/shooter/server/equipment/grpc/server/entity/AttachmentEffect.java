@@ -13,14 +13,18 @@ import lombok.experimental.FieldNameConstants;
 @AllArgsConstructor
 @Embeddable
 public class AttachmentEffect {
-    private Integer soundLoudnessRate;
+    @Min(-99)
+    private Integer soundLoudnessRate = 0;
 
-    private Integer maxZoomRate;
+    @Min(-99)
+    private Integer maxZoomRate = 0;
 
-    private Integer blowBackRate;
+    @Min(-99)
+    private Integer blowBackRate = 0;
 
     @Min(0)
-    private Integer laserMaxDistanceMeters;
+    private Integer laserMaxDistanceMeters = 0;
 
-    private Integer bulletSpeedRate;
+    @Min(-99)
+    private Integer bulletSpeedRate = 0;
 }
