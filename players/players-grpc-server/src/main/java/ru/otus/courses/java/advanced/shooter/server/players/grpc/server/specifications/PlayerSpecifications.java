@@ -4,6 +4,9 @@ import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.entity.Player;
 
+import java.util.Set;
+import java.util.UUID;
+
 @UtilityClass
 public class PlayerSpecifications {
     public static Specification<Player> byLoginStartsWith(String login) {
@@ -21,8 +24,8 @@ public class PlayerSpecifications {
                 builder.equal(root.get(Player.Fields.enabled), enabled);
     }
 
-    public static Specification<Player> byPlayerIds(Iterable<Integer> playerIds) {
+    public static Specification<Player> byPlayerIds(Set<UUID> playerIds) {
         return (root, query, builder) ->
-                builder.in(root.get(Player.Fields.playerId)).value(playerIds);
+                builder.in(root.get(Player.Fields.playerUuid)).value(playerIds);
     }
 }

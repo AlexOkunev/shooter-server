@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -15,8 +16,8 @@ public class Player {
     @Column(name = "keycloak_id")
     private String keycloakId;
 
-    @Column(name = "player_id")
-    private Integer playerId;
+    @Column(name = "player_uuid")
+    private UUID playerUuid;
 
     @Column(name = "email")
     private String email;

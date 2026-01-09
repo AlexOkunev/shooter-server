@@ -1,82 +1,66 @@
 package ru.otus.courses.java.advanced.shooter.server.players.grpc.server.service;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
+import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.bean.PlayersFilterParams;
 import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.entity.Player;
-import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.exception.ObjectNotFoundException;
-import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.mapper.PlayerMapper;
 import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.repository.PlayerRepository;
 import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.specifications.PlayerSpecifications;
-import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.util.ValidationUtils;
-import ru.otus.courses.java.advanced.shooter.server.players.protobuf.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
+@Validated
 public class PlayerServiceImpl implements PlayerService {
     private final PlayerRepository playerRepository;
 
-    private final PlayerMapper playerMapper;
-
     @Override
-    public PlayerInfo getPlayer(GetPlayerRequest request) {
-        return playerRepository.findByPlayerId(request.getPlayerId())
-                .map(playerMapper::toResponse)
-                .orElseThrow(() -> new ObjectNotFoundException("Player with id '%d' not found".formatted(request.getPlayerId())));
+    public Player getPlayerByPlayerUuid(UUID playerUuid) {
+        return playerRepository.findByPlayerUuid(playerUuid)
+                .orElseThrow(() -> new ObjectNotFoundException("Player with uuid '%s' not found".formatted(playerUuid)));
     }
 
     @Override
-    public PlayerInfoListPage getPlayers(GetPlayersRequest request) {
-        if (request.hasPaginationRequest()) {
-            ValidationUtils.validatePaginationRequest(request.getPaginationRequest());
-        }
-
-        Specification<Player> specification = getPlayerSpecification(request);
-
-        Pageable pageable = request.hasPaginationRequest()
-                ? PageRequest.of(request.getPaginationRequest().getPage(), request.getPaginationRequest().getCount(), Sort.by(Sort.Direction.ASC, Player.Fields.playerId))
-                : PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, Player.Fields.playerId));
-
-        Page<Player> playersPage = playerRepository.findAll(specification, pageable);
-
-        return PlayerInfoListPage.newBuilder()
-                .addAllData(playersPage.map(playerMapper::toResponse))
-                .setTotalCount(playersPage.getTotalElements())
-                .build();
+    public Player getPlayerByKeycloakId(String keycloakId) {
+        return playerRepository.findByKeycloakId(keycloakId)
+                .orElseThrow(() -> new ObjectNotFoundException("Player with keycloak ID '%s' not found".formatted(keycloakId)));
     }
 
-    private static Specification<Player> getPlayerSpecification(GetPlayersRequest request) {
-        List<Specification<Player>> specifications = request.hasFilter() ?
-                getPlayerSpecificationsFromFilter(request.getFilter()) : List.of();
-        return Specification.allOf(specifications);
+    @Override
+    public Page<Player> getPlayers(@NotNull PlayersFilterParams filterParams, @NotNull Pageable pageable) {
+        return playerRepository.findAll(getPlayerSpecification(filterParams), pageable);
     }
 
-    private static List<Specification<Player>> getPlayerSpecificationsFromFilter(PlayersFilter playersFilter) {
+    private static Specification<Player> getPlayerSpecification(PlayersFilterParams playersFilter) {
         List<Specification<Player>> specifications = new ArrayList<>();
 
-        if (playersFilter.hasEmail()) {
+        if (playersFilter.getEmail() != null) {
             specifications.add(PlayerSpecifications.byEmailStartsWith(playersFilter.getEmail()));
         }
 
-        if (playersFilter.hasLogin()) {
+        if (playersFilter.getLogin() != null) {
             specifications.add(PlayerSpecifications.byLoginStartsWith(playersFilter.getLogin()));
         }
 
-        if (playersFilter.hasEnabled()) {
+        if (playersFilter.getEnabled() != null) {
             specifications.add(PlayerSpecifications.byEnabled(playersFilter.getEnabled()));
         }
 
-        if (playersFilter.getPlayerIdCount() > 0) {
-            specifications.add(PlayerSpecifications.byPlayerIds(playersFilter.getPlayerIdList()));
+        if (!playersFilter.getPlayerUuids().isEmpty()) {
+            specifications.add(PlayerSpecifications.byPlayerIds(playersFilter.getPlayerUuids()));
         }
 
-        return specifications;
+        return Specification.allOf(specifications);
     }
 }

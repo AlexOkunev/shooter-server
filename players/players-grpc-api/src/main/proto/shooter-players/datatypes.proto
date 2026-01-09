@@ -4,25 +4,25 @@ package ru.otus.courses.java.advanced.shooter.server.players.protobuf;
 
 option java_multiple_files = true;
 
-import "shooter-players/common.proto";
+import "common/common.proto";
 
 message PlayerInfo {
-  int32 playerId = 1;
+  string player_uuid = 1;
   string email = 2;
-  string firstName = 3;
-  string lastName = 4;
+  string first_name = 3;
+  string last_name = 4;
   string login = 5;
   bool enabled = 6;
-  int64 createdTimestamp = 7;
+  int64 created_timestamp = 7;
 }
 
 message PlayerInfoListPage {
   repeated PlayerInfo data = 1;
-  int64 totalCount = 2;
+  common.protobuf.PaginationInfo pagination_info = 2;
 }
 
 message GetPlayersRequest {
-  optional common.PaginationRequest paginationRequest = 1;
+  optional common.protobuf.PaginationRequest pagination_request = 1;
   optional PlayersFilter filter = 2;
 }
 
@@ -30,9 +30,12 @@ message PlayersFilter {
   optional string login = 1;
   optional string email = 2;
   optional bool  enabled = 3;
-  repeated int32 playerId = 4;
+  repeated string player_uuids = 4;
 }
 
 message GetPlayerRequest {
-  int32 playerId = 1;
+  oneof field{
+    string player_uuid = 1;
+    string keycloak_id = 2;
+  }
 }

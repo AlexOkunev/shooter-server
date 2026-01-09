@@ -1,12 +1,18 @@
 package ru.otus.courses.java.advanced.shooter.server.players.grpc.server.service;
 
-import ru.otus.courses.java.advanced.shooter.server.players.protobuf.GetPlayerRequest;
-import ru.otus.courses.java.advanced.shooter.server.players.protobuf.GetPlayersRequest;
-import ru.otus.courses.java.advanced.shooter.server.players.protobuf.PlayerInfo;
-import ru.otus.courses.java.advanced.shooter.server.players.protobuf.PlayerInfoListPage;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.bean.PlayersFilterParams;
+import ru.otus.courses.java.advanced.shooter.server.players.grpc.server.entity.Player;
+
+import java.util.UUID;
 
 public interface PlayerService {
-    PlayerInfo getPlayer(GetPlayerRequest request);
 
-    PlayerInfoListPage getPlayers(GetPlayersRequest request);
+    Player getPlayerByPlayerUuid(UUID playerUuid);
+
+    Player getPlayerByKeycloakId(String keycloakId);
+
+    Page<Player> getPlayers(@NotNull PlayersFilterParams filterParams, @NotNull Pageable pageable);
 }

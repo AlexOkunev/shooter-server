@@ -118,13 +118,30 @@ public class PlayerAccountServiceImpl implements PlayerAccountService {
                 .orElse(playerAccountItemMapper.toEntityWithZeroAmount(currency, playerAccount.getPlayerId()));
 
         if (playerAccountItem.getCurrencyAmount() < request.getAmount()) {
-            throw new InvalidRequestException("Insufficient amount of equipment");
+            throw new InvalidRequestException("Insufficient amount of currency");
         }
 
         playerAccountItem.setCurrencyAmount(playerAccountItem.getCurrencyAmount() - request.getAmount());
         playerAccountItem = playerAccountItemRepository.save(playerAccountItem);
 
         return playerAccountItemMapper.toResponse(playerAccountItem);
+    }
+
+    @Override
+    public void performCurrencyWriteOff(PlayerAccount playerAccount, ReferenceCurrency currency, int price) {
+        if (price < 0) {
+            throw new InvalidRequestException("Price cannot be negative");
+        }
+
+        PlayerAccountItem playerAccountItem = playerAccountItemRepository.findByPlayerIdAndCurrencyId(playerAccount.getPlayerId(), currency.getId())
+                .orElse(playerAccountItemMapper.toEntityWithZeroAmount(currency, playerAccount.getPlayerId()));
+
+        if (playerAccountItem.getCurrencyAmount() < price) {
+            throw new InvalidRequestException("Insufficient amount of currency");
+        }
+
+        playerAccountItem.setCurrencyAmount(playerAccountItem.getCurrencyAmount() - price);
+        playerAccountItemRepository.save(playerAccountItem);
     }
 
     private static void validateCurrencyAmountPositivity(PlayerCurrencyOperationRequest request) {
