@@ -8,9 +8,9 @@
         "connection.password": "players_db_user_password",
         "connection.ds.pool.size": 5,
         "topics": "db.public.user_entity",
-        "auto.create": "true",
         "insert.mode": "upsert",
         "pk.mode" : "record_key",
+        "delete.enabled": "true",
         "transforms": "TimestampConverterCreated,ReplaceFieldKey,ReplaceFieldValue",
         "transforms.TimestampConverterCreated.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
         "transforms.TimestampConverterCreated.field": "created_timestamp",
@@ -20,7 +20,7 @@
         "transforms.ReplaceFieldKey.renames": "id:keycloak_id",
         "transforms.ReplaceFieldValue.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
         "transforms.ReplaceFieldValue.renames": "id:keycloak_id,username:login",
-        "transforms.ReplaceFieldValue.blacklist": "email_constraint,email_verified,federation_link,service_account_client_link,not_before",
+        "transforms.ReplaceFieldValue.exclude": "email_constraint,email_verified,federation_link,service_account_client_link,not_before",
         "tasks.max": "1"
     }
 }

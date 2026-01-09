@@ -98,14 +98,16 @@ services:
       - shooter-network
 
   players-keycloak:
-    image: quay.io/keycloak/keycloak:23.0.6
+    image: quay.io/keycloak/keycloak:26.4.0
     command: [ "start-dev", "--http-port=7777" ]
     environment:
+      KC_HOSTNAME: localhost
       KC_HOSTNAME_STRICT: false
       KC_HOSTNAME_STRICT_HTTPS: false
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
       KC_HTTP_ENABLED: true
+      KC_HTTPS_REQUIRED: "none"
       KC_DB: postgres
       KC_DB_URL: jdbc:postgresql://players-keycloak-postgres/players_keycloak_db
       KC_DB_USERNAME: players_keycloak_db_user
@@ -118,83 +120,71 @@ services:
     networks:
       - shooter-network
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper
-    hostname: zookeeper
-    ports:
-      - "2181:2181"
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    volumes:
-      - zk-data:/var/lib/zookeeper/data
-      - zk-log:/var/lib/zookeeper/log
-    networks:
-      - shooter-network
-
   kafka1:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:8.1.0
     container_name: kafka1
     hostname: kafka1
     ports:
       - "9091:9091"
     environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:19091,PLAINTEXT_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9091
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_EXTERNAL:PLAINTEXT
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_LISTENERS: "PLAINTEXT://:19091,PLAINTEXT_EXTERNAL://:9091,CONTROLLER://:29091"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka1:19091,PLAINTEXT_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9091"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,PLAINTEXT_EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka1:29091,2@kafka2:29092,3@kafka3:29093"
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
-      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
     volumes:
       - kafka1-data:/var/lib/kafka/data
-    depends_on:
-      - zookeeper
     networks:
       - shooter-network
 
   kafka2:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:8.1.0
     container_name: kafka2
     hostname: kafka2
     ports:
       - "9092:9092"
     environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:19092,PLAINTEXT_EXTERNAL://${DOCKER_HOST_IP:-localhost}:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_EXTERNAL:PLAINTEXT
+      KAFKA_NODE_ID: 2
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_LISTENERS: "PLAINTEXT://:19092,PLAINTEXT_EXTERNAL://:9092,CONTROLLER://:29092"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka2:19092,PLAINTEXT_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,PLAINTEXT_EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka1:29091,2@kafka2:29092,3@kafka3:29093"
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
-      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
     volumes:
       - kafka2-data:/var/lib/kafka/data
-    depends_on:
-      - zookeeper
     networks:
       - shooter-network
 
   kafka3:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:8.1.0
     container_name: kafka3
     hostname: kafka3
     ports:
       - "9093:9093"
     environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:19093,PLAINTEXT_EXTERNAL://${DOCKER_HOST_IP:-localhost}:9093
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_EXTERNAL:PLAINTEXT
+      KAFKA_NODE_ID: 3
+      KAFKA_PROCESS_ROLES: "broker,controller"
+      KAFKA_LISTENERS: "PLAINTEXT://:19093,PLAINTEXT_EXTERNAL://:9093,CONTROLLER://:29093"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka3:19093,PLAINTEXT_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9093"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "PLAINTEXT:PLAINTEXT,PLAINTEXT_EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT"
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: "1@kafka1:29091,2@kafka2:29092,3@kafka3:29093"
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_LOG4J_ROOT_LOGLEVEL: INFO
-      KAFKA_CONFLUENT_SUPPORT_METRICS_ENABLE: "false"
     volumes:
       - kafka3-data:/var/lib/kafka/data
-    depends_on:
-      - zookeeper
     networks:
       - shooter-network
 
   schema-registry:
-    image: confluentinc/cp-schema-registry:7.6.0
+    image: confluentinc/cp-schema-registry:8.1.0
     hostname: schema-registry
     depends_on:
       - kafka1
@@ -204,15 +194,14 @@ services:
       - "8081:8081"
     environment:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 'zookeeper:2181'
       SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka1:19091,kafka2:19092,kafka3:19093
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: "kafka1:19091,kafka2:19092,kafka3:19093"
       SCHEMA_REGISTRY_DEBUG: 'true'
     networks:
       - shooter-network
 
   kafka-ui:
-    image: provectuslabs/kafka-ui:latest
+    image: provectuslabs/kafka-ui:v0.7.2
     container_name: kafka-ui
     ports:
       - "8090:8080"
@@ -220,6 +209,8 @@ services:
       - kafka1
       - kafka2
       - kafka3
+      - schema-registry
+      - kafka-connect
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAP_SERVERS: kafka1:19091,kafka2:19092,kafka3:19093
@@ -230,14 +221,14 @@ services:
       - shooter-network
 
   kafka-connect:
-    image: confluentinc/cp-kafka-connect:latest
+    image: confluentinc/cp-kafka-connect:8.1.0
     container_name: kafka-connect
     hostname: kafka-connect
     depends_on:
-      - zookeeper
       - kafka1
       - kafka2
       - kafka3
+      - schema-registry
     ports:
       - "8083:8083"
     environment:

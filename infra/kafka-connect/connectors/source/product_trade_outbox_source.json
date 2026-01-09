@@ -1,0 +1,31 @@
+{
+  "name": "product-trade-issue-required-message-outbox-source-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "market-postgres",
+    "database.port": "5432",
+    "database.user": "market_db_user",
+    "database.password": "market_db_user_password",
+    "database.dbname": "market_db",
+    "database.server.name": "postgres",
+    "table.include.list": "public.product_trade_issue_required_message_outbox",
+    "topic.prefix": "db.market",
+    "transforms": "Unwrap,SetSchemaMetadataKey,SetSchemaMetadataValue,ConvertCreatedTimestamp",
+    "transforms.Unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.Unwrap.drop.tombstones": "false",
+    "transforms.SetSchemaMetadataKey.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Key",
+    "transforms.SetSchemaMetadataKey.schema.name": "ru.otus.courses.java.advanced.shooter.server.market.outbox.ProductTradeIssueRequiredMessageKey",
+    "transforms.SetSchemaMetadataValue.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Value",
+    "transforms.SetSchemaMetadataValue.schema.name": "ru.otus.courses.java.advanced.shooter.server.market.outbox.ProductTradeIssueRequiredMessage",
+    "transforms.ConvertCreatedTimestamp.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+    "transforms.ConvertCreatedTimestamp.target.type": "Timestamp",
+    "transforms.ConvertCreatedTimestamp.field": "created_timestamp",
+    "transforms.ConvertCreatedTimestamp.format": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+    "topic.creation.default.partitions": 3,
+    "topic.creation.default.replication.factor": 3,
+    "plugin.name": "pgoutput",
+    "message.key.columns": "public.product_trade_issue_required_message_outbox:id",
+    "tasks.max": "1"
+  }
+}
+
