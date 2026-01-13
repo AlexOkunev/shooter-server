@@ -15,7 +15,7 @@ import java.util.List;
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
         collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
-        nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
+        nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         uses = {
                 CommonMapper.class

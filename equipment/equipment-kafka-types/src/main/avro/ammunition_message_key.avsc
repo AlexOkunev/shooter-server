@@ -1,0 +1,16 @@
+{
+  "type": "record",
+  "name": "AmmunitionKey",
+  "namespace": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types",
+  "fields": [
+    {
+      "name": "id",
+      "type": {
+        "type": "int",
+        "connect.default": 0
+      },
+      "default": 0
+    }
+  ],
+  "connect.name": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types.AmmunitionKey"
+}

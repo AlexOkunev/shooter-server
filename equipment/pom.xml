@@ -19,6 +19,7 @@
         <module>equipment-grpc-api</module>
         <module>equipment-grpc-server</module>
         <module>equipment-shared-contract</module>
+        <module>equipment-kafka-types</module>
     </modules>
 
     <properties>
@@ -28,6 +29,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <shooter.common.version>1.0</shooter.common.version>
         <shooter.common-mapping.version>1.0</shooter.common-mapping.version>
+        <avro.version>1.11.4</avro.version>
+        <avro.plugin.version>1.11.4</avro.plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -46,6 +49,11 @@
                 <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
                 <artifactId>common-mapping-starter</artifactId>
                 <version>${shooter.common-mapping.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro</artifactId>
+                <version>${avro.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -89,6 +97,19 @@
                             <id>build-info</id>
                             <goals>
                                 <goal>build-info</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.avro</groupId>
+                    <artifactId>avro-maven-plugin</artifactId>
+                    <version>${avro.plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <phase>generate-sources</phase>
+                            <goals>
+                                <goal>schema</goal>
                             </goals>
                         </execution>
                     </executions>

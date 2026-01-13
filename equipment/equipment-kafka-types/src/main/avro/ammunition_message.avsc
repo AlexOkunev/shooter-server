@@ -1,0 +1,70 @@
+{
+  "type": "record",
+  "name": "Ammunition",
+  "namespace": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types",
+  "fields": [
+    {
+      "name": "id",
+      "type": {
+        "type": "int",
+        "connect.default": 0
+      },
+      "default": 0
+    },
+    {
+      "name": "enabled",
+      "type": {
+        "type": "boolean",
+        "connect.default": true
+      },
+      "default": true
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "speed",
+      "type": {
+        "type": "int",
+        "connect.default": 0
+      },
+      "default": 0
+    },
+    {
+      "name": "damage_mean_value",
+      "type": {
+        "type": "int",
+        "connect.default": 0
+      },
+      "default": 0
+    },
+    {
+      "name": "damage_variance",
+      "type": {
+        "type": "int",
+        "connect.default": 0
+      },
+      "default": 0
+    },
+    {
+      "name": "created_timestamp",
+      "type": {
+        "type": "long",
+        "connect.version": 1,
+        "connect.name": "org.apache.kafka.connect.data.Timestamp",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "updated_timestamp",
+      "type": {
+        "type": "long",
+        "connect.version": 1,
+        "connect.name": "org.apache.kafka.connect.data.Timestamp",
+        "logicalType": "timestamp-millis"
+      }
+    }
+  ],
+  "connect.name": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types.Ammunition"
+}

@@ -9,7 +9,7 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.grpc.server.entity
 
 @Mapper(
         componentModel = MappingConstants.ComponentModel.SPRING,
-        nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
+        nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS
 )
 public abstract class AttachmentEffectMapper {

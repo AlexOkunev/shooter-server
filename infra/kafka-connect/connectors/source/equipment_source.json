@@ -1,0 +1,95 @@
+{
+  "name": "equipment-source-connector-v2",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+
+    "database.hostname": "equipment-postgres",
+    "database.port": "5432",
+    "database.user": "equipment_db_user",
+    "database.password": "equipment_db_user_password",
+    "database.dbname": "equipment_db",
+    "database.server.name": "postgres",
+
+    "table.include.list": "public.ammunition,public.attachment,public.currency,public.grenade,public.gun",
+    "topic.prefix": "db.equipment",
+
+    "plugin.name": "pgoutput",
+    "tasks.max": "1",
+    "topic.creation.default.partitions": 1,
+    "topic.creation.default.replication.factor": 3,
+    "message.key.columns": "public.ammunition:id;public.attachment:id;public.currency:id;public.grenade:id;public.gun:id",
+
+    "transforms": "unwrap,ConvertCreatedTimestamp,ConvertUpdatedTimestamp,SetKeySchemaAmmunition,SetValueSchemaAmmunition,SetKeySchemaAttachment,SetValueSchemaAttachment,SetKeySchemaCurrency,SetValueSchemaCurrency,SetKeySchemaGrenade,SetValueSchemaGrenade,SetKeySchemaGun,SetValueSchemaGun",
+
+    "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.unwrap.drop.tombstones": "false",
+    "transforms.unwrap.add.headers": "op,ts_ms",
+
+    "transforms.ConvertCreatedTimestamp.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+    "transforms.ConvertCreatedTimestamp.target.type": "Timestamp",
+    "transforms.ConvertCreatedTimestamp.field": "created_timestamp",
+    "transforms.ConvertCreatedTimestamp.format": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+
+    "transforms.ConvertUpdatedTimestamp.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+    "transforms.ConvertUpdatedTimestamp.target.type": "Timestamp",
+    "transforms.ConvertUpdatedTimestamp.field": "updated_timestamp",
+    "transforms.ConvertUpdatedTimestamp.format": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+
+    "transforms.SetKeySchemaAmmunition.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Key",
+    "transforms.SetKeySchemaAmmunition.schema.name": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types.AmmunitionKey",
+    "transforms.SetKeySchemaAmmunition.predicate": "isAmmunition",
+
+    "transforms.SetValueSchemaAmmunition.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Value",
+    "transforms.SetValueSchemaAmmunition.schema.name": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types.Ammunition",
+    "transforms.SetValueSchemaAmmunition.predicate": "isAmmunition",
+
+    "transforms.SetKeySchemaAttachment.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Key",
+    "transforms.SetKeySchemaAttachment.schema.name": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types.AttachmentKey",
+    "transforms.SetKeySchemaAttachment.predicate": "isAttachment",
+
+    "transforms.SetValueSchemaAttachment.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Value",
+    "transforms.SetValueSchemaAttachment.schema.name": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types.Attachment",
+    "transforms.SetValueSchemaAttachment.predicate": "isAttachment",
+
+    "transforms.SetKeySchemaCurrency.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Key",
+    "transforms.SetKeySchemaCurrency.schema.name": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types.CurrencyKey",
+    "transforms.SetKeySchemaCurrency.predicate": "isCurrency",
+
+    "transforms.SetValueSchemaCurrency.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Value",
+    "transforms.SetValueSchemaCurrency.schema.name": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types.Currency",
+    "transforms.SetValueSchemaCurrency.predicate": "isCurrency",
+
+    "transforms.SetKeySchemaGrenade.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Key",
+    "transforms.SetKeySchemaGrenade.schema.name": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types.GrenadeKey",
+    "transforms.SetKeySchemaGrenade.predicate": "isGrenade",
+
+    "transforms.SetValueSchemaGrenade.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Value",
+    "transforms.SetValueSchemaGrenade.schema.name": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types.Grenade",
+    "transforms.SetValueSchemaGrenade.predicate": "isGrenade",
+
+    "transforms.SetKeySchemaGun.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Key",
+    "transforms.SetKeySchemaGun.schema.name": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types.GunKey",
+    "transforms.SetKeySchemaGun.predicate": "isGun",
+
+    "transforms.SetValueSchemaGun.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Value",
+    "transforms.SetValueSchemaGun.schema.name": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types.Gun",
+    "transforms.SetValueSchemaGun.predicate": "isGun",
+
+    "predicates": "isAmmunition,isAttachment,isCurrency,isGrenade,isGun",
+
+    "predicates.isAmmunition.type": "org.apache.kafka.connect.transforms.predicates.TopicNameMatches",
+    "predicates.isAmmunition.pattern": "db\\.equipment\\.public\\.ammunition",
+
+    "predicates.isAttachment.type": "org.apache.kafka.connect.transforms.predicates.TopicNameMatches",
+    "predicates.isAttachment.pattern": "db\\.equipment\\.public\\.attachment",
+
+    "predicates.isCurrency.type": "org.apache.kafka.connect.transforms.predicates.TopicNameMatches",
+    "predicates.isCurrency.pattern": "db\\.equipment\\.public\\.currency",
+
+    "predicates.isGrenade.type": "org.apache.kafka.connect.transforms.predicates.TopicNameMatches",
+    "predicates.isGrenade.pattern": "db\\.equipment\\.public\\.grenade",
+
+    "predicates.isGun.type": "org.apache.kafka.connect.transforms.predicates.TopicNameMatches",
+    "predicates.isGun.pattern": "db\\.equipment\\.public\\.gun"
+  }
+}

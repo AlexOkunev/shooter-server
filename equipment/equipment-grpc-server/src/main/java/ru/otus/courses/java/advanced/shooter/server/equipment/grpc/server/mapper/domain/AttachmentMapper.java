@@ -14,7 +14,7 @@ import java.util.List;
         componentModel = MappingConstants.ComponentModel.SPRING,
         injectionStrategy = InjectionStrategy.CONSTRUCTOR,
         collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
-        nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT,
+        nullValueMappingStrategy = NullValueMappingStrategy.RETURN_NULL,
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         uses = {
                 AttachmentEffectMapper.class,

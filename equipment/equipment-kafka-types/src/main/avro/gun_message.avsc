@@ -1,0 +1,70 @@
+{
+  "type": "record",
+  "name": "Gun",
+  "namespace": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types",
+  "fields": [
+    {
+      "name": "id",
+      "type": {
+        "type": "int",
+        "connect.default": 0
+      },
+      "default": 0
+    },
+    {
+      "name": "enabled",
+      "type": {
+        "type": "boolean",
+        "connect.default": true
+      },
+      "default": true
+    },
+    {
+      "name": "name",
+      "type": "string"
+    },
+    {
+      "name": "weight_grams",
+      "type": {
+        "type": "int",
+        "connect.default": 0
+      },
+      "default": 0
+    },
+    {
+      "name": "rate_of_fire_per_minute",
+      "type": {
+        "type": "int",
+        "connect.default": 0
+      },
+      "default": 0
+    },
+    {
+      "name": "type",
+      "type": {
+        "type": "int",
+        "connect.default": 0
+      },
+      "default": 0
+    },
+    {
+      "name": "created_timestamp",
+      "type": {
+        "type": "long",
+        "connect.version": 1,
+        "connect.name": "org.apache.kafka.connect.data.Timestamp",
+        "logicalType": "timestamp-millis"
+      }
+    },
+    {
+      "name": "updated_timestamp",
+      "type": {
+        "type": "long",
+        "connect.version": 1,
+        "connect.name": "org.apache.kafka.connect.data.Timestamp",
+        "logicalType": "timestamp-millis"
+      }
+    }
+  ],
+  "connect.name": "ru.otus.courses.java.advanced.shooter.server.equipment.kafka.types.Gun"
+}
