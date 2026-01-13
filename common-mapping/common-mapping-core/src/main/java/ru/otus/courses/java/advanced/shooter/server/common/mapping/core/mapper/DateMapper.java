@@ -18,4 +18,8 @@ public abstract class DateMapper {
     public ZonedDateTime toZonedDateTime(long timestamp) {
         return ZonedDateTime.ofInstant(Instant.ofEpochMilli(timestamp), ZoneOffset.UTC);
     }
+
+    public ZonedDateTime toUtcZonedDateTime(Instant instant) {
+        return ZonedDateTime.ofInstant(instant, ZoneOffset.UTC);
+    }
 }
