@@ -13,6 +13,7 @@
     "transforms": "unwrap,DropKeycloakId,SetSchemaMetadataKey,SetSchemaMetadataValue,ConvertCreatedTimestamp",
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
     "transforms.unwrap.drop.tombstones": "false",
+    "transforms.unwrap.add.headers": "op,ts_ms",
     "transforms.DropKeycloakId.type": "org.apache.kafka.connect.transforms.ReplaceField$Value",
     "transforms.DropKeycloakId.exclude": "keycloak_id",
     "transforms.SetSchemaMetadataKey.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Key",

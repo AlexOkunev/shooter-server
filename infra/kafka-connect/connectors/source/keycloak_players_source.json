@@ -13,10 +13,11 @@
     "transforms": "unwrap",
     "transforms.unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
     "transforms.unwrap.drop.tombstones": "false",
+    "transforms.unwrap.add.headers": "op,ts_ms",
     "topic.creation.default.partitions": 2,
     "topic.creation.default.replication.factor": 3,
     "plugin.name": "pgoutput",
-    "message.key.columns": "public.player:id",
+    "message.key.columns": "public.user_entity:id",
     "tasks.max": "1"
   }
 }
