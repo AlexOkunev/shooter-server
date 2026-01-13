@@ -10,7 +10,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         jdbc:
@@ -28,10 +28,47 @@ spring:
     user: inventory_db_user
     password: inventory_db_user_password
 
+  kafka:
+    bootstrap-servers: localhost:9091,localhost:9092,localhost:9093
+    consumer:
+      key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      enable-auto-commit: false
+      properties:
+        schema.registry.url: http://localhost:8081
+        specific.avro.reader: true
+        max.poll.records: 200
+        fetch.max.wait.ms: 500
+        fetch.min.bytes: 1
+        max.poll.interval.ms: 300000
+        session.timeout.ms: 15000
+        heartbeat.interval.ms: 5000
+      auto-offset-reset: earliest
+    producer:
+      key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+      properties:
+        schema.registry.url: http://localhost:8081
+    listener:
+      type: single
+      ack-mode: record
+
 grpc:
   port: 6568
   shutdownGrace: 30
   enable-reflection: true
+
+equipment-kafka:
+  topics: db.equipment.public.ammunition,db.equipment.public.attachment,db.equipment.public.grenade,db.equipment.public.gun
+  group-id: inventory-equipment-consumer-test-8
+
+players-kafka:
+  topic: db.public.player
+  group-id: inventory-player-message-consumer-test-2
+
+market-kafka:
+  topic: db.market.public.product_trade_issue_required_message_outbox
+  group-id: inventory-product-trade-issue-required-message-consumer-test-2
 
 # TODO SET NORMAL
 reference-data-caching:

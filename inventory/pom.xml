@@ -26,7 +26,10 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <shooter.common.version>1.0</shooter.common.version>
+        <shooter.common-mapping.version>1.0</shooter.common-mapping.version>
         <equipment.shared.contract.version>1.0</equipment.shared.contract.version>
+        <equipment.kafka.types.version>1.0</equipment.kafka.types.version>
+        <players.kafka.types.version>1.0</players.kafka.types.version>
     </properties>
 
     <dependencyManagement>
@@ -43,8 +46,23 @@
             </dependency>
             <dependency>
                 <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+                <artifactId>common-mapping-starter</artifactId>
+                <version>${shooter.common-mapping.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
                 <artifactId>equipment-shared-contract</artifactId>
                 <version>${equipment.shared.contract.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+                <artifactId>equipment-kafka-types</artifactId>
+                <version>${equipment.kafka.types.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+                <artifactId>players-kafka-types</artifactId>
+                <version>${players.kafka.types.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -6,7 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.PlayerInventoryLogEntry;
 
+import java.util.UUID;
+
 @Repository
 public interface PlayerInventoryLogRepository extends JpaRepository<PlayerInventoryLogEntry, Integer> {
-    Page<PlayerInventoryLogEntry> findAllByPlayerId(Integer playerId, Pageable pageable);
+    Page<PlayerInventoryLogEntry> findAllByPlayerUuid(UUID playerUuid, Pageable pageable);
 }

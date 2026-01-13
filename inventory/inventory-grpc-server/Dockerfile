@@ -1,12 +1,12 @@
-FROM amazoncorretto:21-alpine-full
+FROM amazoncorretto:21
 LABEL "version"="${project.version}"
 
-ENV BASE_DIR=/usr/share/inventory-grpc-server
+ENV BASE_DIR=/usr/share/${project.artifactId}
 
 RUN mkdir -p $BASE_DIR
 
 WORKDIR $BASE_DIR
 
-COPY ./target/inventory-grpc-server-${project.version}.jar .
+COPY ./target/${project.artifactId}-${project.version}.jar .
 
-CMD java -jar $BASE_DIR/inventory-grpc-server-${project.version}.jar
+CMD java -jar $BASE_DIR/${project.artifactId}-${project.version}.jar

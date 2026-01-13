@@ -6,7 +6,11 @@ import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.PlayerInventoryItemId;
 
 import java.util.Optional;
+import java.util.UUID;
 
 public interface PlayerInventoryItemRepository extends JpaRepository<PlayerInventoryItem, PlayerInventoryItemId>, JpaSpecificationExecutor<PlayerInventoryItem> {
-    Optional<PlayerInventoryItem> findFirstByPlayerId(Integer playerId);
+
+    Optional<PlayerInventoryItem> findFirstByIdPlayerUuid(UUID playerUuid);
+
+    boolean existsByIdPlayerUuid(UUID playerUuid);
 }

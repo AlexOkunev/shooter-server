@@ -9,25 +9,25 @@ import "inventory/datatypes.proto";
 import "equipment-shared-contract/contract.proto";
 
 enum OperationType {
-  ADMIN_GIVE = 0;
-  ADMIN_TAKE_AWAY = 1;
-  SPEND = 2;
-  BUY = 3;
-  GIVE_AWARD = 4;
-  SELL = 5;
-  HOLD = 6;
+  OPERATION_TYPE_UNSPECIFIED = 0;
+  ADMIN_GIVE = 1;
+  ADMIN_TAKE_AWAY = 2;
+  SPEND = 3;
+  BUY = 4;
+  GIVE_AWARD = 5;
+  SYSTEM_INVENTORY_INIT = 6;
+  ADMIN_INVENTORY_INIT = 7;
 }
 
 message PlayerInventoryLogEntry {
-  int32 playerId = 1;
+  string player_uuid = 1;
   equipment.contract.EquipmentType equipmentType = 2;
   int32 equipmentId = 3;
   OperationType operationType = 4;
   int32 amountBefore = 5;
   int32 amountAfter = 6;
-  int32 heldAmountBefore = 7;
-  int32 heldAmountAfter = 8;
-  int64 timestamp = 9;
+  string uuid = 7;
+  int64 timestamp = 8;
 }
 
 message PlayerInventoryLogPage {
@@ -37,5 +37,5 @@ message PlayerInventoryLogPage {
 
 message GetPlayerInventoryLogRequest {
   optional common.protobuf.PaginationRequest paginationRequest = 1;
-  int32 playerId = 2;
+  string player_uuid = 2;
 }

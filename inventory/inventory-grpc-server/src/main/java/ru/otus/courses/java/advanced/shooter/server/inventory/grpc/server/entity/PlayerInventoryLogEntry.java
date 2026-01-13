@@ -12,21 +12,22 @@ import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumer
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.OperationType;
 
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @Data
 @Entity
 @Table(name = "player_inventory_log_entry")
+@IdClass(PlayerInventoryLogEntryId.class)
 @FieldNameConstants
 public class PlayerInventoryLogEntry {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_pl_inv_log_entry_gen")
-    @SequenceGenerator(name = "seq_pl_inv_log_entry_gen", sequenceName = "seq_pl_inv_log_entry", allocationSize = 1)
-    @Column(name = "id")
-    private Integer id;
-
-    @Column(name = "player_id")
+    @Column(name = "player_uuid")
     @NotNull
-    private Integer playerId;
+    private UUID playerUuid;
+
+    @Id
+    @Column(name = "uuid")
+    private UUID uuid;
 
     @NotNull
     @Column(name = "equipment_type")
@@ -50,16 +51,6 @@ public class PlayerInventoryLogEntry {
     @NotNull
     @Column(name = "amount_after")
     private Integer amountAfter;
-
-    @Min(0)
-    @NotNull
-    @Column(name = "held_amount_before")
-    private Integer heldAmountBefore;
-
-    @Min(0)
-    @NotNull
-    @Column(name = "held_amount_after")
-    private Integer heldAmountAfter;
 
     @Column(name = "created_timestamp")
     @CreationTimestamp

@@ -1,17 +1,26 @@
 package ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.InventoryEquipmentType;
+import lombok.experimental.FieldNameConstants;
+
+import java.io.Serializable;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PlayerInventoryItemId {
-    private int playerId;
+@FieldNameConstants
+@Embeddable
+public class PlayerInventoryItemId implements Serializable {
 
-    private InventoryEquipmentType equipmentType;
+    @Column(name = "player_uuid")
+    private UUID playerUuid;
 
-    private int equipmentId;
+    @Embedded
+    private ReferenceEquipmentId referenceEquipmentId;
 }

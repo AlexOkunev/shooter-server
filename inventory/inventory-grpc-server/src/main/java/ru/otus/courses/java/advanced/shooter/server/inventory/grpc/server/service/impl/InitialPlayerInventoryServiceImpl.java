@@ -1,145 +1,132 @@
 package ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.service.impl;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.tuple.Pair;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.InvalidRequestException;
-import ru.otus.courses.java.advanced.shooter.server.common.utils.validation.ValidationUtils;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.bean.InitialPlayerInventoryFilterParams;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.bean.SavedInitialPlayerInventoryItem;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.bean.UpdateInitialPlayerInventoryCommand;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.cache.base.ReferenceEquipmentCacheService;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.InitialPlayerInventoryItem;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.InitialPlayerInventoryItemId;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.ReferenceEquipmentId;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.EquipmentTypeMapper;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.InitialPlayerInventoryItemMapper;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.PaginationInfoMapper;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.InitialPlayerInventoryItem;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.domain.InitialPlayerInventoryItemMapper;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.repository.InitialPlayerInventoryItemRepository;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.service.InitialPlayerInventoryService;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.specification.InitialPlayerInventorySpecifications;
-import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.initial.GetInitialPlayerInventoryRequest;
-import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.initial.InitialPlayerInventoryItemRequest;
-import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.initial.InitialPlayerInventoryItemsPage;
-import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.initial.ModifyInitialPlayerInventoryRequest;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
+@Validated
 public class InitialPlayerInventoryServiceImpl implements InitialPlayerInventoryService {
     private final InitialPlayerInventoryItemMapper initialPlayerInventoryItemMapper;
-
-    private final EquipmentTypeMapper equipmentTypeMapper;
-
-    private final PaginationInfoMapper paginationInfoMapper;
-
     private final InitialPlayerInventoryItemRepository initialPlayerInventoryItemRepository;
-
     private final ReferenceEquipmentCacheService equipmentCacheService;
 
-    private static final Sort DEFAULT_SORT = Sort.by(
-            Sort.Order.asc(InitialPlayerInventoryItem.Fields.equipmentType),
-            Sort.Order.asc(InitialPlayerInventoryItem.Fields.equipmentId)
-    );
-
     @Override
-    public InitialPlayerInventoryItemsPage getInitialPlayerInventory(GetInitialPlayerInventoryRequest request) {
-        if (request.hasPaginationRequest()) {
-            ValidationUtils.validatePaginationRequest(request.getPaginationRequest());
-        }
-
-        Specification<InitialPlayerInventoryItem> specification = getSpecification(request);
-
-        Pageable pageable = request.hasPaginationRequest() ?
-                PageRequest.of(request.getPaginationRequest().getPage(), request.getPaginationRequest().getCount(), DEFAULT_SORT) :
-                PageRequest.of(0, 10, DEFAULT_SORT);
-
-        Page<InitialPlayerInventoryItem> data = initialPlayerInventoryItemRepository.findAll(specification, pageable);
-
-        return InitialPlayerInventoryItemsPage.newBuilder()
-                .addAllData(data.map(initialPlayerInventoryItemMapper::toResponse))
-                .setPaginationInfo(paginationInfoMapper.toResponse(data))
-                .build();
+    public Page<InitialPlayerInventoryItem> getInitialPlayerInventory(
+            @NotNull InitialPlayerInventoryFilterParams filterParams,
+            @NotNull Pageable pageable
+    ) {
+        Specification<InitialPlayerInventoryItem> specification = getSpecification(filterParams);
+        return initialPlayerInventoryItemRepository.findAll(specification, pageable);
     }
 
     @Override
     @Transactional
-    public void modifyInitialPlayerInventory(ModifyInitialPlayerInventoryRequest request) {
-        if (request.getItemsCount() == 0) {
-            return;
-        }
+    public void updateInitialPlayerInventory(@Valid @NotNull UpdateInitialPlayerInventoryCommand command) {
+        Map<ReferenceEquipmentId, SavedInitialPlayerInventoryItem> savedItems = command.getSavedItems().stream()
+                .collect(Collectors.toMap(initialPlayerInventoryItemMapper::toEntityId, Function.identity()));
 
-        validateModifyInitialPlayerInventoryRequest(request);
+        List<ReferenceEquipmentId> deletedItemIds = command.getDeletedItems().stream()
+                .map(initialPlayerInventoryItemMapper::toEntityId)
+                .toList();
 
-        Map<InitialPlayerInventoryItemId, InitialPlayerInventoryItemRequest> requestMap = request.getItemsList().stream()
-                .collect(Collectors.toMap(item -> new InitialPlayerInventoryItemId(
-                                equipmentTypeMapper.toEntity(item.getEquipmentType()), item.getEquipmentId()),
-                        Function.identity()));
+        validateItemCollections(savedItems.keySet(), deletedItemIds);
 
-        Map<InitialPlayerInventoryItemId, InitialPlayerInventoryItem> foundItemsMap =
-                initialPlayerInventoryItemRepository.findAllById(requestMap.keySet()).stream()
-                        .collect(Collectors.toMap(
-                                item -> new InitialPlayerInventoryItemId(item.getEquipmentType(), item.getEquipmentId()),
-                                Function.identity())
-                        );
+        Map<ReferenceEquipmentId, InitialPlayerInventoryItem> foundItemsMap =
+                initialPlayerInventoryItemRepository.findAllById(savedItems.keySet()).stream()
+                        .collect(Collectors.toMap(InitialPlayerInventoryItem::getId, Function.identity()));
 
-        List<InitialPlayerInventoryItem> createdItems = requestMap.entrySet().stream()
+        List<InitialPlayerInventoryItem> createdItems = savedItems.entrySet().stream()
                 .filter(entry -> !foundItemsMap.containsKey(entry.getKey()))
                 .map(Map.Entry::getValue)
                 .map(initialPlayerInventoryItemMapper::toEntity)
                 .toList();
 
-        List<InitialPlayerInventoryItem> updatedItems = foundItemsMap.entrySet().stream()
-                .map(entry -> Pair.of(entry.getValue(), requestMap.get(entry.getKey())))
-                .peek(pair -> checkVersionsEquality(pair.getLeft(), pair.getRight()))
-                .map(pair -> {
-                    pair.getLeft().setAmount(pair.getRight().getAmount());
-                    pair.getLeft().setEnabled(pair.getRight().getEnabled());
-                    return pair.getLeft();
-                })
-                .toList();
+        List<InitialPlayerInventoryItem> updatedItems = initialPlayerInventoryItemRepository.findAllById(foundItemsMap.keySet());
+
+        updatedItems.forEach(item -> {
+            SavedInitialPlayerInventoryItem savedItem = savedItems.get(item.getId());
+            checkVersionsEquality(item, savedItem);
+            initialPlayerInventoryItemMapper.update(item, savedItem);
+        });
 
         initialPlayerInventoryItemRepository.saveAll(updatedItems);
         initialPlayerInventoryItemRepository.saveAll(createdItems);
+        initialPlayerInventoryItemRepository.deleteAllById(deletedItemIds);
     }
 
-    private void checkVersionsEquality(InitialPlayerInventoryItem dbItem, InitialPlayerInventoryItemRequest request) {
-        if (dbItem.getVersion() != request.getVersion()) {
+    private void validateItemCollections(Collection<ReferenceEquipmentId> savedItemIds, Collection<ReferenceEquipmentId> deletedItemIds) {
+        Collection<ReferenceEquipmentId> intersection = CollectionUtils.intersection(savedItemIds, deletedItemIds);
+        if (!intersection.isEmpty()) {
+            String intersectionString = intersection.stream()
+                    .map(id -> "%s (ID = %d)".formatted(id.getEquipmentType().name(), id.getEquipmentId()))
+                    .collect(Collectors.joining(", "));
+            throw new InvalidRequestException("Saved and deleted items contain duplicates: %s".formatted(intersectionString));
+        }
+
+        savedItemIds.stream()
+                .filter(id -> equipmentCacheService.getById(id).isEmpty())
+                .findFirst()
+                .ifPresent(item -> {
+                    throw new InvalidRequestException("Saved item %s (ID = %d) not found".formatted(
+                            item.getEquipmentType().name(),
+                            item.getEquipmentId())
+                    );
+                });
+
+        deletedItemIds.stream()
+                .filter(id -> equipmentCacheService.getById(id).isEmpty())
+                .findFirst()
+                .ifPresent(item -> {
+                    throw new InvalidRequestException("Deleted item %s (ID = %d) not found".formatted(
+                            item.getEquipmentType().name(),
+                            item.getEquipmentId())
+                    );
+                });
+    }
+
+    private void checkVersionsEquality(InitialPlayerInventoryItem dbItem, SavedInitialPlayerInventoryItem savedItem) {
+        if (dbItem.getVersion() != savedItem.getVersion()) {
             throw new InvalidRequestException("Item %s (ID = %d) has incorrect version. Version in database is %d".formatted(
-                    dbItem.getEquipmentType().name(), dbItem.getEquipmentId(), dbItem.getVersion()));
+                    dbItem.getId().getEquipmentType().name(), dbItem.getId().getEquipmentId(), dbItem.getVersion()));
         }
     }
 
-    private void validateModifyInitialPlayerInventoryRequest(ModifyInitialPlayerInventoryRequest request) {
-        request.getItemsList().stream()
-                .filter(item -> item.getAmount() <= 0)
-                .findFirst()
-                .ifPresent(item -> {
-                    throw new InvalidRequestException("Item %s (ID = %d) must have positive amount".formatted(item.getEquipmentType().name(), item.getEquipmentId()));
-                });
+    private Specification<InitialPlayerInventoryItem> getSpecification(InitialPlayerInventoryFilterParams filter) {
+        List<Specification<InitialPlayerInventoryItem>> specifications = new ArrayList<>();
 
-        request.getItemsList().stream()
-                .filter(item -> equipmentCacheService.getById(
-                                new ReferenceEquipmentId(item.getEquipmentId(), equipmentTypeMapper.toEntity(item.getEquipmentType())))
-                        .isEmpty())
-                .findFirst()
-                .ifPresent(item -> {
-                    throw new InvalidRequestException("Item %s (ID = %d) not found".formatted(item.getEquipmentType().name(), item.getEquipmentId()));
-                });
-    }
-
-    private Specification<InitialPlayerInventoryItem> getSpecification(GetInitialPlayerInventoryRequest request) {
-        if (!request.hasFilter()) {
-            return Specification.allOf();
+        if (filter.getEnabled() != null) {
+            specifications.add(InitialPlayerInventorySpecifications.byEnabled(filter.getEnabled()));
         }
 
-        return Specification.allOf(InitialPlayerInventorySpecifications.byEnabled(request.getFilter().getEnabled()));
+        return Specification.allOf(specifications);
     }
 }

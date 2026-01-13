@@ -9,5 +9,5 @@ import "google/protobuf/empty.proto";
 
 service InitialPlayerInventoryServiceAPI {
   rpc GetInitialPlayerInventory(GetInitialPlayerInventoryRequest) returns (InitialPlayerInventoryItemsPage);
-  rpc ModifyInitialPlayerInventory(ModifyInitialPlayerInventoryRequest) returns (google.protobuf.Empty);
+  rpc UpdateInitialPlayerInventory(UpdateInitialPlayerInventoryRequest) returns (google.protobuf.Empty);
 }

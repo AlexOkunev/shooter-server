@@ -9,7 +9,7 @@ import "equipment-shared-contract/contract.proto";
 
 message PlayerInventoryItemInfo {
   equipment.contract.EquipmentType equipmentType = 1;
-  int32 equipmentId = 2;
+  int32 equipment_id = 2;
   int32 amount = 3;
 }
 
@@ -19,18 +19,23 @@ message PlayerInventoryItemsPage {
 }
 
 message GetPlayerInventoryRequest {
-  optional common.protobuf.PaginationRequest paginationRequest = 1;
-  int32 playerId = 2;
-  repeated equipment.contract.EquipmentType types = 3;
+  string player_uuid = 1;
+  optional Filter filter = 2;
+  optional common.protobuf.PaginationRequest pagination_request = 3;
+
+  message Filter {
+    optional bool enabled = 1;
+    repeated equipment.contract.EquipmentType types = 2;
+  }
 }
 
 message InitializePlayerInventoryRequest {
-  int32 playerId = 1;
+  string player_uuid = 1;
 }
 
 message PlayerEquipmentOperationRequest {
-  int32 playerId = 1;
+  string player_uuid = 1;
   equipment.contract.EquipmentType equipmentType = 2;
-  int32 equipmentId = 3;
+  int32 equipment_id = 3;
   int32 amount = 4;
 }

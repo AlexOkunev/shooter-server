@@ -1,32 +1,23 @@
 package ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import lombok.experimental.FieldNameConstants;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.converter.InventoryEquipmentTypeConverter;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.InventoryEquipmentType;
 
 import java.time.ZonedDateTime;
 
 @Data
 @Entity
 @Table(name = "initial_player_inventory_item")
-@IdClass(InitialPlayerInventoryItemId.class)
 @FieldNameConstants
 public class InitialPlayerInventoryItem {
-    @Id
-    @Column(name = "equipment_type")
-    @Convert(converter = InventoryEquipmentTypeConverter.class)
-    private InventoryEquipmentType equipmentType;
+    @EmbeddedId
+    private ReferenceEquipmentId id;
 
-    @Id
-    @Column(name = "equipment_id")
-    private int equipmentId;
-
-    @Min(0)
+    @Positive
     @Column(name = "amount")
     private int amount;
 

@@ -1,12 +1,14 @@
 package ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.handle;
 
 import io.grpc.Status;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.lognet.springboot.grpc.recovery.GRpcExceptionHandler;
 import org.lognet.springboot.grpc.recovery.GRpcExceptionScope;
 import org.lognet.springboot.grpc.recovery.GRpcServiceAdvice;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.InvalidRequestException;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
 
@@ -28,6 +30,13 @@ public class ExceptionHandler {
     }
 
     @GRpcExceptionHandler
+    public Status handleException(ConstraintViolationException e, GRpcExceptionScope scope) {
+        return Status.INVALID_ARGUMENT
+                .withDescription("Invalid request")
+                .augmentDescription(e.getMessage());
+    }
+
+    @GRpcExceptionHandler
     public Status handleException(DataIntegrityViolationException e, GRpcExceptionScope scope) {
         if (StringUtils.containsAnyIgnoreCase(e.getMessage(), "duplicate key", "already exists")) {
             return Status.ALREADY_EXISTS
@@ -36,6 +45,13 @@ public class ExceptionHandler {
             return Status.INTERNAL
                     .withDescription(e.getMessage());
         }
+    }
+
+    @GRpcExceptionHandler
+    public Status handleException(ObjectOptimisticLockingFailureException e, GRpcExceptionScope scope) {
+        return Status.INTERNAL
+                .withDescription("Concurrent modification error")
+                .augmentDescription(e.getMessage());
     }
 
     @GRpcExceptionHandler

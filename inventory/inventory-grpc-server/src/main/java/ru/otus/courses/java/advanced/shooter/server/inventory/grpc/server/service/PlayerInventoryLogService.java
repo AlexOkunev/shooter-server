@@ -1,8 +1,12 @@
 package ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.service;
 
-import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.log.GetPlayerInventoryLogRequest;
-import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.log.PlayerInventoryLogPage;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.PlayerInventoryLogEntry;
+
+import java.util.UUID;
 
 public interface PlayerInventoryLogService {
-    PlayerInventoryLogPage getPlayerInventoryLogPage(GetPlayerInventoryLogRequest request);
+    Page<PlayerInventoryLogEntry> getPlayerInventoryLogPage(@NotNull UUID playerUuid, @NotNull Pageable pageable);
 }

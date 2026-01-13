@@ -8,8 +8,8 @@ import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.data.Cach
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.service.CacheableDataCacheServiceImplBase;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.structure.impl.SoftReferenceMapCache;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.cache.base.ReferenceEquipmentCacheService;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.ReferenceEquipment;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.ReferenceEquipmentId;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.ReferenceEquipment;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.properties.ReferenceDataCachingProperties;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.repository.ReferenceEquipmentRepository;
 

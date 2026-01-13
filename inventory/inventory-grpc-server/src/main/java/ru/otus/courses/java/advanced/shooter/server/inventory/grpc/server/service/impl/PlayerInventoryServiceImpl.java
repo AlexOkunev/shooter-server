@@ -1,98 +1,72 @@
 package ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.service.impl;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.InvalidRequestException;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectAlreadyExistsException;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
-import ru.otus.courses.java.advanced.shooter.server.common.utils.validation.ValidationUtils;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.bean.PlayerEquipmentOperationCommand;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.bean.PlayerInventoryItemFilterParams;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.cache.base.ReferenceEquipmentCacheService;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.*;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.InventoryEquipmentType;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.enumeration.OperationType;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.EquipmentTypeMapper;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.PaginationInfoMapper;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.PlayerInventoryItemMapper;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.PlayerInventoryLogEntryMapper;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.domain.PlayerInventoryItemMapper;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.domain.PlayerInventoryLogEntryMapper;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.repository.InitialPlayerInventoryItemRepository;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.repository.PlayerInventoryItemRepository;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.repository.PlayerInventoryLogRepository;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.service.PlayerInventoryService;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.specification.PlayerInventoryItemSpecifications;
-import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.GetPlayerInventoryRequest;
-import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.InitializePlayerInventoryRequest;
-import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.PlayerEquipmentOperationRequest;
-import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.PlayerInventoryItemsPage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Validated
 public class PlayerInventoryServiceImpl implements PlayerInventoryService {
     private final PlayerInventoryItemRepository playerInventoryItemRepository;
-
     private final PlayerInventoryLogRepository playerInventoryLogRepository;
-
-    private final PlayerInventoryItemMapper playerInventoryItemMapper;
-
-    private final PaginationInfoMapper paginationInfoMapper;
-
-    private final EquipmentTypeMapper equipmentTypeMapper;
-
     private final InitialPlayerInventoryItemRepository initialPlayerInventoryItemRepository;
-
+    private final PlayerInventoryItemMapper playerInventoryItemMapper;
     private final PlayerInventoryLogEntryMapper playerInventoryLogEntryMapper;
-
     private final ReferenceEquipmentCacheService equipmentCacheService;
 
-    private static final Sort DEFAULT_SORT = Sort.by(
-            Sort.Order.asc(PlayerInventoryItem.Fields.equipmentType),
-            Sort.Order.asc(PlayerInventoryItem.Fields.equipmentId)
-    );
-
     @Override
-    public PlayerInventoryItemsPage getPlayerInventoryItemsPage(GetPlayerInventoryRequest request) {
-        if (request.hasPaginationRequest()) {
-            ValidationUtils.validatePaginationRequest(request.getPaginationRequest());
-        }
-
-        Pageable pageable = request.hasPaginationRequest() ?
-                PageRequest.of(request.getPaginationRequest().getPage(), request.getPaginationRequest().getCount(), DEFAULT_SORT) :
-                PageRequest.of(0, 10, DEFAULT_SORT);
-
-        Specification<PlayerInventoryItem> specification = getSpecification(request);
-
-        Page<PlayerInventoryItem> data = playerInventoryItemRepository.findAll(specification, pageable);
-
-        return PlayerInventoryItemsPage.newBuilder()
-                .addAllData(data.map(playerInventoryItemMapper::toResponse))
-                .setPaginationInfo(paginationInfoMapper.toResponse(data))
-                .build();
+    public Page<PlayerInventoryItem> getPlayerInventoryItemsPage(
+            @NotNull UUID playerUuid,
+            @NotNull Pageable pageable,
+            @NotNull PlayerInventoryItemFilterParams filterParams
+    ) {
+        Specification<PlayerInventoryItem> specification = getSpecification(playerUuid, filterParams);
+        return playerInventoryItemRepository.findAll(specification, pageable);
     }
 
     @Override
     @Transactional
-    public void initializePlayerInventory(InitializePlayerInventoryRequest request) {
-        playerInventoryItemRepository.findFirstByPlayerId(request.getPlayerId())
+    public void initializePlayerInventory(@NotNull UUID playerUuid) {
+        playerInventoryItemRepository.findFirstByIdPlayerUuid(playerUuid)
                 .ifPresent(item -> {
-                    throw new ObjectAlreadyExistsException("Player %d inventory is already initialized".formatted(request.getPlayerId()));
+                    throw new ObjectAlreadyExistsException("Player %s inventory is already initialized".formatted(playerUuid));
                 });
 
-        List<PlayerInventoryItem> inventoryItems = initialPlayerInventoryItemRepository.findAll().stream()
-                .map(initialItem -> playerInventoryItemMapper.toEntity(initialItem, request.getPlayerId()))
+        List<PlayerInventoryItem> inventoryItems = initialPlayerInventoryItemRepository.findAllByEnabledIsTrue().stream()
+                .map(initialItem -> playerInventoryItemMapper.toEntity(initialItem, playerUuid))
                 .toList();
 
         List<PlayerInventoryLogEntry> logEntries = inventoryItems.stream()
-                .map(playerInventoryLogEntryMapper::toEntityInitialize)
+                .map(playerInventoryLogEntryMapper::toEntityForInitialize)
+                .peek(logEntry -> logEntry.setOperationType(OperationType.ADMIN_INVENTORY_INIT))
                 .toList();
 
         playerInventoryItemRepository.saveAll(inventoryItems);
@@ -101,110 +75,149 @@ public class PlayerInventoryServiceImpl implements PlayerInventoryService {
 
     @Override
     @Transactional
-    public void giveEquipment(PlayerEquipmentOperationRequest request) {
-        validateAmountPositivity(request);
-
-        InventoryEquipmentType inventoryEquipmentType = equipmentTypeMapper.toEntity(request.getEquipmentType());
-        ReferenceEquipment equipment = equipmentCacheService.getById(new ReferenceEquipmentId(request.getEquipmentId(), inventoryEquipmentType))
-                .orElseThrow(() -> new ObjectNotFoundException("Equipment %s with ID %d not found".formatted(inventoryEquipmentType, request.getEquipmentId())));
-
-        PlayerInventoryItemId playerInventoryItemId = new PlayerInventoryItemId(request.getPlayerId(), inventoryEquipmentType, equipment.getEquipmentId());
-        PlayerInventoryItem playerInventoryItem = playerInventoryItemRepository.findById(playerInventoryItemId)
-                .orElse(playerInventoryItemMapper.toEntityWithZeroAmount(request));
-
-        PlayerInventoryLogEntry logEntry = playerInventoryLogEntryMapper.toEntity(playerInventoryItem);
-
-        playerInventoryItem.setAmount(playerInventoryItem.getAmount() + request.getAmount());
-        playerInventoryItemRepository.save(playerInventoryItem);
-
-        playerInventoryLogEntryMapper.update(logEntry, playerInventoryItem, OperationType.ADMIN_GIVE);
-        playerInventoryLogRepository.save(logEntry);
-    }
-
-    @Override
-    @Transactional
-    public void takeAwayEquipment(PlayerEquipmentOperationRequest request) {
-        validateAmountPositivity(request);
-
-        InventoryEquipmentType inventoryEquipmentType = equipmentTypeMapper.toEntity(request.getEquipmentType());
-        ReferenceEquipment equipment = equipmentCacheService.getById(new ReferenceEquipmentId(request.getEquipmentId(), inventoryEquipmentType))
-                .orElseThrow(() -> new ObjectNotFoundException("Equipment %s with ID %d not found".formatted(inventoryEquipmentType, request.getEquipmentId())));
-
-        PlayerInventoryItem playerInventoryItem = getPlayerInventoryItem(request, inventoryEquipmentType, equipment);
-
-        validateAmountSufficiency(request, playerInventoryItem);
-
-        PlayerInventoryLogEntry logEntry = playerInventoryLogEntryMapper.toEntity(playerInventoryItem);
-
-        playerInventoryItem.setAmount(playerInventoryItem.getAmount() - request.getAmount());
-        playerInventoryItemRepository.save(playerInventoryItem);
-
-        playerInventoryLogEntryMapper.update(logEntry, playerInventoryItem, OperationType.ADMIN_TAKE_AWAY);
-        playerInventoryLogRepository.save(logEntry);
-    }
-
-    @Override
-    @Transactional
-    public void spendEquipment(PlayerEquipmentOperationRequest request) {
-        validateAmountPositivity(request);
-
-        InventoryEquipmentType inventoryEquipmentType = equipmentTypeMapper.toEntity(request.getEquipmentType());
-
-        ReferenceEquipment equipment = equipmentCacheService.getById(new ReferenceEquipmentId(request.getEquipmentId(), inventoryEquipmentType))
-                .orElseThrow(() -> new ObjectNotFoundException("Equipment %s with ID %d not found".formatted(inventoryEquipmentType, request.getEquipmentId())));
-
-        if (!equipment.isEnabled()) {
-            log.error("Equipment {} (ID = {}) is not enabled", inventoryEquipmentType, request.getEquipmentId());
-            throw new ObjectNotFoundException("Equipment %s with ID %d not found".formatted(inventoryEquipmentType, request.getEquipmentId()));
+    public void initializePlayerInventoryBySystemEvent(@NotNull UUID playerUuid) {
+        if (playerInventoryItemRepository.existsByIdPlayerUuid(playerUuid)) {
+            log.info("Player {} inventory is already initialized", playerUuid);
+            return;
         }
 
-        PlayerInventoryItem playerInventoryItem = getPlayerInventoryItem(request, inventoryEquipmentType, equipment);
+        List<PlayerInventoryItem> inventoryItems = initialPlayerInventoryItemRepository.findAllByEnabledIsTrue().stream()
+                .map(initialItem -> playerInventoryItemMapper.toEntity(initialItem, playerUuid))
+                .toList();
 
-        validateAmountSufficiency(request, playerInventoryItem);
+        List<PlayerInventoryLogEntry> logEntries = inventoryItems.stream()
+                .map(playerInventoryLogEntryMapper::toEntityForInitialize)
+                .peek(logEntry -> logEntry.setOperationType(OperationType.SYSTEM_INVENTORY_INIT))
+                .toList();
 
+        playerInventoryItemRepository.saveAll(inventoryItems);
+        playerInventoryLogRepository.saveAll(logEntries);
+    }
+
+    @Override
+    @Transactional
+    public void giveEquipment(@Valid @NotNull PlayerEquipmentOperationCommand command) {
+        log.info("Give equipment {} (ID={}) for player with UUID {}",
+                command.getEquipmentType().name(), command.getEquipmentId(), command.getPlayerUuid());
+
+        giveEquipmentInternal(command, OperationType.ADMIN_GIVE);
+
+        log.info("Equipment {} (ID={}) given to player with UUID {} successfully",
+                command.getEquipmentType().name(), command.getEquipmentId(), command.getPlayerUuid());
+    }
+
+    @Override
+    @Transactional
+    public void buyEquipment(@Valid @NotNull PlayerEquipmentOperationCommand command) {
+        log.info("Buy equipment {} (ID={}) for player with UUID {}",
+                command.getEquipmentType().name(), command.getEquipmentId(), command.getPlayerUuid());
+
+        giveEquipmentInternal(command, OperationType.BUY);
+
+        log.info("Equipment {} (ID={}) bought buy player with UUID {} successfully",
+                command.getEquipmentType().name(), command.getEquipmentId(), command.getPlayerUuid());
+    }
+
+    @Override
+    @Transactional
+    public void takeAwayEquipment(@Valid @NotNull PlayerEquipmentOperationCommand command) {
+        ReferenceEquipmentId referenceEquipmentId = new ReferenceEquipmentId(command.getEquipmentType(), command.getEquipmentId());
+
+        ReferenceEquipment equipment = equipmentCacheService.getById(referenceEquipmentId)
+                .orElseThrow(() -> new ObjectNotFoundException("Equipment %s with ID %d not found".formatted(
+                        referenceEquipmentId.getEquipmentType().name(), referenceEquipmentId.getEquipmentId())));
+
+        PlayerInventoryItem playerInventoryItem = getPlayerInventoryItem(command.getPlayerUuid(), equipment.getId());
         PlayerInventoryLogEntry logEntry = playerInventoryLogEntryMapper.toEntity(playerInventoryItem);
 
-        playerInventoryItem.setAmount(playerInventoryItem.getAmount() - request.getAmount());
-        playerInventoryItemRepository.save(playerInventoryItem);
+        validateAmountSufficiency(playerInventoryItem, command);
+        playerInventoryItem.setAmount(playerInventoryItem.getAmount() - command.getAmount());
 
-        playerInventoryLogEntryMapper.update(logEntry, playerInventoryItem, OperationType.SPEND);
+        playerInventoryLogEntryMapper.update(logEntry, playerInventoryItem, OperationType.ADMIN_TAKE_AWAY);
+
+        playerInventoryItemRepository.save(playerInventoryItem);
         playerInventoryLogRepository.save(logEntry);
     }
 
-    private PlayerInventoryItem getPlayerInventoryItem(PlayerEquipmentOperationRequest request, InventoryEquipmentType inventoryEquipmentType, ReferenceEquipment equipment) {
-        PlayerInventoryItemId playerInventoryItemId = new PlayerInventoryItemId(request.getPlayerId(), inventoryEquipmentType, equipment.getEquipmentId());
+    @Override
+    @Transactional
+    public void spendEquipment(@Valid @NotNull PlayerEquipmentOperationCommand command) {
+        ReferenceEquipmentId referenceEquipmentId = new ReferenceEquipmentId(command.getEquipmentType(), command.getEquipmentId());
 
-        return playerInventoryItemRepository.findById(playerInventoryItemId)
-                .orElseThrow(() -> new ObjectNotFoundException("Player %d inventory item (%s with id %s) not found".formatted(
-                        playerInventoryItemId.getPlayerId(), playerInventoryItemId.getEquipmentType().name(), playerInventoryItemId.getEquipmentId())));
+        ReferenceEquipment equipment = equipmentCacheService.getById(referenceEquipmentId)
+                .orElseThrow(() -> new ObjectNotFoundException("Equipment %s with ID %d not found".formatted(
+                        referenceEquipmentId.getEquipmentType().name(), referenceEquipmentId.getEquipmentId())));
+
+        if (!equipment.isEnabled()) {
+            log.error("Equipment {} (ID = {}) is not enabled", equipment.getId().getEquipmentType().name(),
+                    equipment.getId().getEquipmentId());
+            throw new ObjectNotFoundException("Equipment %s with ID %d not found".formatted(
+                    equipment.getId().getEquipmentType().name(), equipment.getId().getEquipmentId()));
+        }
+
+        PlayerInventoryItem playerInventoryItem = getPlayerInventoryItem(command.getPlayerUuid(), equipment.getId());
+        PlayerInventoryLogEntry logEntry = playerInventoryLogEntryMapper.toEntity(playerInventoryItem);
+
+        validateAmountSufficiency(playerInventoryItem, command);
+        playerInventoryItem.setAmount(playerInventoryItem.getAmount() - command.getAmount());
+
+        playerInventoryLogEntryMapper.update(logEntry, playerInventoryItem, OperationType.SPEND);
+
+        playerInventoryItemRepository.save(playerInventoryItem);
+        playerInventoryLogRepository.save(logEntry);
     }
 
-    private static void validateAmountSufficiency(PlayerEquipmentOperationRequest request, PlayerInventoryItem playerInventoryItem) {
-        if (playerInventoryItem.getAmount() < request.getAmount()) {
+    private PlayerInventoryItem getPlayerInventoryItem(UUID playerUuid, ReferenceEquipmentId referenceEquipmentId) {
+        PlayerInventoryItemId playerInventoryItemId = new PlayerInventoryItemId(playerUuid, referenceEquipmentId);
+
+        return playerInventoryItemRepository.findById(playerInventoryItemId)
+                .orElseThrow(() -> new ObjectNotFoundException("Player %s inventory item (%s with id %s) not found".formatted(
+                        playerUuid,
+                        referenceEquipmentId.getEquipmentType().name(),
+                        referenceEquipmentId.getEquipmentId()))
+                );
+    }
+
+    private static void validateAmountSufficiency(PlayerInventoryItem playerInventoryItem, PlayerEquipmentOperationCommand command) {
+        if (playerInventoryItem.getAmount() < command.getAmount()) {
             throw new InvalidRequestException("Insufficient amount of equipment");
         }
     }
 
-    private static void validateAmountPositivity(PlayerEquipmentOperationRequest request) {
-        if (request.getAmount() <= 0) {
-            throw new InvalidRequestException("Amount must be greater than zero");
-        }
-    }
-
-    private Specification<PlayerInventoryItem> getSpecification(GetPlayerInventoryRequest request) {
+    private Specification<PlayerInventoryItem> getSpecification(UUID playerUuid, PlayerInventoryItemFilterParams filterParams) {
         List<Specification<PlayerInventoryItem>> specifications = new ArrayList<>();
 
-        specifications.add(PlayerInventoryItemSpecifications.byPlayerId(request.getPlayerId()));
+        specifications.add(PlayerInventoryItemSpecifications.byPlayerUuid(playerUuid));
 
-        if (request.getTypesCount() > 0) {
-            List<Integer> equipmentTypeCodes = request.getTypesList().stream()
-                    .map(equipmentTypeMapper::toEntity)
-                    .map(InventoryEquipmentType::getCode)
-                    .toList();
+        if (!filterParams.getTypes().isEmpty()) {
+            specifications.add(PlayerInventoryItemSpecifications.byEquipmentTypes(filterParams.getTypes()));
+        }
 
-            specifications.add(PlayerInventoryItemSpecifications.byEquipmentTypeCodes(equipmentTypeCodes));
+        if (filterParams.getEnabled() != null) {
+            specifications.add(PlayerInventoryItemSpecifications.byReferenceEquipmentEnabled(filterParams.getEnabled()));
         }
 
         return Specification.allOf(specifications);
+    }
+
+    private void giveEquipmentInternal(PlayerEquipmentOperationCommand command, OperationType operationType) {
+        ReferenceEquipmentId referenceEquipmentId = new ReferenceEquipmentId(command.getEquipmentType(), command.getEquipmentId());
+
+        ReferenceEquipment equipment = equipmentCacheService.getById(referenceEquipmentId)
+                .orElseThrow(() -> new ObjectNotFoundException("Equipment %s with ID %d not found".formatted(
+                        referenceEquipmentId.getEquipmentType().name(), referenceEquipmentId.getEquipmentId())));
+
+        PlayerInventoryItemId playerInventoryItemId = new PlayerInventoryItemId(command.getPlayerUuid(), equipment.getId());
+        PlayerInventoryItem playerInventoryItem = playerInventoryItemRepository.findById(playerInventoryItemId)
+                .orElse(playerInventoryItemMapper.toEntity(command));
+
+        PlayerInventoryLogEntry logEntry = playerInventoryLogEntryMapper.toEntity(playerInventoryItem);
+
+        playerInventoryItem.setAmount(playerInventoryItem.getAmount() + command.getAmount());
+
+        playerInventoryLogEntryMapper.update(logEntry, playerInventoryItem, operationType);
+
+        playerInventoryItemRepository.save(playerInventoryItem);
+        playerInventoryLogRepository.save(logEntry);
     }
 }
