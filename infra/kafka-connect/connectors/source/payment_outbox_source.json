@@ -10,7 +10,7 @@
     "database.server.name": "postgres",
     "table.include.list": "public.payment_processed_message_outbox",
     "topic.prefix": "db.payment",
-    "transforms": "Unwrap,SetSchemaMetadataKey,SetSchemaMetadataValue,ConvertCreatedTimestamp,ConvertFinishedTimestamp",
+    "transforms": "Unwrap,SetSchemaMetadataKey,SetSchemaMetadataValue,ConvertCreatedTimestamp,ConvertFinishedTimestamp,Route",
     "transforms.Unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
     "transforms.Unwrap.drop.tombstones": "false",
     "transforms.SetSchemaMetadataKey.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Key",
@@ -25,10 +25,13 @@
     "transforms.ConvertFinishedTimestamp.target.type": "Timestamp",
     "transforms.ConvertFinishedTimestamp.field": "processing_finished_timestamp",
     "transforms.ConvertFinishedTimestamp.format": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+    "transforms.Route.type": "org.apache.kafka.connect.transforms.RegexRouter",
+    "transforms.Route.regex": "db\\.payment\\.public\\.payment_processed_message_outbox",
+    "transforms.Route.replacement": "db.payment.public.payment_processed_message_outbox_v2",
     "topic.creation.default.partitions": 3,
     "topic.creation.default.replication.factor": 3,
     "plugin.name": "pgoutput",
-    "message.key.columns": "public.payment_processed_message_outbox:id",
+    "message.key.columns": "public.product_trade_issuance_performed_message_outbox:uuid",
     "tasks.max": "1"
   }
 }

@@ -1,13 +1,26 @@
 package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service;
 
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.PlayerCurrencyOperationCommand;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.PlayerAccountItem;
+
+import java.util.UUID;
 
 public interface PlayerAccountService {
-    PlayerAccountItemsPage getPlayerAccount(GetPlayerAccountRequest request);
+    Page<PlayerAccountItem> getPlayerAccountItems(@NotNull UUID playerUuid, boolean onlyEnabledCurrencies, @NotNull Pageable pageable);
 
-    void initializePlayerAccount(InitializePlayerAccountRequest request);
+    void initializePlayerAccount(@NotNull UUID playerUuid);
 
-    PlayerAccountItemInfo giveCurrency(PlayerCurrencyOperationRequest request);
+    void initializePlayerAccountBySystemEvent(@NotNull UUID playerUuid);
 
-    PlayerAccountItemInfo takeAwayCurrency(PlayerCurrencyOperationRequest request);
+    void setPlayerAccountEmailBySystemEvent(@NotNull UUID playerUuid, @NotNull String email);
+
+    PlayerAccountItem giveCurrency(@Valid @NotNull PlayerCurrencyOperationCommand command);
+
+    PlayerAccountItem takeAwayCurrency(@Valid @NotNull PlayerCurrencyOperationCommand command);
+
+    void performCurrencyWriteOff(@Valid @NotNull PlayerCurrencyOperationCommand command);
 }

@@ -66,9 +66,9 @@ players-kafka:
   topic: db.public.player
   group-id: inventory-player-message-consumer-test-2
 
-market-kafka:
+market-kafka-product-trade-issue-required:
   topic: db.market.public.product_trade_issue_required_message_outbox
-  group-id: inventory-product-trade-issue-required-message-consumer-test-2
+  group-id: inventory-product-trade-issue-required-message-consumer-test-7
 
 # TODO SET NORMAL
 reference-data-caching:

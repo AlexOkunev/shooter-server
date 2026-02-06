@@ -9,7 +9,6 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum ProductEquipmentType {
-    UNKNOWN(EquipmentType.UNKNOWN.getNumber()),
     GUN(EquipmentType.GUN.getNumber()),
     GRENADE(EquipmentType.GRENADE.getNumber()),
     ATTACHMENT(EquipmentType.ATTACHMENT.getNumber()),
@@ -21,7 +20,7 @@ public enum ProductEquipmentType {
         return Arrays.stream(values())
                 .filter(value -> value.getCode() == code)
                 .findFirst()
-                .orElse(ProductEquipmentType.UNKNOWN);
+                .orElseThrow(() -> new IllegalArgumentException("Unknown equipment type code: " + code));
     }
 }
 

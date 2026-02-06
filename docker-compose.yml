@@ -263,10 +263,6 @@ volumes:
     driver: local
   payment-stub-postgres-data:
     driver: local
-  zk-log:
-    driver: local
-  zk-data:
-    driver: local
   kafka1-data:
     driver: local
   kafka2-data:

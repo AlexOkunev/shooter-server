@@ -3,13 +3,14 @@ package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.converter.ProductEquipmentTypeConverter;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.converter.ProductTradeStatusConverter;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.enumeration.ProductEquipmentType;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.enumeration.ProductTradeStatus;
 
 import java.time.ZonedDateTime;
@@ -17,52 +18,64 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "product_trade")
-@Data
+@IdClass(TradeId.class)
+@Getter
+@Setter
 @FieldNameConstants
+@ToString(exclude = {"priceCurrency", "product"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ProductTrade {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_product_trade_gen")
-    @SequenceGenerator(name = "seq_product_trade_gen", sequenceName = "seq_product_trade", allocationSize = 1)
-    @Column(name = "id")
-    private Integer id;
-
     @NotNull
-    @Column(name = "player_id")
-    private Integer playerId;
+    @Column(name = "player_uuid")
+    @EqualsAndHashCode.Include
+    private UUID playerUuid;
 
+    @Id
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
+    @Column(name = "uuid")
+    @EqualsAndHashCode.Include
+    private UUID uuid;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "product_id", insertable = false, updatable = false)
     private Product product;
 
-    @Column(name = "product_id", insertable = false, updatable = false)
+    @NotNull
+    @Column(name = "product_id")
     private Integer productId;
 
-    @NotNull
-    @ManyToOne/*(fetch = FetchType.LAZY)*/
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumns({
-            @JoinColumn(name = "product_equipment_id", referencedColumnName = "equipment_id"),
-            @JoinColumn(name = "product_equipment_type", referencedColumnName = "equipment_type")
+            @JoinColumn(name = "product_equipment_id", referencedColumnName = "equipment_id", insertable = false, updatable = false),
+            @JoinColumn(name = "product_equipment_type", referencedColumnName = "equipment_type", insertable = false, updatable = false)
     })
     private ReferenceEquipment productEquipment;
 
-    @Column(name = "product_equipment_id", insertable = false, updatable = false)
-    private Integer productEquipmentId;
-
-    @Column(name = "product_equipment_type", insertable = false, updatable = false)
-    @Convert(converter = ProductEquipmentTypeConverter.class)
-    private ProductEquipmentType productEquipmentType;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(
+                    name = ReferenceEquipmentId.Fields.equipmentType,
+                    column = @Column(name = "product_equipment_type")
+            ),
+            @AttributeOverride(
+                    name = ReferenceEquipmentId.Fields.equipmentId,
+                    column = @Column(name = "product_equipment_id")
+            )
+    })
+    private ReferenceEquipmentId productEquipmentId;
 
     @Positive
     @Column(name = "equipment_amount")
     private int equipmentAmount;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "price_currency_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "price_currency_id", insertable = false, updatable = false)
     private ReferenceCurrency priceCurrency;
 
-    @Column(name = "price_currency_id", insertable = false, updatable = false)
+    @NotNull
+    @Column(name = "price_currency_id")
     private Integer priceCurrencyId;
 
     @Positive
@@ -74,12 +87,10 @@ public class ProductTrade {
     private int version;
 
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_timestamp")
     private ZonedDateTime createdTimestamp;
 
     @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_timestamp")
     private ZonedDateTime updatedTimestamp;
 
@@ -87,9 +98,5 @@ public class ProductTrade {
     @Column(name = "status_code")
     @Convert(converter = ProductTradeStatusConverter.class)
     private ProductTradeStatus status;
-
-    @NotNull
-    @Column(name = "uuid")
-    private UUID uuid;
 }
 

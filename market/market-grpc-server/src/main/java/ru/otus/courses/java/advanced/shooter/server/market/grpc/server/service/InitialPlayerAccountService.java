@@ -1,11 +1,18 @@
 package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service;
 
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.initial.GetInitialPlayerAccountRequest;
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.initial.InitialPlayerAccountItemsPage;
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.initial.ModifyInitialPlayerAccountRequest;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.InitialPlayerAccountFilterParams;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.UpdateInitialPlayerAccountCommand;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.InitialPlayerAccountItem;
 
 public interface InitialPlayerAccountService {
-    InitialPlayerAccountItemsPage getInitialPlayerInventory(GetInitialPlayerAccountRequest request);
+    Page<InitialPlayerAccountItem> getInitialPlayerAccountItems(
+            @NotNull InitialPlayerAccountFilterParams filterParams,
+            @NotNull Pageable pageable
+    );
 
-    void modifyInitialPlayerAccount(ModifyInitialPlayerAccountRequest request);
+    void saveInitialPlayerAccount(@Valid @NotNull UpdateInitialPlayerAccountCommand command);
 }

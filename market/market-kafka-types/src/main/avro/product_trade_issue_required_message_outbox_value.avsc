@@ -1,0 +1,55 @@
+{
+  "type": "record",
+  "name": "ProductTradeIssueRequiredMessage",
+  "namespace": "ru.otus.courses.java.advanced.shooter.server.market.outbox",
+  "fields": [
+    {
+      "name": "player_uuid",
+      "type": {
+        "type": "string",
+        "connect.version": 1,
+        "connect.name": "io.debezium.data.Uuid"
+      }
+    },
+    {
+      "name": "message_uuid",
+      "type": {
+        "type": "string",
+        "connect.version": 1,
+        "connect.default": "00000000-0000-0000-0000-000000000000",
+        "connect.name": "io.debezium.data.Uuid"
+      },
+      "default": "00000000-0000-0000-0000-000000000000"
+    },
+    {
+      "name": "trade_uuid",
+      "type": {
+        "type": "string",
+        "connect.version": 1,
+        "connect.name": "io.debezium.data.Uuid"
+      }
+    },
+    {
+      "name": "equipment_id",
+      "type": "int"
+    },
+    {
+      "name": "equipment_type",
+      "type": "int"
+    },
+    {
+      "name": "equipment_amount",
+      "type": "int"
+    },
+    {
+      "name": "created_timestamp",
+      "type": {
+        "type": "long",
+        "connect.version": 1,
+        "connect.name": "org.apache.kafka.connect.data.Timestamp",
+        "logicalType": "timestamp-millis"
+      }
+    }
+  ],
+  "connect.name": "ru.otus.courses.java.advanced.shooter.server.market.outbox.ProductTradeIssueRequiredMessage"
+}

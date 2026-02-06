@@ -1,11 +1,21 @@
 package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service;
 
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.ProductTradeFilterParams;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.ProductTrade;
+
+import java.util.UUID;
 
 public interface ProductTradeService {
-    ProductTradeInfo createProductTrade(CreateProductTradeRequest request);
+    ProductTrade createProductTrade(@NotNull UUID playerUuid, int productId);
 
-    ProductTradeInfo getProductTrade(GetProductTradeRequest request);
+    ProductTrade getProductTrade(@NotNull UUID playerUuid, @NotNull UUID tradeUuid);
 
-    ProductTradeInfoListPage getProductTrades(GetProductTradesRequest request);
+    Page<ProductTrade> getProductTrades(
+            @NotNull @Valid ProductTradeFilterParams filterParams,
+            @NotNull Pageable pageable
+    );
 }

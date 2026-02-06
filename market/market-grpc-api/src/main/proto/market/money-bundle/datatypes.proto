@@ -8,18 +8,18 @@ import "common/common.proto";
 
 message MoneyBundleInfo {
   int32 id = 1;
-  int32 currencyId = 2;
-  int32 currencyAmount = 3;
-  int32 rublesPrice = 4;
+  int32 currency_id = 2;
+  int32 currency_amount = 3;
+  int32 rubles_price = 4;
   bool enabled = 5;
-  int64 createdTimestamp = 6;
-  int64 updatedTimestamp = 7;
+  int64 created_timestamp = 6;
+  int64 updated_timestamp = 7;
   int32 version = 8;
 }
 
 message MoneyBundleInfoListPage {
   repeated MoneyBundleInfo data = 1;
-  common.protobuf.PaginationInfo paginationInfo = 2;
+  common.protobuf.PaginationInfo pagination_info = 2;
 }
 
 message GetMoneyBundleRequest {
@@ -27,15 +27,14 @@ message GetMoneyBundleRequest {
 }
 
 message GetMoneyBundlesRequest {
-  optional common.protobuf.PaginationRequest paginationRequest = 1;
+  optional common.protobuf.PaginationRequest pagination_request = 1;
   optional Filter filter = 2;
 
   message Filter {
-    repeated int32 ids = 1;
-    optional bool enabled = 2;
-    optional bool currencyEnabled = 3;
-    optional bool currencyCanBeTraded = 4;
-    repeated int32 currencyIds = 5;
+    optional bool enabled = 1;
+    optional bool currency_enabled = 2;
+    optional bool currency_can_be_bought = 3;
+    repeated int32 currency_ids = 4;
   }
 }
 
@@ -50,8 +49,8 @@ message UpdateMoneyBundleRequest {
 }
 
 message MoneyBundleWritableData {
-  int32 currencyId = 1;
-  int32 currencyAmount = 2;
-  int32 rublesPrice = 3;
+  int32 currency_id = 1;
+  int32 currency_amount = 2;
+  int32 rubles_price = 3;
   bool enabled = 4;
 }

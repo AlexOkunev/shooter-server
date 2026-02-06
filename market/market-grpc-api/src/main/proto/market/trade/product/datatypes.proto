@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.product;
+
+option java_multiple_files = true;
+
+import "common/common.proto";
+import "equipment-shared-contract/contract.proto";
+
+enum ProductTradeStatus {
+  PRODUCT_TRADE_STATUS_UNSPECIFIED = 0;
+  CREATED = 1;
+  WRITE_OFF_WAIT = 2;
+  WRITE_OFF_PENDING = 3;
+  WRITE_OFF_DONE = 4;
+  ISSUE_EQUIPMENT_PENDING = 5;
+  ISSUE_EQUIPMENT_DONE = 6;
+  SUCCEEDED = 7;
+  FAILED = 8;
+  TIMEOUT = 9;
+}
+
+message CreateProductTradeRequest {
+  string player_uuid = 1;
+  int32 product_id = 2;
+}
+
+message ProductTradeInfo {
+  string player_uuid = 1;
+  string uuid = 2;
+  int32 product_id = 3;
+  equipment.contract.EquipmentType equipmentType = 4;
+  int32 equipment_id = 5;
+  int32 equipment_amount = 6;
+  int32 price_currency_id = 7;
+  int32 price_value = 8;
+  int64 created_timestamp = 9;
+  int64 updated_timestamp = 10;
+  ProductTradeStatus status = 11;
+}
+
+message ProductTradeInfoListPage {
+  repeated ProductTradeInfo data = 1;
+  common.protobuf.PaginationInfo pagination_info = 2;
+}
+
+message GetProductTradeRequest {
+  string player_uuid = 1;
+  string trade_uuid = 2;
+}
+
+message GetProductTradesRequest {
+  string player_uuid = 1;
+  optional common.protobuf.PaginationRequest pagination_request = 2;
+  optional Filter filter = 3;
+
+  message Filter {
+    repeated int32 product_ids = 1;
+    optional equipment.contract.EquipmentType equipment_type = 2;
+    repeated int32 equipment_ids = 3;
+    repeated ProductTradeStatus statuses = 4;
+  }
+}

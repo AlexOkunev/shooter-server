@@ -1,15 +1,28 @@
 package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service;
 
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.product.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.ProductFilterParams;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.ProductSavedData;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.Product;
 
 public interface ProductService {
-    ProductInfo getProduct(GetProductRequest request);
+    Product getProduct(int id);
 
-    ProductInfoListPage getProducts(GetProductsRequest request);
+    Product getEnabledProduct(int id);
 
-    ProductInfo createProduct(CreateProductRequest request);
+    Product createProduct(@Valid @NotNull ProductSavedData data);
 
-    ProductInfo updateProduct(UpdateProductRequest request);
+    Product updateProduct(
+            int id,
+            int version,
+            @Valid @NotNull ProductSavedData data
+    );
 
-    ProductInfo getEnabledProduct(GetProductRequest request);
+    Page<Product> getProducts(
+            @NotNull ProductFilterParams filterParams,
+            @NotNull Pageable pageable
+    );
 }

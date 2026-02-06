@@ -9,5 +9,5 @@ import "google/protobuf/empty.proto";
 
 service InitialPlayerAccountServiceAPI {
   rpc GetInitialPlayerAccount(GetInitialPlayerAccountRequest) returns (InitialPlayerAccountItemsPage);
-  rpc ModifyInitialPlayerAccount(ModifyInitialPlayerAccountRequest) returns (google.protobuf.Empty);
+  rpc UpdateInitialPlayerAccount(UpdateInitialPlayerAccountRequest) returns (google.protobuf.Empty);
 }

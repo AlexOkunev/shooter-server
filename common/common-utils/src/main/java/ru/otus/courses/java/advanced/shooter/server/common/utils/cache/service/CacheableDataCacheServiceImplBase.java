@@ -68,7 +68,7 @@ public abstract class CacheableDataCacheServiceImplBase<ID, T extends CacheableD
     @Override
     public void reloadAllData() {
         clear();
-        loadAllData();
+        loadAllData(); //TODO!!! исправить, небезопасно в плане потоков. или не чистить, или целиком загружать и менять структуру в поле dataCache
     }
 
     protected abstract CacheableDataPage<T> loadReferenceDataPage(int page, int size);

@@ -18,6 +18,7 @@
     <modules>
         <module>market-grpc-api</module>
         <module>market-grpc-server</module>
+        <module>market-kafka-types</module>
     </modules>
 
     <properties>
@@ -28,6 +29,10 @@
         <shooter.common.version>1.0</shooter.common.version>
         <equipment.shared.contract.version>1.0</equipment.shared.contract.version>
         <shooter.payment-stub.version>1.0</shooter.payment-stub.version>
+        <equipment.kafka.types.version>1.0</equipment.kafka.types.version>
+        <players.kafka.types.version>1.0</players.kafka.types.version>
+        <inventory.kafka.types.version>1.0</inventory.kafka.types.version>
+        <shooter.common-mapping.version>1.0</shooter.common-mapping.version>
     </properties>
 
     <dependencyManagement>
@@ -61,6 +66,26 @@
                 <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
                 <artifactId>equipment-shared-contract</artifactId>
                 <version>${equipment.shared.contract.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+                <artifactId>equipment-kafka-types</artifactId>
+                <version>${equipment.kafka.types.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+                <artifactId>players-kafka-types</artifactId>
+                <version>${players.kafka.types.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+                <artifactId>inventory-kafka-types</artifactId>
+                <version>${inventory.kafka.types.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+                <artifactId>common-mapping-starter</artifactId>
+                <version>${shooter.common-mapping.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

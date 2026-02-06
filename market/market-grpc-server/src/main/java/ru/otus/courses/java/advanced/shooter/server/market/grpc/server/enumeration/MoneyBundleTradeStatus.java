@@ -8,11 +8,11 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum MoneyBundleTradeStatus {
-    UNKNOWN(-1),
-    CREATED(0),
-    PAYMENT_PENDING(1),
-    SUCCEEDED(2),
-    FAILED(3);
+    CREATED(1),
+    PAYMENT_WAIT(2),
+    PAYMENT_PENDING(3),
+    SUCCEEDED(4),
+    FAILED(5);
 
     private final int code;
 
@@ -20,7 +20,7 @@ public enum MoneyBundleTradeStatus {
         return Arrays.stream(values())
                 .filter(value -> value.getCode() == code)
                 .findFirst()
-                .orElse(MoneyBundleTradeStatus.UNKNOWN);
+                .orElseThrow(() -> new IllegalArgumentException("Unknown MoneyBundleTradeStatus code: " + code));
     }
 }
 

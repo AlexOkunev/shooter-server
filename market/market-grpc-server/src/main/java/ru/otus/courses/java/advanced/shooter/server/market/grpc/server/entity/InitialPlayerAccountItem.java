@@ -1,31 +1,35 @@
 package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import jakarta.validation.constraints.Positive;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.ZonedDateTime;
 
-@Data
 @Entity
 @Table(name = "initial_player_account_item")
+@Getter
+@Setter
 @FieldNameConstants
+@ToString(exclude = "currency")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class InitialPlayerAccountItem {
     @Id
-    @Column(name = "currency_id", updatable = false)
+    @Column(name = "currency_id")
+    @EqualsAndHashCode.Include
     private int currencyId;
 
-    @NotNull
-    @ManyToOne
-    @MapsId
-    @JoinColumn(name = "currency_id")
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "currency_id", updatable = false, insertable = false)
     private ReferenceCurrency currency;
 
-    @Min(0)
+    @Positive
     @Column(name = "amount")
     private int amount;
 
@@ -33,12 +37,10 @@ public class InitialPlayerAccountItem {
     private boolean enabled;
 
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_timestamp")
     private ZonedDateTime createdTimestamp;
 
     @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_timestamp")
     private ZonedDateTime updatedTimestamp;
 

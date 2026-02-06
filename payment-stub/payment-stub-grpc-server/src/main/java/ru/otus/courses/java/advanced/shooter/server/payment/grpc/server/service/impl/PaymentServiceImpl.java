@@ -5,7 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.courses.java.advanced.shooter.server.payment.grpc.server.entity.Payment;
-import ru.otus.courses.java.advanced.shooter.server.payment.grpc.server.entity.PaymentProcessedMessage;
+import ru.otus.courses.java.advanced.shooter.server.payment.grpc.server.entity.outbox.PaymentProcessedMessage;
 import ru.otus.courses.java.advanced.shooter.server.payment.grpc.server.enumeration.PaymentStatus;
 import ru.otus.courses.java.advanced.shooter.server.payment.grpc.server.mapper.PaymentMapper;
 import ru.otus.courses.java.advanced.shooter.server.payment.grpc.server.mapper.PaymentMessageMapper;
@@ -66,13 +66,19 @@ public class PaymentServiceImpl implements PaymentService {
             return paymentMapper.toResponse(existingPayment.get());
         }
 
-        String session = paymentSystemStubService.getSession(request.getPlayerId(), request.getPlayerEmail(), request.getRublesAmount(), request.getTradeUuid());
-        String publicToken = paymentSystemStubService.getPublicToken(session);
-        Payment payment = paymentMapper.toEntity(request, session, publicToken);
+        String session = paymentSystemStubService.getSession(
+                request.getPlayerUuid(),
+                request.getPlayerEmail(),
+                request.getRublesAmount(),
+                request.getTradeUuid()
+        );
 
-        ZonedDateTime processingFinishedTimestamp = ZonedDateTime.now().plus(
-                random.nextInt(paymentProcessingProperties.getProcessingTimeMsMax()), ChronoUnit.MILLIS);
-        payment.setProcessingFinishedTimestamp(processingFinishedTimestamp);
+        String publicToken = paymentSystemStubService.getPublicToken(session);
+
+        long processingMs = random.nextInt(paymentProcessingProperties.getProcessingTimeMsMax());
+        ZonedDateTime processingFinishedTimestamp = ZonedDateTime.now().plus(processingMs, ChronoUnit.MILLIS);
+
+        Payment payment = paymentMapper.toEntity(request, session, publicToken, processingFinishedTimestamp);
 
         payment = paymentRepository.save(payment);
 
@@ -97,6 +103,10 @@ public class PaymentServiceImpl implements PaymentService {
 
     private static void validateCreateRequest(CreatePaymentRequest request) {
         if (StringUtils.isBlank(request.getPlayerEmail())) {
+            throw new IllegalArgumentException("Player email is blank");
+        }
+
+        if (StringUtils.isBlank(request.getPlayerUuid())) {
             throw new IllegalArgumentException("Player email is blank");
         }
 

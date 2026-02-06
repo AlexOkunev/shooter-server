@@ -16,8 +16,8 @@ import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.bean.I
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.bean.SavedInitialPlayerInventoryItem;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.bean.UpdateInitialPlayerInventoryCommand;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.cache.base.ReferenceEquipmentCacheService;
-import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.ReferenceEquipmentId;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.InitialPlayerInventoryItem;
+import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.entity.ReferenceEquipmentId;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.mapper.domain.InitialPlayerInventoryItemMapper;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.repository.InitialPlayerInventoryItemRepository;
 import ru.otus.courses.java.advanced.shooter.server.inventory.grpc.server.service.InitialPlayerInventoryService;
@@ -70,7 +70,7 @@ public class InitialPlayerInventoryServiceImpl implements InitialPlayerInventory
                 .map(initialPlayerInventoryItemMapper::toEntity)
                 .toList();
 
-        List<InitialPlayerInventoryItem> updatedItems = initialPlayerInventoryItemRepository.findAllById(foundItemsMap.keySet());
+        Collection<InitialPlayerInventoryItem> updatedItems = foundItemsMap.values();
 
         updatedItems.forEach(item -> {
             SavedInitialPlayerInventoryItem savedItem = savedItems.get(item.getId());

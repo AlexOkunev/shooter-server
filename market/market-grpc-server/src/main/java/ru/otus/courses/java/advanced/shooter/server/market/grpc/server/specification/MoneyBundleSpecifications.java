@@ -7,10 +7,6 @@ import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.Re
 
 @UtilityClass
 public class MoneyBundleSpecifications {
-    public static Specification<MoneyBundle> byIds(Iterable<Integer> ids) {
-        return (root, query, builder) ->
-                builder.in(root.get(MoneyBundle.Fields.id)).value(ids);
-    }
 
     public static Specification<MoneyBundle> byEnabled(boolean enabled) {
         return (root, query, builder) ->
@@ -22,9 +18,9 @@ public class MoneyBundleSpecifications {
                 builder.equal(root.join(MoneyBundle.Fields.currency).get(ReferenceCurrency.Fields.enabled), enabled);
     }
 
-    public static Specification<MoneyBundle> byCurrencyCanBeTraded(boolean canBeTraded) {
+    public static Specification<MoneyBundle> byCurrencyCanBeBought(boolean canBeBought) {
         return (root, query, builder) ->
-                builder.equal(root.join(MoneyBundle.Fields.currency).get(ReferenceCurrency.Fields.canBeTraded), canBeTraded);
+                builder.equal(root.join(MoneyBundle.Fields.currency).get(ReferenceCurrency.Fields.canBeBought), canBeBought);
     }
 
     public static Specification<MoneyBundle> byCurrencyIds(Iterable<Integer> currencyIds) {

@@ -1,148 +1,121 @@
 package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service.impl;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.tuple.Pair;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.InvalidRequestException;
-import ru.otus.courses.java.advanced.shooter.server.common.utils.validation.ValidationUtils;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.InitialPlayerAccountFilterParams;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.SavedInitialPlayerAccountItem;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.UpdateInitialPlayerAccountCommand;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.cache.base.ReferenceCurrencyCacheService;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.InitialPlayerAccountItem;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.ReferenceCurrency;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.InitialPlayerAccountItemMapper;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.PaginationInfoMapper;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.domain.InitialPlayerAccountItemMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.InitialPlayerAccountItemRepository;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service.InitialPlayerAccountService;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.specification.InitialPlayerAccountItemSpecifications;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.util.TransactionExecutor;
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.initial.GetInitialPlayerAccountRequest;
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.initial.InitialPlayerAccountItemRequest;
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.initial.InitialPlayerAccountItemsPage;
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.initial.ModifyInitialPlayerAccountRequest;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
+@Validated
 public class InitialPlayerAccountServiceImpl implements InitialPlayerAccountService {
     private final InitialPlayerAccountItemRepository initialPlayerAccountItemRepository;
-
     private final InitialPlayerAccountItemMapper initialPlayerAccountItemMapper;
-
     private final ReferenceCurrencyCacheService referenceCurrencyCacheService;
-
-    private final PaginationInfoMapper paginationInfoMapper;
-
     private final TransactionExecutor transactionExecutor;
 
-    private static final Sort DEFAULT_SORT = Sort.by(Sort.Order.asc(InitialPlayerAccountItem.Fields.currencyId));
-
     @Override
-    public InitialPlayerAccountItemsPage getInitialPlayerInventory(GetInitialPlayerAccountRequest request) {
-        if (request.hasPaginationRequest()) {
-            ValidationUtils.validatePaginationRequest(request.getPaginationRequest());
-        }
-
-        Specification<InitialPlayerAccountItem> specification = getSpecification(request);
-
-        Pageable pageable = request.hasPaginationRequest() ?
-                PageRequest.of(request.getPaginationRequest().getPage(), request.getPaginationRequest().getCount(), DEFAULT_SORT) :
-                PageRequest.of(0, 10, DEFAULT_SORT);
-
-        Page<InitialPlayerAccountItem> data = initialPlayerAccountItemRepository.findAll(specification, pageable);
-
-        return InitialPlayerAccountItemsPage.newBuilder()
-                .addAllData(data.map(initialPlayerAccountItemMapper::toResponse))
-                .setPaginationInfo(paginationInfoMapper.toResponse(data))
-                .build();
+    public Page<InitialPlayerAccountItem> getInitialPlayerAccountItems(
+            @NotNull InitialPlayerAccountFilterParams filterParams,
+            @NotNull Pageable pageable
+    ) {
+        Specification<InitialPlayerAccountItem> specification = getSpecification(filterParams);
+        return initialPlayerAccountItemRepository.findAll(specification, pageable);
     }
 
     @Override
-    public void modifyInitialPlayerAccount(ModifyInitialPlayerAccountRequest request) {
-        if (request.getItemsCount() == 0) {
-            return;
-        }
+    public void saveInitialPlayerAccount(@Valid @NotNull UpdateInitialPlayerAccountCommand command) {
+        validateItemCollections(command.getSavedItems(), command.getDeletedCurrencyIds());
 
-        validateModifyInitialPlayerAccountRequest(request);
+        Map<Integer, SavedInitialPlayerAccountItem> savedItemsMap = command.getSavedItems().stream()
+                .collect(Collectors.toMap(SavedInitialPlayerAccountItem::getCurrencyId, Function.identity()));
 
-        Map<Integer, InitialPlayerAccountItemRequest> requestMap = request.getItemsList().stream()
-                .collect(Collectors.toMap(InitialPlayerAccountItemRequest::getCurrencyId, Function.identity()));
+        Map<Integer, InitialPlayerAccountItem> foundItemsMap =
+                initialPlayerAccountItemRepository.findAllById(savedItemsMap.keySet()).stream()
+                        .collect(Collectors.toMap(InitialPlayerAccountItem::getCurrencyId, Function.identity()));
 
-        Map<Integer, InitialPlayerAccountItem> foundItemsMap = initialPlayerAccountItemRepository.findAllById(requestMap.keySet())
-                .stream()
-                .collect(Collectors.toMap(InitialPlayerAccountItem::getCurrencyId, Function.identity()));
-
-        List<InitialPlayerAccountItem> createdItems = requestMap.entrySet().stream()
+        List<InitialPlayerAccountItem> createdItems = savedItemsMap.entrySet().stream()
                 .filter(entry -> !foundItemsMap.containsKey(entry.getKey()))
                 .map(Map.Entry::getValue)
                 .map(initialPlayerAccountItemMapper::toEntity)
                 .toList();
 
-        List<InitialPlayerAccountItem> updatedItems = foundItemsMap.entrySet().stream()
-                .map(entry -> Pair.of(entry.getValue(), requestMap.get(entry.getKey())))
-                .peek(pair -> checkVersionsEquality(pair.getLeft(), pair.getRight()))
-                .map(pair -> {
-                    pair.getLeft().setAmount(pair.getRight().getAmount());
-                    pair.getLeft().setEnabled(pair.getRight().getEnabled());
-                    return pair.getLeft();
-                })
-                .toList();
+        Collection<InitialPlayerAccountItem> updatedItems = foundItemsMap.values();
+
+        updatedItems.forEach(item -> {
+            SavedInitialPlayerAccountItem savedItem = savedItemsMap.get(item.getCurrencyId());
+            checkVersionsEquality(item, savedItemsMap.get(item.getCurrencyId()));
+            initialPlayerAccountItemMapper.update(item, savedItem);
+        });
 
         transactionExecutor.execute(() -> {
             initialPlayerAccountItemRepository.saveAll(updatedItems);
             initialPlayerAccountItemRepository.saveAll(createdItems);
+            initialPlayerAccountItemRepository.deleteAllById(command.getDeletedCurrencyIds());
         });
     }
 
-    private void checkVersionsEquality(InitialPlayerAccountItem dbItem, InitialPlayerAccountItemRequest request) {
-        if (dbItem.getVersion() != request.getVersion()) {
+    private void checkVersionsEquality(InitialPlayerAccountItem dbItem, SavedInitialPlayerAccountItem savedItem) {
+        if (dbItem.getVersion() != savedItem.getVersion()) {
             throw new InvalidRequestException("Item (ID = %d) has incorrect version. Version in database is %d".formatted(
                     dbItem.getCurrencyId(), dbItem.getVersion()));
         }
     }
 
-    private void validateModifyInitialPlayerAccountRequest(ModifyInitialPlayerAccountRequest request) {
-        Set<Integer> uniqueCurrencyIds = request.getItemsList().stream()
-                .map(InitialPlayerAccountItemRequest::getCurrencyId)
+    private void validateItemCollections(Collection<SavedInitialPlayerAccountItem> savedItems, List<Integer> deletedCurrencyIds) {
+        Set<Integer> uniqueSavedCurrencyIds = savedItems.stream()
+                .map(SavedInitialPlayerAccountItem::getCurrencyId)
                 .collect(Collectors.toSet());
 
-        if (uniqueCurrencyIds.size() != request.getItemsCount()) {
-            throw new InvalidRequestException("Currency IDs in request must be unique");
+        if (uniqueSavedCurrencyIds.size() != savedItems.size()) {
+            throw new InvalidRequestException("Saved items contain duplicate currency IDs");
         }
 
-        request.getItemsList().stream()
-                .filter(item -> item.getAmount() <= 0)
-                .findFirst()
-                .ifPresent(item -> {
-                    throw new InvalidRequestException("Item (ID = %d) must have positive amount".formatted(item.getCurrencyId()));
-                });
+        Collection<Integer> intersection = CollectionUtils.intersection(uniqueSavedCurrencyIds, deletedCurrencyIds);
+        if (!intersection.isEmpty()) {
+            throw new InvalidRequestException("Saved and deleted items contain duplicates: %s".formatted(
+                    StringUtils.join(intersection)));
+        }
 
-        for (var item : request.getItemsList()) {
-            ReferenceCurrency currency = referenceCurrencyCacheService.getById(item.getCurrencyId())
-                    .orElseThrow(() -> new InvalidRequestException("Currency with ID %d not found".formatted(item.getCurrencyId())));
+        for (int currencyId : uniqueSavedCurrencyIds) {
+            ReferenceCurrency currency = referenceCurrencyCacheService.getById(currencyId)
+                    .orElseThrow(() -> new InvalidRequestException("Currency with ID %d not found".formatted(currencyId)));
 
             if (!currency.isEnabled()) {
-                throw new InvalidRequestException("Currency with ID %d is not enabled".formatted(item.getCurrencyId()));
+                throw new InvalidRequestException("Currency with ID %d is not enabled".formatted(currencyId));
             }
         }
     }
 
-    private Specification<InitialPlayerAccountItem> getSpecification(GetInitialPlayerAccountRequest request) {
+    private Specification<InitialPlayerAccountItem> getSpecification(InitialPlayerAccountFilterParams filterParams) {
         List<Specification<InitialPlayerAccountItem>> specifications = new ArrayList<>();
 
-        if (request.hasFilter()) {
-            if (request.getFilter().hasEnabled()) {
-                specifications.add(InitialPlayerAccountItemSpecifications.byEnabled(request.getFilter().getEnabled()));
-            }
+        if (filterParams.getEnabled() != null) {
+            specifications.add(InitialPlayerAccountItemSpecifications.byEnabled(filterParams.getEnabled()));
         }
 
         return Specification.allOf(specifications);

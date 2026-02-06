@@ -1,0 +1,31 @@
+{
+  "name": "product-trade-issuance-performed-message-outbox-source-connector",
+  "config": {
+    "connector.class": "io.debezium.connector.postgresql.PostgresConnector",
+    "database.hostname": "inventory-postgres",
+    "database.port": "5432",
+    "database.user": "inventory_db_user",
+    "database.password": "inventory_db_user_password",
+    "database.dbname": "inventory_db",
+    "database.server.name": "postgres",
+    "table.include.list": "public.product_trade_issuance_performed_message_outbox",
+    "topic.prefix": "db.inventory",
+    "transforms": "Unwrap,SetSchemaMetadataKey,SetSchemaMetadataValue,ConvertCreatedTimestamp",
+    "transforms.Unwrap.type": "io.debezium.transforms.ExtractNewRecordState",
+    "transforms.Unwrap.drop.tombstones": "false",
+    "transforms.SetSchemaMetadataKey.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Key",
+    "transforms.SetSchemaMetadataKey.schema.name": "ru.otus.courses.java.advanced.shooter.server.inventory.outbox.ProductTradeIssuancePerformedMessageKey",
+    "transforms.SetSchemaMetadataValue.type": "org.apache.kafka.connect.transforms.SetSchemaMetadata$Value",
+    "transforms.SetSchemaMetadataValue.schema.name": "ru.otus.courses.java.advanced.shooter.server.inventory.outbox.ProductTradeIssuancePerformedMessage",
+    "transforms.ConvertCreatedTimestamp.type": "org.apache.kafka.connect.transforms.TimestampConverter$Value",
+    "transforms.ConvertCreatedTimestamp.target.type": "Timestamp",
+    "transforms.ConvertCreatedTimestamp.field": "created_timestamp",
+    "transforms.ConvertCreatedTimestamp.format": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
+    "topic.creation.default.partitions": 3,
+    "topic.creation.default.replication.factor": 3,
+    "plugin.name": "pgoutput",
+    "message.key.columns": "public.product_trade_issuance_performed_message_outbox:message_uuid",
+    "tasks.max": "1"
+  }
+}
+

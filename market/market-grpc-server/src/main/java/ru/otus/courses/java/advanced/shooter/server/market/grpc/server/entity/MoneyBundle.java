@@ -3,8 +3,11 @@ package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
+import org.hibernate.Hibernate;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.data.CacheableData;
@@ -13,8 +16,10 @@ import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "money_bundle")
-@Data
+@Getter
+@Setter
 @FieldNameConstants
+@ToString(exclude = "currency")
 public class MoneyBundle implements CacheableData<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_money_bundle_gen")
@@ -22,16 +27,15 @@ public class MoneyBundle implements CacheableData<Integer> {
     @Column(name = "id")
     private Integer id;
 
-    @NotNull
     @Column(name = "enabled")
     private boolean enabled = true;
 
-    @NotNull
-    @ManyToOne
-    @JoinColumn(name = "currency_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "currency_id", insertable = false, updatable = false)
     private ReferenceCurrency currency;
 
-    @Column(name = "currency_id", insertable = false, updatable = false)
+    @NotNull
+    @Column(name = "currency_id")
     private Integer currencyId;
 
     @Positive
@@ -47,12 +51,34 @@ public class MoneyBundle implements CacheableData<Integer> {
     private int version;
 
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_timestamp")
     private ZonedDateTime createdTimestamp;
 
     @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_timestamp")
     private ZonedDateTime updatedTimestamp;
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+
+        if (o == null) {
+            return false;
+        }
+
+        if (Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+
+        MoneyBundle that = (MoneyBundle) o;
+
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public final int hashCode() {
+        return Hibernate.getClass(this).hashCode();
+    }
 }

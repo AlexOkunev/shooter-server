@@ -7,21 +7,21 @@ option java_multiple_files = true;
 import "common/common.proto";
 
 message InitialPlayerAccountItemInfo {
-  int32 currencyId = 1;
+  int32 currency_id = 1;
   int32 amount = 2;
   bool enabled = 3;
-  int64 createdTimestamp = 4;
-  int64 updatedTimestamp = 5;
+  int64 created_timestamp = 4;
+  int64 updated_timestamp = 5;
   int32 version = 6;
 }
 
 message InitialPlayerAccountItemsPage {
   repeated InitialPlayerAccountItemInfo data = 1;
-  common.protobuf.PaginationInfo paginationInfo = 2;
+  common.protobuf.PaginationInfo pagination_info = 2;
 }
 
 message GetInitialPlayerAccountRequest {
-  optional common.protobuf.PaginationRequest paginationRequest = 1;
+  optional common.protobuf.PaginationRequest pagination_request = 1;
   optional Filter filter = 2;
 
   message Filter {
@@ -29,13 +29,14 @@ message GetInitialPlayerAccountRequest {
   }
 }
 
-message InitialPlayerAccountItemRequest {
-  int32 currencyId = 1;
+message SavedInitialPlayerAccountItemRequest {
+  int32 currency_id = 1;
   int32 amount = 2;
   bool enabled = 3;
   int32 version = 4;
 }
 
-message ModifyInitialPlayerAccountRequest {
-  repeated InitialPlayerAccountItemRequest items = 1;
+message UpdateInitialPlayerAccountRequest {
+  repeated SavedInitialPlayerAccountItemRequest saved_items = 1;
+  repeated int32 deleted_currency_ids = 2;
 }

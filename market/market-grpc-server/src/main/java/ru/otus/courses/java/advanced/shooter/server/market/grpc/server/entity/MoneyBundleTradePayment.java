@@ -1,8 +1,6 @@
 package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity;
 
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -16,7 +14,7 @@ import java.util.UUID;
 @FieldNameConstants
 public class MoneyBundleTradePayment {
     @NotBlank
-    private String session;
+    private String paymentSession;
 
     @NotBlank
     private String publicToken;
@@ -25,9 +23,7 @@ public class MoneyBundleTradePayment {
     private UUID uuid;
 
     @NotNull
-    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime startTimestamp;
 
-    @Temporal(TemporalType.TIMESTAMP)
     private ZonedDateTime finishTimestamp;
 }

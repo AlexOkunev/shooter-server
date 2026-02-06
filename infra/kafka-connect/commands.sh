@@ -8,4 +8,6 @@ curl -X POST --data-binary "@./connectors/source/equipment_source.json" -H "Cont
 
 curl -X POST --data-binary "@./connectors/source/product_trade_outbox_source.json" -H "Content-Type: application/json" http://localhost:8083/connectors | jq
 
+curl -X POST --data-binary "@./connectors/source/product_trade_issuance_performed_message_outbox_source.json" -H "Content-Type: application/json" http://localhost:8083/connectors | jq
+
 curl -X POST --data-binary "@./connectors/sink/keycloak_players_sink.json" -H "Content-Type: application/json" http://localhost:8083/connectors | jq

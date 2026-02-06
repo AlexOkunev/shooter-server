@@ -5,7 +5,6 @@ package ru.otus.courses.java.advanced.shooter.server.market.protobuf.money.bundl
 option java_multiple_files = true;
 
 import "market/money-bundle/datatypes.proto";
-import "google/protobuf/empty.proto";
 
 service MoneyBundleServiceAPI {
   rpc GetMoneyBundle(GetMoneyBundleRequest) returns (MoneyBundleInfo);

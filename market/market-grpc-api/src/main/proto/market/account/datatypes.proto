@@ -5,30 +5,30 @@ package ru.otus.courses.java.advanced.shooter.server.market.protobuf.account;
 option java_multiple_files = true;
 
 import "common/common.proto";
-import "market/trade/datatypes.proto";
 
 message PlayerAccountItemInfo {
-  int32 currencyId = 1;
+  int32 currency_id = 1;
   int32 amount = 2;
 }
 
 message PlayerAccountItemsPage {
   repeated PlayerAccountItemInfo data = 1;
-  common.protobuf.PaginationInfo paginationInfo = 2;
+  common.protobuf.PaginationInfo pagination_info = 2;
 }
 
 message GetPlayerAccountRequest {
-  optional common.protobuf.PaginationRequest paginationRequest = 1;
-  int32 playerId = 2;
+  optional common.protobuf.PaginationRequest pagination_request = 1;
+  string player_uuid = 2;
+  optional bool only_enabled_currencies = 3;
 }
 
 message InitializePlayerAccountRequest {
-  int32 playerId = 1;
+  string player_uuid = 1;
 }
 
 message PlayerCurrencyOperationRequest {
-  int32 playerId = 1;
-  int32 currencyId = 2;
+  string player_uuid = 1;
+  int32 currency_id = 2;
   int32 amount = 3;
 }
 

@@ -7,6 +7,6 @@ import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.Pr
 import java.util.UUID;
 
 @Repository
-public interface ProcessedExternalMessageRepository extends JpaRepository<ProcessedExternalMessage, Integer> {
+public interface ProcessedExternalMessageRepository extends JpaRepository<ProcessedExternalMessage, UUID> {
     boolean existsByMessageUUID(UUID uuid);
 }

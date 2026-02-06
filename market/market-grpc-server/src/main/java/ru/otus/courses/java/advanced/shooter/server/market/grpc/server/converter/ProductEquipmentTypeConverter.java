@@ -8,7 +8,7 @@ import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.enumerati
 public class ProductEquipmentTypeConverter implements AttributeConverter<ProductEquipmentType, Integer> {
     @Override
     public Integer convertToDatabaseColumn(ProductEquipmentType productEquipmentType) {
-        return productEquipmentType.getCode();
+        return productEquipmentType == null ? null : productEquipmentType.getCode();
     }
 
     @Override

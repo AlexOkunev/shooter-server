@@ -18,6 +18,7 @@
     <modules>
         <module>inventory-grpc-api</module>
         <module>inventory-grpc-server</module>
+        <module>inventory-kafka-types</module>
     </modules>
 
     <properties>

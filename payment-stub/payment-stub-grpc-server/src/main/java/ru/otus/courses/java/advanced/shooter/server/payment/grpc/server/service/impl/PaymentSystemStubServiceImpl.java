@@ -12,10 +12,9 @@ import java.util.Random;
 @Slf4j
 @Service
 public class PaymentSystemStubServiceImpl implements PaymentSystemStubService {
+
     private final PaymentProcessingProperties paymentProcessingProperties;
-
     private final Random random;
-
     private final RandomStringUtils randomStringUtils;
 
     public PaymentSystemStubServiceImpl(PaymentProcessingProperties paymentProcessingProperties) {
@@ -26,7 +25,7 @@ public class PaymentSystemStubServiceImpl implements PaymentSystemStubService {
 
     @Override
     @SneakyThrows
-    public String getSession(Integer playerId, String playerEmail, int rublesAmount, String tradeUuid) {
+    public String getSession(String playerId, String playerEmail, int rublesAmount, String tradeUuid) {
         log.info("Create session for playerId: {}, playerEmail: {}, rublesAmount: {}, tradeUuid: {}", playerId, playerEmail, rublesAmount, tradeUuid);
         int delay = random.nextInt(paymentProcessingProperties.getPaymentSystemResponseDelayMsMax());
         Thread.sleep(delay);
@@ -42,7 +41,7 @@ public class PaymentSystemStubServiceImpl implements PaymentSystemStubService {
         int delay = random.nextInt(paymentProcessingProperties.getPaymentSystemResponseDelayMsMax());
         Thread.sleep(delay);
         String token = randomStringUtils.next(30, true, true);
-        log.info("Got public token for session: {}", session);
+        log.info("Got public token {} for session: {}", token, session);
         return token;
     }
 }

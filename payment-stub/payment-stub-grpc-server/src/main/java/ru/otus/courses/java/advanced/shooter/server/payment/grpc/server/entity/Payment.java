@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.FieldNameConstants;
 import org.hibernate.annotations.CreationTimestamp;
 import ru.otus.courses.java.advanced.shooter.server.payment.grpc.server.converter.PaymentStatusConverter;
@@ -13,20 +15,23 @@ import ru.otus.courses.java.advanced.shooter.server.payment.grpc.server.enumerat
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-@Data
 @Entity
 @Table(name = "payment")
+@IdClass(PaymentId.class)
+@Getter
+@Setter
 @FieldNameConstants
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Payment {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_payment_gen")
-    @SequenceGenerator(name = "seq_payment_gen", sequenceName = "seq_payment", allocationSize = 1)
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "player_uuid")
+    @EqualsAndHashCode.Include
+    private UUID playerUuid;
 
-    @NotNull
-    @Column(name = "player_id")
-    private Integer playerId;
+    @Id
+    @Column(name = "payment_uuid")
+    @EqualsAndHashCode.Include
+    private UUID paymentUuid;
 
     @NotBlank
     @Column(name = "player_email")
@@ -41,17 +46,11 @@ public class Payment {
     private Integer rublesAmount;
 
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_timestamp")
     private ZonedDateTime createdTimestamp;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "processing_finished_timestamp")
     private ZonedDateTime processingFinishedTimestamp;
-
-    @NotNull
-    @Column(name = "payment_uuid")
-    private UUID paymentUuid;
 
     @NotBlank
     @Column(name = "payment_session")

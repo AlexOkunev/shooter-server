@@ -1,9 +1,13 @@
 package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.FieldNameConstants;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -15,33 +19,36 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "money_bundle_trade")
-@Data
+@IdClass(TradeId.class)
+@Getter
+@Setter
 @FieldNameConstants
+@ToString(exclude = {"currency", "moneyBundle"})
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class MoneyBundleTrade {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_money_bundle_trade_gen")
-    @SequenceGenerator(name = "seq_money_bundle_trade_gen", sequenceName = "seq_money_bundle_trade", allocationSize = 1)
-    @Column(name = "id")
-    private Integer id;
+    @Column(name = "player_uuid")
+    @EqualsAndHashCode.Include
+    private UUID playerUuid;
 
-    @NotNull
-    @Column(name = "player_id")
-    private Integer playerId;
+    @Id
+    @Column(name = "uuid")
+    @EqualsAndHashCode.Include
+    private UUID uuid;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "money_bundle_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "money_bundle_id", insertable = false, updatable = false)
     private MoneyBundle moneyBundle;
 
-    @Column(name = "money_bundle_id", insertable = false, updatable = false)
+    @Column(name = "money_bundle_id")
     private Integer moneyBundleId;
 
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "currency_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "currency_id", insertable = false, updatable = false)
     private ReferenceCurrency currency;
 
-    @Column(name = "currency_id", insertable = false, updatable = false)
+    @Column(name = "currency_id")
     private Integer currencyId;
 
     @Positive
@@ -57,12 +64,10 @@ public class MoneyBundleTrade {
     private int version;
 
     @CreationTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "created_timestamp")
     private ZonedDateTime createdTimestamp;
 
     @UpdateTimestamp
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "updated_timestamp")
     private ZonedDateTime updatedTimestamp;
 
@@ -71,13 +76,10 @@ public class MoneyBundleTrade {
     @Convert(converter = MoneyBundleTradeStatusConverter.class)
     private MoneyBundleTradeStatus status;
 
-    @NotNull
-    @Column(name = "uuid")
-    private UUID uuid;
-
+    @Valid
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = MoneyBundleTradePayment.Fields.session, column = @Column(name = "payment_session")),
+            @AttributeOverride(name = MoneyBundleTradePayment.Fields.paymentSession, column = @Column(name = "payment_session")),
             @AttributeOverride(name = MoneyBundleTradePayment.Fields.publicToken, column = @Column(name = "payment_public_token")),
             @AttributeOverride(name = MoneyBundleTradePayment.Fields.uuid, column = @Column(name = "payment_uuid")),
             @AttributeOverride(name = MoneyBundleTradePayment.Fields.startTimestamp, column = @Column(name = "payment_start_timestamp")),

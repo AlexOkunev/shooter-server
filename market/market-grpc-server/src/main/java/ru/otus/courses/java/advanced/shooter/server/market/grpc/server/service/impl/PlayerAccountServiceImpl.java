@@ -1,159 +1,186 @@
 package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service.impl;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.InvalidRequestException;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectAlreadyExistsException;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
-import ru.otus.courses.java.advanced.shooter.server.common.utils.validation.ValidationUtils;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.PlayerCurrencyOperationCommand;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.cache.base.ReferenceCurrencyCacheService;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.PlayerAccount;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.PlayerAccountItem;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.ReferenceCurrency;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.PaginationInfoMapper;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.PlayerAccountItemMapper;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.domain.PlayerAccountItemMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.InitialPlayerAccountItemRepository;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.PlayerAccountItemRepository;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.PlayerAccountRepository;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service.PlayerAccountService;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.specification.PlayerAccountItemSpecifications;
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
+@Validated
 public class PlayerAccountServiceImpl implements PlayerAccountService {
+
     private final PlayerAccountRepository playerAccountRepository;
-
     private final PlayerAccountItemRepository playerAccountItemRepository;
-
     private final PlayerAccountItemMapper playerAccountItemMapper;
-
-    private final PaginationInfoMapper paginationInfoMapper;
-
     private final InitialPlayerAccountItemRepository initialPlayerAccountItemRepository;
-
     private final ReferenceCurrencyCacheService referenceCurrencyCacheService;
 
-    private static final Sort DEFAULT_SORT = Sort.by(Sort.Order.asc(PlayerAccountItem.Fields.currencyId));
-
     @Override
-    public PlayerAccountItemsPage getPlayerAccount(GetPlayerAccountRequest request) {
-        playerAccountRepository.findById(request.getPlayerId()).orElseThrow(() ->
-                new ObjectNotFoundException("Player %d account not found".formatted(request.getPlayerId())));
+    public Page<PlayerAccountItem> getPlayerAccountItems(@NotNull UUID playerUuid, boolean onlyEnabledCurrencies, @NotNull Pageable pageable) {
+        PlayerAccount playerAccount = getPlayerAccount(playerUuid);
 
-        if (request.hasPaginationRequest()) {
-            ValidationUtils.validatePaginationRequest(request.getPaginationRequest());
-        }
+        Specification<PlayerAccountItem> specification = getSpecification(
+                playerAccount.getPlayerUuid(),
+                onlyEnabledCurrencies
+        );
 
-        Pageable pageable = request.hasPaginationRequest() ?
-                PageRequest.of(request.getPaginationRequest().getPage(), request.getPaginationRequest().getCount(), DEFAULT_SORT) :
-                PageRequest.of(0, 10, DEFAULT_SORT);
-
-        Specification<PlayerAccountItem> specification = getSpecification(request);
-
-        Page<PlayerAccountItem> data = playerAccountItemRepository.findAll(specification, pageable);
-
-        return PlayerAccountItemsPage.newBuilder()
-                .addAllData(data.map(playerAccountItemMapper::toResponse))
-                .setPaginationInfo(paginationInfoMapper.toResponse(data))
-                .build();
+        return playerAccountItemRepository.findAll(specification, pageable);
     }
 
     @Override
     @Transactional
-    public void initializePlayerAccount(InitializePlayerAccountRequest request) {
-        playerAccountRepository.findById(request.getPlayerId()).ifPresent(playerAccount -> {
-            throw new ObjectAlreadyExistsException("Player %d account is already initialized".formatted(playerAccount.getPlayerId()));
+    public void initializePlayerAccount(@NotNull UUID playerUuid) {
+        playerAccountRepository.findByPlayerUuid(playerUuid).ifPresent(playerAccount -> {
+            throw new ObjectAlreadyExistsException("Player %s account is already initialized".formatted(playerUuid));
         });
 
-        List<PlayerAccountItem> inventoryItems = initialPlayerAccountItemRepository.findAll().stream()
-                .map(initialItem -> playerAccountItemMapper.toEntity(initialItem, request.getPlayerId()))
+        List<PlayerAccountItem> inventoryItems = initialPlayerAccountItemRepository.findAllByEnabledIsTrue().stream()
+                .map(initialItem -> playerAccountItemMapper.toEntity(initialItem, playerUuid))
                 .toList();
 
         PlayerAccount playerAccount = new PlayerAccount();
-        playerAccount.setPlayerId(request.getPlayerId());
+        playerAccount.setPlayerUuid(playerUuid);
         playerAccountRepository.save(playerAccount);
 
         playerAccountItemRepository.saveAll(inventoryItems);
     }
 
     @Override
-    public PlayerAccountItemInfo giveCurrency(PlayerCurrencyOperationRequest request) {
-        validateCurrencyAmountPositivity(request);
+    @Transactional
+    public void initializePlayerAccountBySystemEvent(@NotNull UUID playerUuid) {
+        Optional<PlayerAccount> foundPlayerAccount = playerAccountRepository.findByPlayerUuid(playerUuid);
 
-        ReferenceCurrency currency = referenceCurrencyCacheService.getById(request.getCurrencyId())
-                .orElseThrow(() -> new IllegalArgumentException("Currency with ID %d not found".formatted(request.getCurrencyId())));
+        if (foundPlayerAccount.isPresent()) {
+            log.error("Player {} account is already initialized", playerUuid);
+            return;
+        }
 
-        PlayerAccount playerAccount = playerAccountRepository.findById(request.getPlayerId()).orElseThrow(
-                () -> new ObjectNotFoundException("Player %d account is not found".formatted(request.getPlayerId())));
+        List<PlayerAccountItem> inventoryItems = initialPlayerAccountItemRepository.findAllByEnabledIsTrue().stream()
+                .map(initialItem -> playerAccountItemMapper.toEntity(initialItem, playerUuid))
+                .toList();
 
-        PlayerAccountItem playerAccountItem = playerAccountItemRepository.findByPlayerIdAndCurrencyId(playerAccount.getPlayerId(), currency.getId())
-                .orElse(playerAccountItemMapper.toEntityWithZeroAmount(currency, playerAccount.getPlayerId()));
+        PlayerAccount playerAccount = new PlayerAccount();
+        playerAccount.setPlayerUuid(playerUuid);
+        playerAccountRepository.save(playerAccount);
 
-        playerAccountItem.setCurrencyAmount(playerAccountItem.getCurrencyAmount() + request.getAmount());
-        playerAccountItem = playerAccountItemRepository.save(playerAccountItem);
-
-        return playerAccountItemMapper.toResponse(playerAccountItem);
+        playerAccountItemRepository.saveAll(inventoryItems);
     }
 
     @Override
-    public PlayerAccountItemInfo takeAwayCurrency(PlayerCurrencyOperationRequest request) {
-        validateCurrencyAmountPositivity(request);
+    public void setPlayerAccountEmailBySystemEvent(UUID playerUuid, String email) {
+        Optional<PlayerAccount> foundPlayerAccount = playerAccountRepository.findByPlayerUuid(playerUuid);
 
-        ReferenceCurrency currency = referenceCurrencyCacheService.getById(request.getCurrencyId())
-                .orElseThrow(() -> new IllegalArgumentException("Currency with ID %d not found".formatted(request.getCurrencyId())));
-
-        PlayerAccount playerAccount = playerAccountRepository.findById(request.getPlayerId()).orElseThrow(
-                () -> new ObjectNotFoundException("Player %d account is not found".formatted(request.getPlayerId())));
-
-        PlayerAccountItem playerAccountItem = playerAccountItemRepository.findByPlayerIdAndCurrencyId(playerAccount.getPlayerId(), currency.getId())
-                .orElse(playerAccountItemMapper.toEntityWithZeroAmount(currency, playerAccount.getPlayerId()));
-
-        if (playerAccountItem.getCurrencyAmount() < request.getAmount()) {
-            throw new InvalidRequestException("Insufficient amount of currency");
+        if (foundPlayerAccount.isEmpty()) {
+            log.error("Player {} not found", playerUuid);
+            return;
         }
 
-        playerAccountItem.setCurrencyAmount(playerAccountItem.getCurrencyAmount() - request.getAmount());
-        playerAccountItem = playerAccountItemRepository.save(playerAccountItem);
-
-        return playerAccountItemMapper.toResponse(playerAccountItem);
+        PlayerAccount playerAccount = foundPlayerAccount.get();
+        playerAccount.setEmail(email);
+        playerAccountRepository.save(playerAccount);
     }
 
     @Override
-    public void performCurrencyWriteOff(PlayerAccount playerAccount, ReferenceCurrency currency, int price) {
-        if (price < 0) {
-            throw new InvalidRequestException("Price cannot be negative");
-        }
+    @Transactional
+    public PlayerAccountItem giveCurrency(@Valid @NotNull PlayerCurrencyOperationCommand command) {
+        PlayerAccount playerAccount = getPlayerAccount(command.getPlayerUuid());
+        ReferenceCurrency currency = getReferenceCurrency(command);
 
-        PlayerAccountItem playerAccountItem = playerAccountItemRepository.findByPlayerIdAndCurrencyId(playerAccount.getPlayerId(), currency.getId())
-                .orElse(playerAccountItemMapper.toEntityWithZeroAmount(currency, playerAccount.getPlayerId()));
+        PlayerAccountItem playerAccountItem = playerAccountItemRepository.findByPlayerUuidAndCurrencyId(playerAccount.getPlayerUuid(), currency.getId())
+                .orElse(playerAccountItemMapper.toEntityWithZeroAmount(playerAccount.getPlayerUuid(), currency.getId()));
 
-        if (playerAccountItem.getCurrencyAmount() < price) {
+        playerAccountItem.setAmount(playerAccountItem.getAmount() + command.getAmount());
+
+        return playerAccountItemRepository.save(playerAccountItem);
+    }
+
+    @Override
+    @Transactional
+    public PlayerAccountItem takeAwayCurrency(@Valid @NotNull PlayerCurrencyOperationCommand command) {
+        PlayerAccount playerAccount = getPlayerAccount(command.getPlayerUuid());
+        ReferenceCurrency currency = getReferenceCurrency(command);
+
+        PlayerAccountItem playerAccountItem = playerAccountItemRepository.findByPlayerUuidAndCurrencyId(playerAccount.getPlayerUuid(), currency.getId())
+                .orElseThrow(() -> new InvalidRequestException("Insufficient amount of currency"));
+
+        if (playerAccountItem.getAmount() < command.getAmount()) {
             throw new InvalidRequestException("Insufficient amount of currency");
         }
 
-        playerAccountItem.setCurrencyAmount(playerAccountItem.getCurrencyAmount() - price);
+        playerAccountItem.setAmount(playerAccountItem.getAmount() - command.getAmount());
+
+        return playerAccountItemRepository.save(playerAccountItem);
+    }
+
+    @Override
+    @Transactional
+    public void performCurrencyWriteOff(@Valid @NotNull PlayerCurrencyOperationCommand command) {
+        PlayerAccount playerAccount = getPlayerAccount(command.getPlayerUuid());
+        ReferenceCurrency currency = getReferenceCurrency(command);
+
+        if (!currency.isEnabled()) {
+            throw new InvalidRequestException("Currency is disabled");
+        }
+
+        PlayerAccountItem playerAccountItem = playerAccountItemRepository.findByPlayerUuidAndCurrencyId(playerAccount.getPlayerUuid(), currency.getId())
+                .orElseThrow(() -> new InvalidRequestException("Insufficient amount of currency"));
+
+        if (playerAccountItem.getAmount() < command.getAmount()) {
+            throw new InvalidRequestException("Insufficient amount of currency");
+        }
+
+        playerAccountItem.setAmount(playerAccountItem.getAmount() - command.getAmount());
+
         playerAccountItemRepository.save(playerAccountItem);
     }
 
-    private static void validateCurrencyAmountPositivity(PlayerCurrencyOperationRequest request) {
-        if (request.getAmount() <= 0) {
-            throw new InvalidRequestException("Amount must be greater than zero");
-        }
+    private PlayerAccount getPlayerAccount(UUID playerUuid) {
+        return playerAccountRepository.findByPlayerUuid(playerUuid).orElseThrow(
+                () -> new ObjectNotFoundException("Player %s account is not found".formatted(playerUuid)));
     }
 
-    private Specification<PlayerAccountItem> getSpecification(GetPlayerAccountRequest request) {
-        return Specification.allOf(
-                PlayerAccountItemSpecifications.byPlayerId(request.getPlayerId()),
-                PlayerAccountItemSpecifications.byPositiveAmount()
-        );
+    private ReferenceCurrency getReferenceCurrency(PlayerCurrencyOperationCommand command) {
+        return referenceCurrencyCacheService.getById(command.getCurrencyId())
+                .orElseThrow(() -> new IllegalArgumentException("Currency with ID %d not found".formatted(command.getCurrencyId())));
+    }
+
+    private Specification<PlayerAccountItem> getSpecification(UUID playerUuid, boolean onlyEnabledCurrencies) {
+        List<Specification<PlayerAccountItem>> specifications = new ArrayList<>();
+
+        specifications.add(PlayerAccountItemSpecifications.byPlayerUuid(playerUuid));
+        specifications.add(PlayerAccountItemSpecifications.byPositiveAmount());
+
+        if (onlyEnabledCurrencies) {
+            specifications.add(PlayerAccountItemSpecifications.byEnabledCurrency());
+        }
+
+        return Specification.allOf(specifications);
     }
 }

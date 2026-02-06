@@ -4,15 +4,7 @@
   "namespace": "ru.otus.courses.java.advanced.shooter.server.payment.outbox",
   "fields": [
     {
-      "name": "id",
-      "type": {
-        "type": "int",
-        "connect.default": 0
-      },
-      "default": 0
-    },
-    {
-      "name": "message_uuid",
+      "name": "uuid",
       "type": {
         "type": "string",
         "connect.version": 1,
@@ -58,6 +50,14 @@
     {
       "name": "status",
       "type": "int"
+    },
+    {
+      "name": "player_uuid",
+      "type": {
+        "type": "string",
+        "connect.version": 1,
+        "connect.name": "io.debezium.data.Uuid"
+      }
     }
   ],
   "connect.name": "ru.otus.courses.java.advanced.shooter.server.payment.outbox.ProcessedPaymentMessage"

@@ -1,122 +1,125 @@
 package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service.impl;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.InvalidRequestException;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
-import ru.otus.courses.java.advanced.shooter.server.common.utils.validation.ValidationUtils;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.PlayerCurrencyOperationCommand;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.ProductTradeFilterParams;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.cache.base.ProductCacheService;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.PlayerAccount;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.Product;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.ProductTrade;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.enumeration.ProductTradeStatus;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.PaginationInfoMapper;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.ProductEquipmentTypeMapper;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.ProductTradeMapper;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.ProductTradeStatusMapper;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.outbox.ProductTradeIssueRequiredMessage;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.domain.ProductTradeIssueRequiredMessageMapper;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.domain.ProductTradeMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.PlayerAccountRepository;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.ProductTradeIssueRequiredMessageRepository;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.ProductTradeRepository;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service.PlayerAccountService;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service.ProductTradeService;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.specification.ProductTradeSpecifications;
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.*;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.util.TransactionExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+@Slf4j
 @Service
+@Validated
 @RequiredArgsConstructor
 public class ProductTradeServiceImpl implements ProductTradeService {
-    private final PaginationInfoMapper paginationInfoMapper;
 
     private final ProductCacheService productCacheService;
-
+    private final PlayerAccountService playerAccountService;
     private final ProductTradeRepository productTradeRepository;
-
     private final PlayerAccountRepository playerAccountRepository;
-
     private final ProductTradeMapper productTradeMapper;
-
-    private final ProductEquipmentTypeMapper productEquipmentTypeMapper;
-
-    private final ProductTradeStatusMapper productTradeStatusMapper;
-
-    private static final Sort DEFAULT_SORT = Sort.by(Sort.Direction.ASC, ProductTrade.Fields.id);
+    private final ProductTradeIssueRequiredMessageMapper productTradeIssueRequiredMessageMapper;
+    private final ProductTradeIssueRequiredMessageRepository productTradeIssueRequiredMessageRepository;
+    private final TransactionExecutor transactionExecutor;
 
     @Override
-    public ProductTradeInfo createProductTrade(CreateProductTradeRequest request) {
-        Product product = productCacheService.getById(request.getProductId())
+    public ProductTrade createProductTrade(@NotNull UUID playerUuid, int productId) {
+        Product product = productCacheService.getById(productId)
                 .filter(Product::isEnabled)
-                .orElseThrow(() -> new ObjectNotFoundException("Enabled product with id %d not found".formatted(request.getProductId())));
+                .orElseThrow(() -> new ObjectNotFoundException("Enabled product with id %d not found"
+                        .formatted(productId)));
 
         if (product.getEquipment() == null || !product.getEquipment().isEnabled()) {
-            throw new InvalidRequestException("Product equipment is not enabled");
+            throw new InvalidRequestException("Product equipment is not found or not enabled");
         }
 
-        PlayerAccount playerAccount = playerAccountRepository.findByPlayerId(request.getPlayerId())
-                .orElseThrow(() -> new ObjectNotFoundException("Player with id %d not found".formatted(request.getPlayerId())));
+        if (product.getPriceCurrency() == null || !product.getPriceCurrency().isEnabled()) {
+            throw new InvalidRequestException("Product price currency is not found or not enabled");
+        }
 
-        ProductTrade productTrade = productTradeMapper.toEntity(playerAccount.getPlayerId(), product);
-        productTrade = productTradeRepository.save(productTrade);
+        PlayerAccount playerAccount = playerAccountRepository.findByPlayerUuid(playerUuid)
+                .orElseThrow(() -> new ObjectNotFoundException("Player with uuid %s not found".formatted(playerUuid)));
 
-        return productTradeMapper.toResponse(productTrade);
+        ProductTrade productTrade = productTradeMapper.toEntity(playerAccount.getPlayerUuid(), product);
+
+        ProductTradeIssueRequiredMessage productTradeIssueRequiredMessage = productTradeIssueRequiredMessageMapper.toMessage(productTrade);
+
+        return transactionExecutor.execute(() -> {
+            playerAccountService.performCurrencyWriteOff(
+                    PlayerCurrencyOperationCommand.builder()
+                            .playerUuid(playerAccount.getPlayerUuid())
+                            .amount(product.getPrice())
+                            .currencyId(product.getPriceCurrency().getId())
+                            .build()
+            );
+
+            productTradeIssueRequiredMessageRepository.save(productTradeIssueRequiredMessage);
+
+            return productTradeRepository.save(productTrade);
+        });
     }
 
     @Override
-    public ProductTradeInfo getProductTrade(GetProductTradeRequest request) {
-        return productTradeRepository.findByIdAndPlayerId(request.getTradeId(), request.getPlayerId())
-                .map(productTradeMapper::toResponse)
-                .orElseThrow(() -> new ObjectNotFoundException("Product trade with id '%d' and player id '%d' not found".formatted(request.getTradeId(), request.getPlayerId())));
+    public ProductTrade getProductTrade(@NotNull UUID playerUuid, @NotNull UUID tradeUuid) {
+        return productTradeRepository.findByPlayerUuidAndUuid(playerUuid, tradeUuid)
+                .orElseThrow(() -> new ObjectNotFoundException(
+                        "Product trade with uuid '%s' and player uuid '%s' not found".formatted(tradeUuid, playerUuid))
+                );
     }
 
     @Override
-    public ProductTradeInfoListPage getProductTrades(GetProductTradesRequest request) {
-        if (request.hasPaginationRequest()) {
-            ValidationUtils.validatePaginationRequest(request.getPaginationRequest());
-        }
-
-        Specification<ProductTrade> specification = getSpecification(request.getFilter());
-        Pageable pageable = request.hasPaginationRequest() ?
-                PageRequest.of(request.getPaginationRequest().getPage(), request.getPaginationRequest().getCount(), DEFAULT_SORT) :
-                PageRequest.of(0, 10, DEFAULT_SORT);
-
-        Page<ProductTrade> data = productTradeRepository.findAll(specification, pageable);
-
-        return ProductTradeInfoListPage.newBuilder()
-                .addAllData(data.map(productTradeMapper::toResponse))
-                .setPaginationInfo(paginationInfoMapper.toResponse(data))
-                .build();
+    public Page<ProductTrade> getProductTrades(@NotNull @Valid ProductTradeFilterParams filterParams,
+                                               @NotNull Pageable pageable
+    ) {
+        Specification<ProductTrade> specification = getSpecification(filterParams);
+        return productTradeRepository.findAll(specification, pageable);
     }
 
-    private Specification<ProductTrade> getSpecification(GetProductTradesRequest.Filter filter) {
+    private Specification<ProductTrade> getSpecification(ProductTradeFilterParams filter) {
         List<Specification<ProductTrade>> specifications = new ArrayList<>();
 
-        if (filter.hasPlayerId()) {
-            specifications.add(ProductTradeSpecifications.byPlayerId(filter.getPlayerId()));
+        if (filter.getPlayerUuid() != null) {
+            specifications.add(ProductTradeSpecifications.byPlayerUuid(filter.getPlayerUuid()));
         }
 
-        if (filter.getTradeIdsCount() > 0) {
-            specifications.add(ProductTradeSpecifications.byIds(filter.getTradeIdsList()));
+        if (!filter.getProductIds().isEmpty()) {
+            specifications.add(ProductTradeSpecifications.byProductIds(filter.getProductIds()));
         }
 
-        if (filter.getProductIdsCount() > 0) {
-            specifications.add(ProductTradeSpecifications.byProductIds(filter.getProductIdsList()));
-        }
-
-        if (filter.hasEquipmentType() && filter.getEquipmentIdsCount() > 0) {
+        if (filter.getEquipmentType() != null && !filter.getEquipmentIds().isEmpty()) {
             specifications.add(ProductTradeSpecifications.byEquipmentTypeAndEquipmentIds(
-                    productEquipmentTypeMapper.toEntity(filter.getEquipmentType()),
-                    filter.getEquipmentIdsList())
-            );
+                    filter.getEquipmentType(),
+                    filter.getEquipmentIds()
+            ));
         }
 
-        if (filter.getStatusesCount() > 0) {
-            List<ProductTradeStatus> statues = productTradeStatusMapper.toEntityList(filter.getStatusesList());
-            specifications.add(ProductTradeSpecifications.byStatuses(statues));
+        if (!filter.getStatuses().isEmpty()) {
+            specifications.add(ProductTradeSpecifications.byStatuses(filter.getStatuses()));
         }
 
         return Specification.allOf(specifications);

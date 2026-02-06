@@ -10,14 +10,15 @@ spring:
   jpa:
     hibernate:
       ddl-auto: none
-    show-sql: false
+    show-sql: true
     properties:
       hibernate:
         jdbc:
           batch_size: 100
-          order_inserts: true
-          order_updates: true
           fetch_size: 400
+        order_inserts: true
+        order_updates: true
+        default_batch_fetch_size: 100
         generate_statistics: false
         format_sql: true
         default_schema: public
@@ -33,15 +34,24 @@ spring:
     consumer:
       key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      enable-auto-commit: false
       properties:
         schema.registry.url: http://localhost:8081
         specific.avro.reader: true
+        max.poll.records: 200
+        fetch.max.wait.ms: 500
+        fetch.min.bytes: 1
+        max.poll.interval.ms: 300000
+        session.timeout.ms: 15000
+        heartbeat.interval.ms: 5000
+      auto-offset-reset: earliest
     producer:
       key-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
       value-serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
       properties:
         schema.registry.url: http://localhost:8081
     listener:
+      type: single
       ack-mode: record
 
 grpc:
@@ -52,11 +62,27 @@ grpc:
 payment-stub-grpc:
   host: localhost
   port: 6568
-  deadline-ms: 2000
+  deadline-ms: 20000
+
+equipment-kafka:
+  topics: db.equipment.public.ammunition,db.equipment.public.attachment,db.equipment.public.grenade,db.equipment.public.gun
+  group-id: market-equipment-consumer-test-2
+
+currency-kafka:
+  topic: db.equipment.public.currency
+  group-id: market-equipment-currency-consumer-test-2
+
+players-kafka:
+  topic: db.public.player
+  group-id: market-player-message-consumer-test-6
 
 payment-kafka:
-  topic: db.payment.public.payment_processed_message_outbox
-  group-id: market-payment-processed-message-consumer-test-3
+  topic: db.payment.public.payment_processed_message_outbox_v2
+  group-id: market-payment-processed-message-consumer-test-6
+
+inventory-product-trade-issuance-performed-kafka:
+  topic: db.inventory.public.product_trade_issuance_performed_message_outbox
+  group-id: inventory-product-trade-issuance-performed-message-consumer-test-1
 
 # TODO SET NORMAL
 reference-data-caching:

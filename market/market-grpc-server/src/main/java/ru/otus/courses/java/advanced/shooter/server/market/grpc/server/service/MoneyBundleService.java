@@ -1,15 +1,28 @@
 package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service;
 
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.money.bundle.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.MoneyBundleFilterParams;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.MoneyBundleSavedData;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.MoneyBundle;
 
 public interface MoneyBundleService {
-    MoneyBundleInfo getMoneyBundle(GetMoneyBundleRequest request);
+    MoneyBundle getMoneyBundle(int id);
 
-    MoneyBundleInfoListPage getMoneyBundles(GetMoneyBundlesRequest request);
+    MoneyBundle getEnabledMoneyBundle(int id);
 
-    MoneyBundleInfo createMoneyBundle(CreateMoneyBundleRequest request);
+    MoneyBundle createMoneyBundle(@Valid @NotNull MoneyBundleSavedData data);
 
-    MoneyBundleInfo updateMoneyBundle(UpdateMoneyBundleRequest request);
+    MoneyBundle updateMoneyBundle(
+            int id,
+            int currentVersion,
+            @Valid @NotNull MoneyBundleSavedData data
+    );
 
-    MoneyBundleInfo getEnabledMoneyBundle(GetMoneyBundleRequest request);
+    Page<MoneyBundle> getMoneyBundles(
+            @NotNull MoneyBundleFilterParams filterParams,
+            @NotNull Pageable pageable
+    );
 }

@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.InitialPlayerAccountItem;
 
+import java.util.List;
+
 @Repository
 public interface InitialPlayerAccountItemRepository extends JpaRepository<InitialPlayerAccountItem, Integer>, JpaSpecificationExecutor<InitialPlayerAccountItem> {
+    List<InitialPlayerAccountItem> findAllByEnabledIsTrue();
 }

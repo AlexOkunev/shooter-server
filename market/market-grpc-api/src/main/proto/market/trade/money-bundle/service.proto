@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.money.bundle;
+
+option java_multiple_files = true;
+
+import "market/trade/money-bundle/datatypes.proto";
+
+service MoneyBundleTradeServiceAPI {
+  rpc CreateMoneyBundleTrade(CreateMoneyBundleTradeRequest) returns (MoneyBundleTradeInfo);
+  rpc PerformMoneyBundleTradePayment(PerformMoneyBundleTradePaymentRequest) returns (MoneyBundleTradeInfo);
+  rpc GetMoneyBundleTrade(GetMoneyBundleTradeRequest) returns (MoneyBundleTradeInfo);
+  rpc GetMoneyBundleTrades(GetMoneyBundleTradesRequest) returns (MoneyBundleTradeInfoListPage);
+}

@@ -1,0 +1,16 @@
+{
+	"type": "record",
+	"name": "ProductTradeIssuancePerformedMessageKey",
+	"namespace": "ru.otus.courses.java.advanced.shooter.server.inventory.outbox",
+	"fields": [
+		{
+			"name": "message_uuid",
+			"type": {
+				"type": "string",
+				"connect.version": 1,
+				"connect.name": "io.debezium.data.Uuid"
+			}
+		}
+	],
+	"connect.name": "ru.otus.courses.java.advanced.shooter.server.inventory.outbox.ProductTradeIssuancePerformedMessageKey"
+}

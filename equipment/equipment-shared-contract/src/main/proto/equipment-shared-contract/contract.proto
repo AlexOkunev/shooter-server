@@ -4,9 +4,8 @@ package ru.otus.courses.java.advanced.shooter.server.equipment.contract;
 
 option java_multiple_files = true;
 
-//TODO!!! maybe not needed. maybe delete all module
 enum EquipmentType {
-  EQUIPMENT_TYPE_UNSPECIFIED = 0; //TODO!!! maybe not needed remove
+  EQUIPMENT_TYPE_UNSPECIFIED = 0;
   GUN = 1;
   GRENADE = 2;
   ATTACHMENT = 3;

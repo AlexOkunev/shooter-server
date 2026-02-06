@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.product;
+
+option java_multiple_files = true;
+
+import "market/trade/product/datatypes.proto";
+
+service ProductTradeServiceAPI {
+  rpc CreateProductTrade(CreateProductTradeRequest) returns (ProductTradeInfo);
+  rpc GetProductTrade(GetProductTradeRequest) returns (ProductTradeInfo);
+  rpc GetProductTrades(GetProductTradesRequest) returns (ProductTradeInfoListPage);
+}

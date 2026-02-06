@@ -36,3 +36,5 @@ public class PaymentStubGrpcClientConfig {
                 .withDeadline(Deadline.after(paymentStubGrpcProperties.getDeadlineMs(), TimeUnit.MILLISECONDS));
     }
 }
+
+//TODO use retry 3 attempts, with bucket. add circuit breaker

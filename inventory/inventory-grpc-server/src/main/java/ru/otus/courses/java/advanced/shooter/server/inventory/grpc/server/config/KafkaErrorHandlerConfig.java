@@ -27,13 +27,16 @@ public class KafkaErrorHandlerConfig {
                         kafkaTemplate,
                         (record, ex) -> new TopicPartition(record.topic() + ".DLT", record.partition())
                 ),
-                new FixedBackOff(1000L, 3L));
+                new FixedBackOff(1000L, 3L)
+        );
 
         errorHandler.addNotRetryableExceptions(ValidationException.class, IllegalArgumentException.class);
 
-        errorHandler.setRetryListeners((record, ex, attemptNumber) ->
-                log.warn("Retry attempt {} for topic {} record key {} value {}. Cause: {}",
-                        attemptNumber, record.topic(), record.key(), record.value(), ex.getMessage()));
+        errorHandler.setRetryListeners((record, ex, attempt) ->
+                log.error("Retry {} topic={} partition={} offset={} key={} ex={} msg={}",
+                        attempt, record.topic(), record.partition(), record.offset(), record.key(),
+                        ex.getClass().getSimpleName(), ex.getMessage(), ex)
+        );
 
         return errorHandler;
     }

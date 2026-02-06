@@ -36,7 +36,8 @@ public class ProductCacheServiceImpl extends CacheableDataCacheServiceImplBase<I
     @Override
     protected CacheableDataPage<Product> loadReferenceDataPage(int page, int size) {
         log.debug("Load products from page {} size {}", page, size);
+        //TODO смотреть какие будут запросы связанных сущностей, мб нужен entity graph как в equipment
         Page<Product> dataPage = productRepository.findAll(PageRequest.of(page, size));
         return new CacheableDataPage<>(dataPage.getContent(), dataPage.getNumber(), dataPage.getTotalPages());
-    }
+    } //TODO мб во всех кешах использовать инкрементную загрузку
 }

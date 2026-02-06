@@ -1,15 +1,13 @@
 package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.PlayerAccountItem;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.PlayerAccountItemId;
 
 import java.util.Optional;
+import java.util.UUID;
 
-public interface PlayerAccountItemRepository extends JpaRepository<PlayerAccountItem, Integer>, JpaSpecificationExecutor<PlayerAccountItem> {
-    Page<PlayerAccountItem> findByPlayerId(int playerId, Pageable pageable);
-
-    Optional<PlayerAccountItem> findByPlayerIdAndCurrencyId(int playerId, int currencyId);
+public interface PlayerAccountItemRepository extends JpaRepository<PlayerAccountItem, PlayerAccountItemId>, JpaSpecificationExecutor<PlayerAccountItem> {
+    Optional<PlayerAccountItem> findByPlayerUuidAndCurrencyId(UUID playerUuid, int currencyId);
 }

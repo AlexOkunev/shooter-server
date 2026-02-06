@@ -24,5 +24,5 @@ public class ReferenceCurrency implements CacheableData<Integer> {
     private String name;
 
     @Column(name = "can_be_bought")
-    private boolean canBeTraded;
+    private boolean canBeBought;
 }

@@ -3,42 +3,37 @@ package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.specific
 import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.ProductTrade;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.ReferenceEquipmentId;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.enumeration.ProductEquipmentType;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.enumeration.ProductTradeStatus;
 
-import java.util.stream.StreamSupport;
+import java.util.UUID;
 
 @UtilityClass
 public class ProductTradeSpecifications {
-    public static Specification<ProductTrade> byIds(Iterable<Integer> ids) {
-        return (root, query, builder) ->
-                builder.in(root.get(ProductTrade.Fields.id)).value(ids);
-    }
 
-    public static Specification<ProductTrade> byPlayerId(Integer playerId) {
+    public static Specification<ProductTrade> byPlayerUuid(UUID playerUuid) {
         return (root, query, builder) ->
-                builder.equal(root.get(ProductTrade.Fields.playerId), playerId);
+                builder.equal(root.get(ProductTrade.Fields.playerUuid), playerUuid);
     }
 
     public static Specification<ProductTrade> byEquipmentTypeAndEquipmentIds(ProductEquipmentType equipmentType, Iterable<Integer> equipmentIds) {
         return (root, query, builder) ->
                 builder.and(
-                        builder.equal(root.get(ProductTrade.Fields.productEquipmentType), equipmentType.getCode()),
-                        builder.in(root.get(ProductTrade.Fields.productEquipmentId)).value(equipmentIds)
+                        builder.equal(root.get(ProductTrade.Fields.productEquipment)
+                                .get(ReferenceEquipmentId.Fields.equipmentType), equipmentType),
+                        builder.in(root.get(ProductTrade.Fields.productEquipment)
+                                .get(ReferenceEquipmentId.Fields.equipmentId)).value(equipmentIds)
                 );
     }
 
     public static Specification<ProductTrade> byProductIds(Iterable<Integer> productIds) {
         return (root, query, builder) ->
-                builder.in(root.join(ProductTrade.Fields.productId)).value(productIds);
+                builder.in(root.get(ProductTrade.Fields.productId)).value(productIds);
     }
 
     public static Specification<ProductTrade> byStatuses(Iterable<ProductTradeStatus> statuses) {
-        Iterable<Integer> statusCodes = StreamSupport.stream(statuses.spliterator(), false)
-                .map(ProductTradeStatus::getCode)
-                .toList();
-
         return (root, query, builder) ->
-                builder.in(root.join(ProductTrade.Fields.status)).value(statusCodes);
+                builder.in(root.get(ProductTrade.Fields.status)).value(statuses);
     }
 }

@@ -4,10 +4,8 @@ package ru.otus.courses.java.advanced.shooter.server.payment.protobuf;
 
 option java_multiple_files = true;
 
-import "common/common.proto";
-
 message CreatePaymentRequest {
-  int32 player_id = 1;
+  string player_uuid = 1;
   string player_email = 2;
   string trade_uuid = 3;
   int32 rubles_amount = 4;

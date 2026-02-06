@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.money.bundle;
+
+option java_multiple_files = true;
+
+import "common/common.proto";
+
+enum MoneyBundleTradeStatus {
+  MONEY_BUNDLE_TRADE_STATUS_UNSPECIFIED = 0;
+  CREATED = 1;
+  PAYMENT_PENDING = 2;
+  PAYMENT_WAIT = 3;
+  SUCCEEDED = 4;
+  FAILED = 5;
+}
+
+message MoneyBundleTradeInfo {
+  string player_uuid = 1;
+  string uuid = 2;
+  int32 money_bundle_id = 3;
+  int32 currency_id = 4;
+  int32 currency_amount = 5;
+  int32 rubles_price = 6;
+  int64 created_timestamp = 7;
+  int64 updated_timestamp = 8;
+  MoneyBundleTradeStatus status = 9;
+  optional PaymentInfo payment_info = 10;
+
+  message PaymentInfo {
+    string payment_session = 1;
+    string public_token = 2;
+    string uuid = 3;
+    int64 start_timestamp = 4;
+    optional int64 finish_timestamp = 5;
+  }
+}
+
+message CreateMoneyBundleTradeRequest {
+  string player_uuid = 1;
+  int32 money_bundle_id = 2;
+}
+
+message PerformMoneyBundleTradePaymentRequest {
+  string player_uuid = 1;
+  string trade_uuid = 2;
+}
+
+message MoneyBundleTradeInfoListPage {
+  repeated MoneyBundleTradeInfo data = 1;
+  common.protobuf.PaginationInfo pagination_info = 2;
+}
+
+message GetMoneyBundleTradeRequest {
+  string player_uuid = 1;
+  string trade_uuid = 2;
+}
+
+message GetMoneyBundleTradesRequest {
+  string player_uuid = 1;
+  optional common.protobuf.PaginationRequest pagination_request = 2;
+  optional Filter filter = 3;
+
+  message Filter {
+    repeated int32 currency_ids = 1;
+    repeated MoneyBundleTradeStatus statuses = 2;
+  }
+}

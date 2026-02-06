@@ -17,6 +17,8 @@ public class KafkaListenerConfig {
 
     public static final String SINGLE_THREAD_PLAYERS_KAFKA_LISTENER_CONTAINER_FACTORY = "singleThreadPlayersKafkaListenerContainerFactory";
 
+    public static final String MULTI_THREAD_PRODUCT_ISSUE_REQUIRED_KAFKA_LISTENER_CONTAINER_FACTORY = "multiThreadProductIssueRequiredKafkaListenerContainerFactory";
+
     @Bean(name = SINGLE_THREAD_EQUIPMENT_KAFKA_LISTENER_CONTAINER_FACTORY)
     public ConcurrentKafkaListenerContainerFactory<Object, Object> singleThreadEquipmentKafkaListenerContainerFactory(
             ConsumerFactory<Object, Object> consumerFactory,
@@ -38,6 +40,19 @@ public class KafkaListenerConfig {
         ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory);
         factory.setConcurrency(1);
+        factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
+        factory.setCommonErrorHandler(errorHandler);
+        return factory;
+    }
+
+    @Bean(name = MULTI_THREAD_PRODUCT_ISSUE_REQUIRED_KAFKA_LISTENER_CONTAINER_FACTORY)
+    public ConcurrentKafkaListenerContainerFactory<Object, Object> multiThreadProductIssueRequiredKafkaListenerContainerFactory(
+            ConsumerFactory<Object, Object> consumerFactory,
+            @Qualifier(KafkaErrorHandlerConfig.KAFKA_ERROR_HANDLER) DefaultErrorHandler errorHandler
+    ) {
+        ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(consumerFactory);
+        factory.setConcurrency(3); //TODO value from config. increas partitions number. create everything from scratch
         factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.RECORD);
         factory.setCommonErrorHandler(errorHandler);
         return factory;

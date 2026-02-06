@@ -17,23 +17,20 @@ import java.util.Random;
 @Slf4j
 @Component
 public class PaymentResultSendJob implements Runnable {
+
     private final PaymentRepository paymentRepository;
-
     private final PaymentService paymentService;
-
-    private final PaymentProcessingProperties paymentProcessingProperties;
-
     private final Pageable pageable;
-
     private final Random random;
+    private final int failureRate;
 
     public PaymentResultSendJob(PaymentRepository paymentRepository, PaymentService paymentService,
                                 PaymentProcessingProperties paymentProcessingProperties) {
         this.paymentRepository = paymentRepository;
         this.paymentService = paymentService;
-        this.paymentProcessingProperties = paymentProcessingProperties;
         this.pageable = PageRequest.of(0, paymentProcessingProperties.getBatchSize());
-        random = new Random();
+        this.random = new Random();
+        this.failureRate = paymentProcessingProperties.getFailureRate();
     }
 
     @Override
@@ -41,15 +38,24 @@ public class PaymentResultSendJob implements Runnable {
         Page<Payment> payments;
 
         do {
-            payments = paymentRepository.findAllByProcessingFinishedTimestampBeforeAndStatus(ZonedDateTime.now(),
-                    PaymentStatus.PROCESSING, pageable);
-            log.info("Processing payments. Count: {}", payments.getNumberOfElements());
+            payments = paymentRepository.findAllByProcessingFinishedTimestampBeforeAndStatus(
+                    ZonedDateTime.now(),
+                    PaymentStatus.PROCESSING,
+                    pageable
+            );
+
+            if (!payments.getContent().isEmpty()) {
+                log.info("Processing payments. Count: {}", payments.getNumberOfElements());
+            }
 
             for (Payment payment : payments) {
                 try {
-                    PaymentStatus paymentStatus = random.nextInt(100) < paymentProcessingProperties.getFailureRate() ?
-                            PaymentStatus.FAILED : PaymentStatus.SUCCEEDED;
-                    paymentService.processPaymentResult(payment, paymentStatus);
+                    paymentService.processPaymentResult(
+                            payment,
+                            random.nextInt(100) < failureRate
+                                    ? PaymentStatus.FAILED
+                                    : PaymentStatus.SUCCEEDED
+                    );
                 } catch (RuntimeException e) {
                     log.error("Payment processing failed. UUID: {}", payment.getPaymentUuid(), e);
                 }

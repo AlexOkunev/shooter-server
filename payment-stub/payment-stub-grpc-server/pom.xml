@@ -21,12 +21,18 @@
         <mapstruct.version>1.6.3</mapstruct.version>
         <lombok.mapstruct.binding.version>0.2.0</lombok.mapstruct.binding.version>
         <commons.collections.version>4.4</commons.collections.version>
+        <mapstruct.spi.firehead.version>1.1.0</mapstruct.spi.firehead.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
             <artifactId>common-utils</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+            <artifactId>common-mapping-starter</artifactId>
         </dependency>
 
         <dependency>
@@ -172,6 +178,11 @@
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok-mapstruct-binding</artifactId>
                             <version>${lombok.mapstruct.binding.version}</version>
+                        </path>
+                        <path>
+                            <groupId>de.firehead</groupId>
+                            <artifactId>mapstruct-spi-protobuf</artifactId>
+                            <version>${mapstruct.spi.firehead.version}</version>
                         </path>
                     </annotationProcessorPaths>
                 </configuration>

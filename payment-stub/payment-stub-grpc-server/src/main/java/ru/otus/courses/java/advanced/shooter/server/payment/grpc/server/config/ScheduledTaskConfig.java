@@ -13,8 +13,8 @@ import java.time.Duration;
 @Configuration
 @RequiredArgsConstructor
 public class ScheduledTaskConfig implements SchedulingConfigurer {
-    private final PaymentResultSendJob paymentResultSendJob;
 
+    private final PaymentResultSendJob paymentResultSendJob;
     private final PaymentProcessingProperties paymentProcessingProperties;
 
     @Override

@@ -19,7 +19,7 @@ public class PaymentProcessingProperties {
     private final int paymentSystemResponseDelayMsMax = 300;
 
     @Positive
-    private final int processingTimeMsMax = 10_000;
+    private final int processingTimeMsMax = 2_000;
 
     @Positive
     private final int batchSize = 20;
