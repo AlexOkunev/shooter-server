@@ -10,6 +10,7 @@ import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.Pr
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.enumeration.ProductTradeStatus;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.ProcessedExternalMessageRepository;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.ProductTradeRepository;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service.PlayerAccountService;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service.ProductTradeProcessingService;
 
 import java.time.ZoneOffset;
@@ -23,6 +24,7 @@ public class ProductTradeProcessingServiceImpl implements ProductTradeProcessing
 
     private final ProductTradeRepository productTradeRepository;
     private final ProcessedExternalMessageRepository processedExternalMessageRepository;
+    private final PlayerAccountService playerAccountService;
 
     @Override
     @Transactional
@@ -44,10 +46,17 @@ public class ProductTradeProcessingServiceImpl implements ProductTradeProcessing
                         .formatted(message.getPlayerUuid(), message.getTradeUuid())
                 ));
 
-        if(productTrade.getStatus() == ProductTradeStatus.SUCCEEDED) {
-            log.error("Trade {} is already in status {}", productTrade.getUuid(), productTrade.getStatus());
+        if(productTrade.getStatus() == ProductTradeStatus.SUCCEEDED || productTrade.getStatus() == ProductTradeStatus.FAILED) {
+            log.error("Trade {} is already in status {}. Message.success is {}", productTrade.getUuid(), productTrade.getStatus(), message.getSuccess());
             ProcessedExternalMessage processedExternalMessage = saveProcessedExternalMessage(message, messageUuid);
             log.info("Save processed external message: {}", processedExternalMessage.getMessageUUID());
+            return;
+        }
+
+        if(!message.getSuccess()) {
+            log.info("Product issuance fail processing. Message {} player {} trade {}. Refund", messageUuid, message.getPlayerUuid(), message.getTradeUuid());
+            playerAccountService.refundMoneyForProductTrade(productTrade);
+            log.info("Product issuance fail processing. Message {} player {} trade {}. Refund completed successfully", messageUuid, message.getPlayerUuid(), message.getTradeUuid());
         }
 
         productTrade.setUpdatedTimestamp(ZonedDateTime.now(ZoneOffset.UTC));

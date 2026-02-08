@@ -17,6 +17,7 @@ import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.Play
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.cache.base.ReferenceCurrencyCacheService;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.PlayerAccount;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.PlayerAccountItem;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.ProductTrade;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.ReferenceCurrency;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.domain.PlayerAccountItemMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.InitialPlayerAccountItemRepository;
@@ -157,6 +158,20 @@ public class PlayerAccountServiceImpl implements PlayerAccountService {
         }
 
         playerAccountItem.setAmount(playerAccountItem.getAmount() - command.getAmount());
+
+        playerAccountItemRepository.save(playerAccountItem);
+    }
+
+    @Override
+    @Transactional
+    public void refundMoneyForProductTrade(ProductTrade productTrade) {
+        PlayerAccount playerAccount = getPlayerAccount(productTrade.getPlayerUuid());
+        ReferenceCurrency currency = productTrade.getPriceCurrency();
+
+        PlayerAccountItem playerAccountItem = playerAccountItemRepository.findByPlayerUuidAndCurrencyId(playerAccount.getPlayerUuid(), currency.getId())
+                .orElse(playerAccountItemMapper.toEntityWithZeroAmount(playerAccount.getPlayerUuid(), currency.getId()));
+
+        playerAccountItem.setAmount(playerAccountItem.getAmount() + productTrade.getPriceValue());
 
         playerAccountItemRepository.save(playerAccountItem);
     }

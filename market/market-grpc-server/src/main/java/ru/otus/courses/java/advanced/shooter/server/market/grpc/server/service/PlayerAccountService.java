@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.PlayerCurrencyOperationCommand;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.PlayerAccountItem;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.ProductTrade;
 
 import java.util.UUID;
 
@@ -23,4 +24,6 @@ public interface PlayerAccountService {
     PlayerAccountItem takeAwayCurrency(@Valid @NotNull PlayerCurrencyOperationCommand command);
 
     void performCurrencyWriteOff(@Valid @NotNull PlayerCurrencyOperationCommand command);
+
+    void refundMoneyForProductTrade(@NotNull ProductTrade productTrade);
 }
