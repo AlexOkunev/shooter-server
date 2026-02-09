@@ -9,10 +9,11 @@ import "common/common.proto";
 enum MoneyBundleTradeStatus {
   MONEY_BUNDLE_TRADE_STATUS_UNSPECIFIED = 0;
   CREATED = 1;
-  PAYMENT_PENDING = 2;
-  PAYMENT_WAIT = 3;
+  PAYMENT_CREATION_WAIT = 2;
+  PAYMENT_PENDING = 3;
   SUCCEEDED = 4;
   FAILED = 5;
+  TIMEOUT = 6;
 }
 
 message MoneyBundleTradeInfo {

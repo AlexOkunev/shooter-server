@@ -61,7 +61,7 @@ grpc:
 
 payment-stub-grpc:
   host: localhost
-  port: 6568
+  port: 6569
   deadline-ms: 20000
 
 equipment-kafka:
@@ -89,3 +89,13 @@ reference-data-caching:
   data-page-size: 10
   refresh-rate-seconds: 200000
   scheduled-refresh-cache-enabled: true
+
+stuck-money-bundle-trade-processing:
+  enabled: true
+  period: 10s
+  payment-creation-wait-processing:
+    enabled: true
+    max-stuck-period: 30s
+  payment-pending-processing:
+    enabled: true
+    max-stuck-period: 30m

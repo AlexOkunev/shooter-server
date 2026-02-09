@@ -29,7 +29,7 @@ spring:
     password: payment_stub_db_user_password
 
 grpc:
-  port: 6568
+  port: 6569
   shutdownGrace: 30
   enable-reflection: true
 

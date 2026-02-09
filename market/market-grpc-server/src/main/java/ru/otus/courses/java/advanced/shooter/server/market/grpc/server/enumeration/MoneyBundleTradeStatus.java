@@ -9,10 +9,11 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum MoneyBundleTradeStatus {
     CREATED(1),
-    PAYMENT_WAIT(2),
+    PAYMENT_CREATION_WAIT(2),
     PAYMENT_PENDING(3),
     SUCCEEDED(4),
-    FAILED(5);
+    FAILED(5),
+    TIMEOUT(6);
 
     private final int code;
 

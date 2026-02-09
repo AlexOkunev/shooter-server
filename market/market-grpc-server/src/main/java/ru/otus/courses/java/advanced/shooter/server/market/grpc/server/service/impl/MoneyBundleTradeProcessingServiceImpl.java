@@ -71,7 +71,8 @@ public class MoneyBundleTradeProcessingServiceImpl implements MoneyBundleTradePr
                         "Player %s money bundle trade %s not found".formatted(playerUuid, tradeUuid)
                 ));
 
-        if (moneyBundleTrade.getStatus() != MoneyBundleTradeStatus.PAYMENT_PENDING) {
+        if (moneyBundleTrade.getStatus() != MoneyBundleTradeStatus.PAYMENT_PENDING &&
+                moneyBundleTrade.getStatus() != MoneyBundleTradeStatus.TIMEOUT) {
             log.error("Money bundle trade with uuid {} has incorrect status {}. Must be {}",
                     tradeUuid, moneyBundleTrade.getStatus(), MoneyBundleTradeStatus.PAYMENT_PENDING);
             throw new InvalidMoneyBundleTradeStatusException("Money bundle trade %s has incorrect status %s. Must be %s"

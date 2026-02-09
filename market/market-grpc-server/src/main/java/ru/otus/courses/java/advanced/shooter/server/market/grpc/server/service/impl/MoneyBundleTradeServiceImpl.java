@@ -17,8 +17,8 @@ import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.Mone
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.cache.base.MoneyBundleCacheService;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.*;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.enumeration.MoneyBundleTradeStatus;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.proto.PaymentStubRequestMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.domain.MoneyBundleTradeMapper;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.proto.PaymentStubRequestMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.MoneyBundleTradeRepository;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.PlayerAccountRepository;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service.MoneyBundleTradeService;
@@ -94,12 +94,11 @@ public class MoneyBundleTradeServiceImpl implements MoneyBundleTradeService {
                 .orElseThrow(() -> new ObjectNotFoundException(
                         "Money bundle trade with id '%s' and player id '%s' not found".formatted(playerUuid, tradeUuid)));
 
-        //TODO!!! потом в job сбрасывать до или FAILED. добавить todo что статусы подвисших сначала запросить через grpc. аналогично в product trade
         int modified = moneyBundleTradeRepository.updateStatusChecked(
                 playerUuid,
                 tradeUuid,
                 MoneyBundleTradeStatus.CREATED,
-                MoneyBundleTradeStatus.PAYMENT_WAIT,
+                MoneyBundleTradeStatus.PAYMENT_CREATION_WAIT,
                 ZonedDateTime.now(ZoneOffset.UTC)
         );
 
@@ -127,7 +126,7 @@ public class MoneyBundleTradeServiceImpl implements MoneyBundleTradeService {
             MoneyBundleTrade tempTrade = moneyBundleTradeRepository.findByPlayerUuidAndUuid(playerUuid, tradeUuid)
                     .orElseThrow(() -> new ObjectNotFoundException("Trade not found"));
 
-            if (tempTrade.getStatus() != MoneyBundleTradeStatus.PAYMENT_WAIT) {
+            if (tempTrade.getStatus() != MoneyBundleTradeStatus.PAYMENT_CREATION_WAIT) {
                 throw new RuntimeException("Trade is not in payment wait status");
             }
 

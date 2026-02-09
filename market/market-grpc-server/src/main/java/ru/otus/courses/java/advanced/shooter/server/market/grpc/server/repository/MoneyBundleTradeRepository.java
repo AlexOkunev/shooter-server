@@ -35,4 +35,21 @@ public interface MoneyBundleTradeRepository extends JpaRepository<MoneyBundleTra
             @Param("newStatus") MoneyBundleTradeStatus newStatus,
             @Param("updatedTimestamp") ZonedDateTime updatedTimestamp
     );
+
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    @Transactional
+    @Query("""
+             update MoneyBundleTrade t
+                set t.status = :newStatus,
+                    t.version = t.version + 1,
+                    t.updatedTimestamp = :updatedTimestamp
+              where t.status = :expectedStatus
+                and t.updatedTimestamp <= :statusEnteredNotLaterThan
+            """)
+    int updateStatusForTrades(
+            @Param("expectedStatus") MoneyBundleTradeStatus expectedStatus,
+            @Param("newStatus") MoneyBundleTradeStatus newStatus,
+            @Param("statusEnteredNotLaterThan") ZonedDateTime statusEnteredNotLaterThan,
+            @Param("updatedTimestamp") ZonedDateTime updatedTimestamp
+    );
 }
