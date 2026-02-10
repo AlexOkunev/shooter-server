@@ -8,15 +8,9 @@ import java.util.Arrays;
 @Getter
 @RequiredArgsConstructor
 public enum ProductTradeStatus {
-    CREATED(1),
-    WRITE_OFF_WAIT(2),
-    WRITE_OFF_PENDING(3),
-    WRITE_OFF_DONE(4),
     ISSUE_EQUIPMENT_PENDING(5),
-    ISSUE_EQUIPMENT_DONE(6),
     SUCCEEDED(7),
-    FAILED(8),
-    TIMEOUT(9);
+    FAILED(8);
 
     private final int code;
 
@@ -27,5 +21,3 @@ public enum ProductTradeStatus {
                 .orElseThrow(() -> new IllegalArgumentException("Unknown ProductTradeStatus code: " + code));
     }
 }
-
-//TODO!!! maybe reduce number of statuses

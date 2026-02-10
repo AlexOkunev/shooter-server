@@ -24,7 +24,7 @@ public interface ProductTradeMapper {
     @Mappings({
             @Mapping(
                     target = ProductTrade.Fields.status,
-                    constant = "CREATED"
+                    constant = "ISSUE_EQUIPMENT_PENDING"
             ),
             @Mapping(
                     target = ProductTrade.Fields.product,
