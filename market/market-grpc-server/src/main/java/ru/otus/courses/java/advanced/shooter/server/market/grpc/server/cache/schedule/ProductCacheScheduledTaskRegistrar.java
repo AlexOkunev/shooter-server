@@ -17,7 +17,6 @@ import java.time.Duration;
 public class ProductCacheScheduledTaskRegistrar implements SchedulingConfigurer {
 
     private final ProductCacheService productCacheService;
-
     private final ReferenceDataCachingProperties referenceDataCachingProperties;
 
     @Override
@@ -26,7 +25,7 @@ public class ProductCacheScheduledTaskRegistrar implements SchedulingConfigurer 
             taskRegistrar.addFixedRateTask(new FixedRateTask(
                     () -> {
                         log.info("Refresh cache for product cache");
-                        productCacheService.reloadAllData();
+                        productCacheService.refresh();
                         log.info("New cache size is: {}", productCacheService.count());
                     },
                     Duration.ofSeconds(referenceDataCachingProperties.getRefreshRateSeconds()),

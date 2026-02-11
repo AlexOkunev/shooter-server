@@ -84,10 +84,9 @@ inventory-product-trade-issuance-performed-kafka:
   topic: db.inventory.public.product_trade_issuance_performed_message_outbox
   group-id: inventory-product-trade-issuance-performed-message-consumer-test-1
 
-# TODO SET NORMAL
 reference-data-caching:
-  data-page-size: 10
-  refresh-rate-seconds: 200000
+  data-page-size: 100
+  refresh-rate-seconds: 600
   scheduled-refresh-cache-enabled: true
 
 stuck-money-bundle-trade-processing:

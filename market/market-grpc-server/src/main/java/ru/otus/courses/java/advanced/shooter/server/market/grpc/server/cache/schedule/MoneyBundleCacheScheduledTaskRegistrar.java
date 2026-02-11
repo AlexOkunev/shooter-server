@@ -17,7 +17,6 @@ import java.time.Duration;
 public class MoneyBundleCacheScheduledTaskRegistrar implements SchedulingConfigurer {
 
     private final MoneyBundleCacheService moneyBundleCacheService;
-
     private final ReferenceDataCachingProperties referenceDataCachingProperties;
 
     @Override
@@ -26,7 +25,7 @@ public class MoneyBundleCacheScheduledTaskRegistrar implements SchedulingConfigu
             taskRegistrar.addFixedRateTask(new FixedRateTask(
                     () -> {
                         log.info("Refresh cache for money bundle cache");
-                        moneyBundleCacheService.reloadAllData();
+                        moneyBundleCacheService.refresh();
                         log.info("New cache size is: {}", moneyBundleCacheService.count());
                     },
                     Duration.ofSeconds(referenceDataCachingProperties.getRefreshRateSeconds()),

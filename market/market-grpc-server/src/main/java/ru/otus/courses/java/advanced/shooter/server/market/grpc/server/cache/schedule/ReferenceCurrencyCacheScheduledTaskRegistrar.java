@@ -17,7 +17,6 @@ import java.time.Duration;
 public class ReferenceCurrencyCacheScheduledTaskRegistrar implements SchedulingConfigurer {
 
     private final ReferenceCurrencyCacheService referenceCurrencyCacheService;
-
     private final ReferenceDataCachingProperties referenceDataCachingProperties;
 
     @Override
@@ -26,7 +25,7 @@ public class ReferenceCurrencyCacheScheduledTaskRegistrar implements SchedulingC
             taskRegistrar.addFixedRateTask(new FixedRateTask(
                     () -> {
                         log.info("Refresh cache for currency cache");
-                        referenceCurrencyCacheService.reloadAllData();
+                        referenceCurrencyCacheService.refresh();
                         log.info("New cache size is: {}", referenceCurrencyCacheService.count());
                     },
                     Duration.ofSeconds(referenceDataCachingProperties.getRefreshRateSeconds()),

@@ -17,7 +17,6 @@ import java.time.Duration;
 public class ReferenceEquipmentCacheScheduledTaskRegistrar implements SchedulingConfigurer {
 
     private final ReferenceEquipmentCacheService referenceEquipmentCacheService;
-
     private final ReferenceDataCachingProperties referenceDataCachingProperties;
 
     @Override
@@ -26,7 +25,7 @@ public class ReferenceEquipmentCacheScheduledTaskRegistrar implements Scheduling
             taskRegistrar.addFixedRateTask(new FixedRateTask(
                     () -> {
                         log.info("Refresh cache for equipment cache");
-                        referenceEquipmentCacheService.reloadAllData();
+                        referenceEquipmentCacheService.refresh();
                         log.info("New cache size is: {}", referenceEquipmentCacheService.count());
                     },
                     Duration.ofSeconds(referenceDataCachingProperties.getRefreshRateSeconds()),

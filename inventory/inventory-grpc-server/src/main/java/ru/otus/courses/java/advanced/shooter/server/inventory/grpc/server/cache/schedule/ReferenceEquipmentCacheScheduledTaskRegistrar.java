@@ -25,11 +25,11 @@ public class ReferenceEquipmentCacheScheduledTaskRegistrar implements Scheduling
             taskRegistrar.addFixedRateTask(new FixedRateTask(
                     () -> {
                         log.info("Refresh equipment cache");
-                        referenceEquipmentCacheService.reloadAllData();
+                        referenceEquipmentCacheService.refresh();
                         log.info("New cache size is: {}", referenceEquipmentCacheService.count());
                     },
                     Duration.ofSeconds(referenceDataCachingProperties.getRefreshRateSeconds()),
-                    Duration.ofMillis(100L)
+                    Duration.ofSeconds(1L)
             ));
         }
     }

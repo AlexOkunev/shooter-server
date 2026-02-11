@@ -70,8 +70,7 @@ market-kafka-product-trade-issue-required:
   topic: db.market.public.product_trade_issue_required_message_outbox
   group-id: inventory-product-trade-issue-required-message-consumer-test-7
 
-# TODO SET NORMAL
 reference-data-caching:
-  data-page-size: 10
-  refresh-rate-seconds: 200000
+  data-page-size: 100
+  refresh-rate-seconds: 600
   scheduled-refresh-cache-enabled: true

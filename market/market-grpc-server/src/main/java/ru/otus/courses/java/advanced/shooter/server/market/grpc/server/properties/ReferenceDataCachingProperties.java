@@ -3,10 +3,13 @@ package ru.otus.courses.java.advanced.shooter.server.market.grpc.server.properti
 import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
 @Data
+@Validated
 @ConfigurationProperties(prefix = "reference-data-caching")
 public class ReferenceDataCachingProperties {
+
     @Positive
     private int dataPageSize = 20;
 
