@@ -46,12 +46,14 @@ public class PlayerInventoryTradeProcessingServiceImpl implements PlayerInventor
             return;
         }
 
-        boolean success = playerInventoryService.buyEquipment(PlayerEquipmentOperationCommand.builder()
-                .playerUuid(playerUuid)
-                .equipmentId(message.getEquipmentId())
-                .equipmentType(InventoryEquipmentType.fromCode(message.getEquipmentType()))
-                .amount(message.getEquipmentAmount())
-                .build()
+        boolean success = playerInventoryService.buyEquipment(
+                tradeUuid,
+                PlayerEquipmentOperationCommand.builder()
+                        .playerUuid(playerUuid)
+                        .equipmentId(message.getEquipmentId())
+                        .equipmentType(InventoryEquipmentType.fromCode(message.getEquipmentType()))
+                        .amount(message.getEquipmentAmount())
+                        .build()
         );
 
         productTradeIssuancePerformedMessageRepository.save(ProductTradeIssuancePerformedMessage.builder()

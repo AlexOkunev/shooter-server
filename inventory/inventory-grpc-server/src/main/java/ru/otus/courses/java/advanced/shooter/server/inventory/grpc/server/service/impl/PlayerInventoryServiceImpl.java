@@ -126,14 +126,14 @@ public class PlayerInventoryServiceImpl implements PlayerInventoryService {
 
     @Override
     @Transactional
-    public boolean buyEquipment(@Valid @NotNull PlayerEquipmentOperationCommand command) {
-        log.info("Buy equipment {} (ID={}) for player with UUID {}",
-                command.getEquipmentType().name(), command.getEquipmentId(), command.getPlayerUuid());
+    public boolean buyEquipment(@NotNull UUID tradeUuid, @Valid @NotNull PlayerEquipmentOperationCommand command) {
+        log.info("Buy equipment {} (ID={}) for player with UUID {}. Trade UUID {}",
+                command.getEquipmentType().name(), command.getEquipmentId(), command.getPlayerUuid(), tradeUuid);
 
         ReferenceEquipmentId referenceEquipmentId = new ReferenceEquipmentId(command.getEquipmentType(), command.getEquipmentId());
 
         Optional<ReferenceEquipment> equipmentOptional = equipmentCacheService.getById(referenceEquipmentId);
-        if(equipmentOptional.isEmpty()) {
+        if (equipmentOptional.isEmpty()) {
             log.error("Equipment {} (ID={}) not found", command.getEquipmentType().name(), command.getEquipmentId());
             return false;
         }
@@ -145,6 +145,7 @@ public class PlayerInventoryServiceImpl implements PlayerInventoryService {
                 .orElse(playerInventoryItemMapper.toEntity(command));
 
         PlayerInventoryLogEntry logEntry = playerInventoryLogEntryMapper.toEntity(playerInventoryItem);
+        logEntry.setOperationUuid(tradeUuid);
 
         playerInventoryItem.setAmount(playerInventoryItem.getAmount() + command.getAmount());
 

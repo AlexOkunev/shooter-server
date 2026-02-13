@@ -29,6 +29,9 @@ public class PlayerInventoryLogEntry {
     @Column(name = "uuid")
     private UUID uuid;
 
+    @Column(name = "operation_uuid")
+    private UUID operationUuid;
+
     @NotNull
     @Column(name = "equipment_type")
     @Convert(converter = InventoryEquipmentTypeConverter.class)

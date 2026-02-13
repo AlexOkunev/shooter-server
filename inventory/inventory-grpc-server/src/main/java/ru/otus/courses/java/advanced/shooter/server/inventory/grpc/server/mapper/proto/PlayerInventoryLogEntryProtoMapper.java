@@ -23,6 +23,7 @@ import java.util.List;
         }
 )
 public abstract class PlayerInventoryLogEntryProtoMapper {
+
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     public abstract List<ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.log.PlayerInventoryLogEntry> toResponseList(
             Iterable<PlayerInventoryLogEntry> source);

@@ -17,7 +17,7 @@ public interface PlayerInventoryService {
 
     void giveEquipment(@Valid @NotNull PlayerEquipmentOperationCommand command);
 
-    boolean buyEquipment(@Valid @NotNull PlayerEquipmentOperationCommand command);
+    boolean buyEquipment(@NotNull UUID tradeUuid, @Valid @NotNull PlayerEquipmentOperationCommand command);
 
     void takeAwayEquipment(@Valid @NotNull PlayerEquipmentOperationCommand command);
 

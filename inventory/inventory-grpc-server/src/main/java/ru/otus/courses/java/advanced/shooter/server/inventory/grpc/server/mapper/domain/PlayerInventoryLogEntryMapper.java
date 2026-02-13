@@ -50,6 +50,10 @@ public interface PlayerInventoryLogEntryMapper {
             @Mapping(
                     target = PlayerInventoryLogEntry.Fields.equipmentType,
                     source = PlayerInventoryItem.Fields.id + "." + PlayerInventoryItemId.Fields.referenceEquipmentId + "." + ReferenceEquipmentId.Fields.equipmentType
+            ),
+            @Mapping(
+                    target = PlayerInventoryLogEntry.Fields.operationUuid,
+                    ignore = true
             )
     })
     PlayerInventoryLogEntry toEntityForInitialize(PlayerInventoryItem source);
@@ -80,6 +84,10 @@ public interface PlayerInventoryLogEntryMapper {
             @Mapping(
                     target = PlayerInventoryLogEntry.Fields.equipmentType,
                     source = PlayerInventoryItem.Fields.id + "." + PlayerInventoryItemId.Fields.referenceEquipmentId + "." + ReferenceEquipmentId.Fields.equipmentType
+            ),
+            @Mapping(
+                    target = PlayerInventoryLogEntry.Fields.operationUuid,
+                    ignore = true
             )
     })
     PlayerInventoryLogEntry toEntity(PlayerInventoryItem source);
