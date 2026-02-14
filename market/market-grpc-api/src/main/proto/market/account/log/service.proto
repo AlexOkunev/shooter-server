@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.log;
+
+option java_multiple_files = true;
+
+import "market/account/log/datatypes.proto";
+
+service PlayerAccountLogServiceAPI {
+  rpc GetPlayerAccountLog(GetPlayerAccountLogRequest) returns (PlayerAccountLogPage);
+}

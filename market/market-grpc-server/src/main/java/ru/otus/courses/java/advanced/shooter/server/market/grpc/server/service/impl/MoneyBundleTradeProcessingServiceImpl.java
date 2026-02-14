@@ -87,11 +87,13 @@ public class MoneyBundleTradeProcessingServiceImpl implements MoneyBundleTradePr
         }
 
         if (paymentStatusCode == PaymentStatusCodes.SUCCESS_CODE) {
-            playerAccountService.giveCurrency(PlayerCurrencyOperationCommand.builder()
-                    .playerUuid(moneyBundleTrade.getPlayerUuid())
-                    .amount(moneyBundleTrade.getCurrencyAmount())
-                    .currencyId(moneyBundleTrade.getCurrencyId())
-                    .build()
+            playerAccountService.buyCurrency(
+                    tradeUuid,
+                    PlayerCurrencyOperationCommand.builder()
+                            .playerUuid(moneyBundleTrade.getPlayerUuid())
+                            .amount(moneyBundleTrade.getCurrencyAmount())
+                            .currencyId(moneyBundleTrade.getCurrencyId())
+                            .build()
             );
         }
 

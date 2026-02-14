@@ -21,9 +21,11 @@ public interface PlayerAccountService {
 
     PlayerAccountItem giveCurrency(@Valid @NotNull PlayerCurrencyOperationCommand command);
 
+    PlayerAccountItem buyCurrency(@NotNull UUID tradeUuid, @Valid @NotNull PlayerCurrencyOperationCommand command);
+
     PlayerAccountItem takeAwayCurrency(@Valid @NotNull PlayerCurrencyOperationCommand command);
 
-    void performCurrencyWriteOff(@Valid @NotNull PlayerCurrencyOperationCommand command);
+    void performCurrencyWriteOff(@NotNull UUID tradeUuid, @Valid @NotNull PlayerCurrencyOperationCommand command);
 
     void refundMoneyForProductTrade(@NotNull ProductTrade productTrade);
 }

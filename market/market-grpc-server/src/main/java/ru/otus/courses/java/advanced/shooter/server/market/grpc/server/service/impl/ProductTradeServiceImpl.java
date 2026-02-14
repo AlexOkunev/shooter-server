@@ -70,7 +70,10 @@ public class ProductTradeServiceImpl implements ProductTradeService {
         ProductTradeIssueRequiredMessage productTradeIssueRequiredMessage = productTradeIssueRequiredMessageMapper.toMessage(productTrade);
 
         return transactionExecutor.execute(() -> {
+            ProductTrade savedProductTrade = productTradeRepository.save(productTrade);
+
             playerAccountService.performCurrencyWriteOff(
+                    savedProductTrade.getUuid(),
                     PlayerCurrencyOperationCommand.builder()
                             .playerUuid(playerAccount.getPlayerUuid())
                             .amount(product.getPrice())
@@ -80,7 +83,7 @@ public class ProductTradeServiceImpl implements ProductTradeService {
 
             productTradeIssueRequiredMessageRepository.save(productTradeIssueRequiredMessage);
 
-            return productTradeRepository.save(productTrade);
+            return savedProductTrade;
         });
     }
 

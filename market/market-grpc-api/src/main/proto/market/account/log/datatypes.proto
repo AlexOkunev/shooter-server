@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.log;
+
+option java_multiple_files = true;
+
+import "common/common.proto";
+
+//TODO!!! remove unused
+enum OperationType {
+  OPERATION_TYPE_UNSPECIFIED = 0;
+  ADMIN_GIVE = 1;
+  ADMIN_TAKE_AWAY = 2;
+  SPEND = 3;
+  BUY = 4;
+  GIVE_AWARD = 5;
+  SYSTEM_PLAYER_ACCOUNT_INIT = 6;
+  ADMIN_PLAYER_ACCOUNT_INIT = 7;
+  REFUND = 8;
+}
+
+message PlayerAccountLogEntry {
+  string player_uuid = 1;
+  int32 currency_id = 2;
+  OperationType operation_type = 3;
+  int32 amount_before = 4;
+  int32 amount_after = 5;
+  string uuid = 6;
+  optional string operation_uuid = 7;
+  int64 timestamp = 8;
+}
+
+message PlayerAccountLogPage {
+  repeated PlayerAccountLogEntry data = 1;
+  common.protobuf.PaginationInfo paginationInfo = 2;
+}
+
+message GetPlayerAccountLogRequest {
+  optional common.protobuf.PaginationRequest paginationRequest = 1;
+  string player_uuid = 2;
+}

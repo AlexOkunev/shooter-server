@@ -15,13 +15,13 @@ import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.Objec
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.bean.PlayerCurrencyOperationCommand;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.cache.base.ReferenceCurrencyCacheService;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.PlayerAccount;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.PlayerAccountItem;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.ProductTrade;
-import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.ReferenceCurrency;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.*;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.enumeration.OperationType;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.domain.PlayerAccountItemMapper;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.mapper.domain.PlayerAccountLogEntryMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.InitialPlayerAccountItemRepository;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.PlayerAccountItemRepository;
+import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.PlayerAccountLogRepository;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.PlayerAccountRepository;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.service.PlayerAccountService;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.specification.PlayerAccountItemSpecifications;
@@ -40,6 +40,8 @@ public class PlayerAccountServiceImpl implements PlayerAccountService {
     private final PlayerAccountRepository playerAccountRepository;
     private final PlayerAccountItemRepository playerAccountItemRepository;
     private final PlayerAccountItemMapper playerAccountItemMapper;
+    private final PlayerAccountLogRepository playerAccountLogRepository;
+    private final PlayerAccountLogEntryMapper playerAccountLogEntryMapper;
     private final InitialPlayerAccountItemRepository initialPlayerAccountItemRepository;
     private final ReferenceCurrencyCacheService referenceCurrencyCacheService;
 
@@ -66,11 +68,18 @@ public class PlayerAccountServiceImpl implements PlayerAccountService {
                 .map(initialItem -> playerAccountItemMapper.toEntity(initialItem, playerUuid))
                 .toList();
 
+        List<PlayerAccountLogEntry> logEntries = inventoryItems.stream()
+                .map(playerAccountLogEntryMapper::toEntityForInitialize)
+                .peek(entry -> entry.setOperationType(OperationType.ADMIN_PLAYER_ACCOUNT_INIT))
+                .toList();
+
         PlayerAccount playerAccount = new PlayerAccount();
         playerAccount.setPlayerUuid(playerUuid);
         playerAccountRepository.save(playerAccount);
 
         playerAccountItemRepository.saveAll(inventoryItems);
+
+        playerAccountLogRepository.saveAll(logEntries);
     }
 
     @Override
@@ -87,11 +96,18 @@ public class PlayerAccountServiceImpl implements PlayerAccountService {
                 .map(initialItem -> playerAccountItemMapper.toEntity(initialItem, playerUuid))
                 .toList();
 
+        List<PlayerAccountLogEntry> logEntries = inventoryItems.stream()
+                .map(playerAccountLogEntryMapper::toEntityForInitialize)
+                .peek(entry -> entry.setOperationType(OperationType.SYSTEM_PLAYER_ACCOUNT_INIT))
+                .toList();
+
         PlayerAccount playerAccount = new PlayerAccount();
         playerAccount.setPlayerUuid(playerUuid);
         playerAccountRepository.save(playerAccount);
 
         playerAccountItemRepository.saveAll(inventoryItems);
+
+        playerAccountLogRepository.saveAll(logEntries);
     }
 
     @Override
@@ -117,7 +133,36 @@ public class PlayerAccountServiceImpl implements PlayerAccountService {
         PlayerAccountItem playerAccountItem = playerAccountItemRepository.findByPlayerUuidAndCurrencyId(playerAccount.getPlayerUuid(), currency.getId())
                 .orElse(playerAccountItemMapper.toEntityWithZeroAmount(playerAccount.getPlayerUuid(), currency.getId()));
 
+        PlayerAccountLogEntry logEntry = playerAccountLogEntryMapper.toEntity(playerAccountItem);
+
         playerAccountItem.setAmount(playerAccountItem.getAmount() + command.getAmount());
+
+        logEntry.setOperationType(OperationType.ADMIN_GIVE);
+        logEntry.setAmountAfter(playerAccountItem.getAmount());
+
+        playerAccountLogRepository.save(logEntry);
+
+        return playerAccountItemRepository.save(playerAccountItem);
+    }
+
+    @Override
+    @Transactional
+    public PlayerAccountItem buyCurrency(@NotNull UUID tradeUuid, @Valid @NotNull PlayerCurrencyOperationCommand command) {
+        PlayerAccount playerAccount = getPlayerAccount(command.getPlayerUuid());
+        ReferenceCurrency currency = getReferenceCurrency(command);
+
+        PlayerAccountItem playerAccountItem = playerAccountItemRepository.findByPlayerUuidAndCurrencyId(playerAccount.getPlayerUuid(), currency.getId())
+                .orElse(playerAccountItemMapper.toEntityWithZeroAmount(playerAccount.getPlayerUuid(), currency.getId()));
+
+        PlayerAccountLogEntry logEntry = playerAccountLogEntryMapper.toEntity(playerAccountItem);
+
+        playerAccountItem.setAmount(playerAccountItem.getAmount() + command.getAmount());
+
+        logEntry.setOperationType(OperationType.BUY);
+        logEntry.setAmountAfter(playerAccountItem.getAmount());
+        logEntry.setOperationUuid(tradeUuid);
+
+        playerAccountLogRepository.save(logEntry);
 
         return playerAccountItemRepository.save(playerAccountItem);
     }
@@ -131,18 +176,25 @@ public class PlayerAccountServiceImpl implements PlayerAccountService {
         PlayerAccountItem playerAccountItem = playerAccountItemRepository.findByPlayerUuidAndCurrencyId(playerAccount.getPlayerUuid(), currency.getId())
                 .orElseThrow(() -> new InvalidRequestException("Insufficient amount of currency"));
 
+        PlayerAccountLogEntry logEntry = playerAccountLogEntryMapper.toEntity(playerAccountItem);
+
         if (playerAccountItem.getAmount() < command.getAmount()) {
             throw new InvalidRequestException("Insufficient amount of currency");
         }
 
         playerAccountItem.setAmount(playerAccountItem.getAmount() - command.getAmount());
 
+        logEntry.setAmountAfter(playerAccountItem.getAmount());
+        logEntry.setOperationType(OperationType.ADMIN_TAKE_AWAY);
+
+        playerAccountLogRepository.save(logEntry);
+
         return playerAccountItemRepository.save(playerAccountItem);
     }
 
     @Override
     @Transactional
-    public void performCurrencyWriteOff(@Valid @NotNull PlayerCurrencyOperationCommand command) {
+    public void performCurrencyWriteOff(@NotNull UUID tradeUuid, @Valid @NotNull PlayerCurrencyOperationCommand command) {
         PlayerAccount playerAccount = getPlayerAccount(command.getPlayerUuid());
         ReferenceCurrency currency = getReferenceCurrency(command);
 
@@ -153,11 +205,19 @@ public class PlayerAccountServiceImpl implements PlayerAccountService {
         PlayerAccountItem playerAccountItem = playerAccountItemRepository.findByPlayerUuidAndCurrencyId(playerAccount.getPlayerUuid(), currency.getId())
                 .orElseThrow(() -> new InvalidRequestException("Insufficient amount of currency"));
 
+        PlayerAccountLogEntry logEntry = playerAccountLogEntryMapper.toEntity(playerAccountItem);
+
         if (playerAccountItem.getAmount() < command.getAmount()) {
             throw new InvalidRequestException("Insufficient amount of currency");
         }
 
         playerAccountItem.setAmount(playerAccountItem.getAmount() - command.getAmount());
+
+        logEntry.setAmountAfter(playerAccountItem.getAmount());
+        logEntry.setOperationType(OperationType.SPEND);
+        logEntry.setOperationUuid(tradeUuid);
+
+        playerAccountLogRepository.save(logEntry);
 
         playerAccountItemRepository.save(playerAccountItem);
     }
@@ -171,7 +231,15 @@ public class PlayerAccountServiceImpl implements PlayerAccountService {
         PlayerAccountItem playerAccountItem = playerAccountItemRepository.findByPlayerUuidAndCurrencyId(playerAccount.getPlayerUuid(), currency.getId())
                 .orElse(playerAccountItemMapper.toEntityWithZeroAmount(playerAccount.getPlayerUuid(), currency.getId()));
 
+        PlayerAccountLogEntry logEntry = playerAccountLogEntryMapper.toEntity(playerAccountItem);
+
         playerAccountItem.setAmount(playerAccountItem.getAmount() + productTrade.getPriceValue());
+
+        logEntry.setAmountAfter(playerAccountItem.getAmount());
+        logEntry.setOperationType(OperationType.REFUND);
+        logEntry.setOperationUuid(productTrade.getUuid());
+
+        playerAccountLogRepository.save(logEntry);
 
         playerAccountItemRepository.save(playerAccountItem);
     }
