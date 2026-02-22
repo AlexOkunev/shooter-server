@@ -36,14 +36,6 @@ public interface PlayerAccountLogEntryMapper {
                     target = PlayerAccountLogEntry.Fields.amountAfter,
                     source = PlayerAccountItem.Fields.amount
             ),
-//            @Mapping(
-//                    target = PlayerAccountLogEntry.Fields.playerUuid,
-//                    source = PlayerAccountItem.Fields.playerUuid
-//            ), TODO!!!
-//            @Mapping(
-//                    target = PlayerAccountLogEntry.Fields.currencyId,
-//                    source = PlayerAccountItem.Fields.currencyId
-//            ),TODO!!!
             @Mapping(
                     target = PlayerAccountLogEntry.Fields.operationUuid,
                     ignore = true
@@ -66,14 +58,6 @@ public interface PlayerAccountLogEntryMapper {
                     target = PlayerAccountLogEntry.Fields.operationType,
                     ignore = true
             ),
-            //            @Mapping(
-//                    target = PlayerAccountLogEntry.Fields.playerUuid,
-//                    source = PlayerAccountItem.Fields.playerUuid
-//            ), TODO!!!
-//            @Mapping(
-//                    target = PlayerAccountLogEntry.Fields.currencyId,
-//                    source = PlayerAccountItem.Fields.currencyId
-//            ),TODO!!!
             @Mapping(
                     target = PlayerAccountLogEntry.Fields.operationUuid,
                     ignore = true

@@ -6,7 +6,6 @@ option java_multiple_files = true;
 
 import "common/common.proto";
 
-//TODO!!! remove unused
 enum OperationType {
   OPERATION_TYPE_UNSPECIFIED = 0;
   ADMIN_GIVE = 1;

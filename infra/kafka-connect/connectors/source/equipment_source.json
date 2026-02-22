@@ -16,7 +16,7 @@
     "plugin.name": "pgoutput",
     "tasks.max": "1",
     "topic.creation.default.partitions": 1,
-    "topic.creation.default.replication.factor": 3,
+    "topic.creation.default.replication.factor": 8,
     "message.key.columns": "public.ammunition:id;public.attachment:id;public.currency:id;public.grenade:id;public.gun:id",
 
     "transforms": "unwrap,ConvertCreatedTimestamp,ConvertUpdatedTimestamp,SetKeySchemaAmmunition,SetValueSchemaAmmunition,SetKeySchemaAttachment,SetValueSchemaAttachment,SetKeySchemaCurrency,SetValueSchemaCurrency,SetKeySchemaGrenade,SetValueSchemaGrenade,SetKeySchemaGun,SetValueSchemaGun",

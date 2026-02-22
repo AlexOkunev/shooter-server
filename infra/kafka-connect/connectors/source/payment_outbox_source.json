@@ -29,7 +29,7 @@
     "transforms.Route.regex": "db\\.payment\\.public\\.payment_processed_message_outbox",
     "transforms.Route.replacement": "db.payment.public.payment_processed_message_outbox_v2",
     "topic.creation.default.partitions": 3,
-    "topic.creation.default.replication.factor": 3,
+    "topic.creation.default.replication.factor": 8,
     "plugin.name": "pgoutput",
     "message.key.columns": "public.product_trade_issuance_performed_message_outbox:uuid",
     "tasks.max": "1"

@@ -10,6 +10,7 @@ import org.lognet.springboot.grpc.recovery.GRpcServiceAdvice;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.InvalidRequestException;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectAlreadyExistsException;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
 
 @Slf4j
@@ -24,6 +25,20 @@ public class ExceptionHandler {
 
     @GRpcExceptionHandler
     public Status handleException(InvalidRequestException e, GRpcExceptionScope scope) {
+        return Status.INVALID_ARGUMENT
+                .withDescription("Invalid request")
+                .augmentDescription(e.getMessage());
+    }
+
+    @GRpcExceptionHandler
+    public Status handleException(IllegalArgumentException e, GRpcExceptionScope scope) {
+        return Status.INVALID_ARGUMENT
+                .withDescription("Invalid request")
+                .augmentDescription(e.getMessage());
+    }
+
+    @GRpcExceptionHandler
+    public Status handleException(ObjectAlreadyExistsException e, GRpcExceptionScope scope) {
         return Status.INVALID_ARGUMENT
                 .withDescription("Invalid request")
                 .augmentDescription(e.getMessage());

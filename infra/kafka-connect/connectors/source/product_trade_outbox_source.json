@@ -22,7 +22,7 @@
     "transforms.ConvertCreatedTimestamp.field": "created_timestamp",
     "transforms.ConvertCreatedTimestamp.format": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'",
     "topic.creation.default.partitions": 3,
-    "topic.creation.default.replication.factor": 3,
+    "topic.creation.default.replication.factor": 8,
     "plugin.name": "pgoutput",
     "message.key.columns": "public.product_trade_issue_required_message_outbox:id",
     "tasks.max": "1"

@@ -20,9 +20,9 @@ public class ProductTradeSpecifications {
     public static Specification<ProductTrade> byEquipmentTypeAndEquipmentIds(ProductEquipmentType equipmentType, Iterable<Integer> equipmentIds) {
         return (root, query, builder) ->
                 builder.and(
-                        builder.equal(root.get(ProductTrade.Fields.productEquipment)
+                        builder.equal(root.get(ProductTrade.Fields.productEquipmentId)
                                 .get(ReferenceEquipmentId.Fields.equipmentType), equipmentType),
-                        builder.in(root.get(ProductTrade.Fields.productEquipment)
+                        builder.in(root.get(ProductTrade.Fields.productEquipmentId)
                                 .get(ReferenceEquipmentId.Fields.equipmentId)).value(equipmentIds)
                 );
     }

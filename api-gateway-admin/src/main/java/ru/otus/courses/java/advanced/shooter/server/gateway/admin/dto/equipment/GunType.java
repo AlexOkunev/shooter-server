@@ -1,0 +1,10 @@
+package ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment;
+
+public enum GunType {
+    PISTOL,
+    SUBMACHINE_GUN,
+    ASSAULT_RIFLE,
+    SCATTERSHOT,
+    MACHINE_GUN,
+    PRECISION_RIFLE;
+}

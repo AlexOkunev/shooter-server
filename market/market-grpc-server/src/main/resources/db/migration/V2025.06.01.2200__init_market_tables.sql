@@ -148,7 +148,7 @@ CREATE SEQUENCE IF NOT EXISTS public.seq_product_trade
 
 CREATE TABLE IF NOT EXISTS public.product_trade
 (
-    id                     integer NOT NULL         DEFAULT nextval('seq_money_bundle_trade'),
+    id                     integer NOT NULL         DEFAULT nextval('seq_product_trade'),
     player_id              integer NOT NULL,
     product_id             integer NOT NULL,
     product_equipment_id   integer NOT NULL,

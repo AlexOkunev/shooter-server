@@ -20,7 +20,7 @@
         <protoc.version>3.25.3</protoc.version>
         <os.maven.plugin.version>1.7.1</os.maven.plugin.version>
         <jakarta.annotation.api.version>1.3.5</jakarta.annotation.api.version>
-        <io.grpc.version>1.57.0</io.grpc.version>
+        <io.grpc.version>1.71.0</io.grpc.version>
     </properties>
 
     <dependencies>
@@ -32,13 +32,26 @@
 
         <dependency>
             <groupId>io.grpc</groupId>
-            <artifactId>grpc-services</artifactId>
+            <artifactId>grpc-netty</artifactId>
+            <version>${io.grpc.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-core</artifactId>
             <version>${io.grpc.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.grpc</groupId>
-            <artifactId>grpc-netty</artifactId>
+            <artifactId>grpc-stub</artifactId>
+            <version>${io.grpc.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
             <version>${io.grpc.version}</version>
         </dependency>
 

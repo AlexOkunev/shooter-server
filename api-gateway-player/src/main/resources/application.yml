@@ -1,0 +1,42 @@
+server:
+  port: 8180
+
+spring:
+  application:
+    name: api-gateway-player
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:7777/realms/shooter-players
+
+player-grpc-service:
+  server:
+    host: localhost
+    port: 6565
+  deadline-ms: 5000
+
+equipment-grpc-service:
+  server:
+    host: localhost
+    port: 6566
+  deadline-ms: 5000
+
+market-grpc-service:
+  server:
+    host: localhost
+    port: 6567
+  deadline-ms: 5000
+
+inventory-grpc-service:
+  server:
+    host: localhost
+    port: 6568
+  deadline-ms: 5000
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui
+  api-docs:
+    path: /api-docs

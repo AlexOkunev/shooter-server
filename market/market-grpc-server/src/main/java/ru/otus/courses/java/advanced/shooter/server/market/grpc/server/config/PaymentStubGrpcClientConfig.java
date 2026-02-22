@@ -21,6 +21,7 @@ public class PaymentStubGrpcClientConfig {
 
     public static final String PAYMENT_STUB_CHANNEL_NAME = "paymentStubChannel";
 
+    //TODO override authority
     @Bean(PAYMENT_STUB_CHANNEL_NAME)
     public ManagedChannel managedChannel() {
         return ManagedChannelBuilder.forAddress(paymentStubGrpcProperties.getHost(), paymentStubGrpcProperties.getPort())

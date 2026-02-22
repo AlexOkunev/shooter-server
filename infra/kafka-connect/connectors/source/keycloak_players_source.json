@@ -15,7 +15,7 @@
     "transforms.unwrap.drop.tombstones": "false",
     "transforms.unwrap.add.headers": "op,ts_ms",
     "topic.creation.default.partitions": 2,
-    "topic.creation.default.replication.factor": 3,
+    "topic.creation.default.replication.factor": 8,
     "plugin.name": "pgoutput",
     "message.key.columns": "public.user_entity:id",
     "tasks.max": "1"
