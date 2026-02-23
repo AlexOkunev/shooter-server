@@ -35,7 +35,7 @@ public class CurrencyController {
                 .map(currencyMapper::toDto);
     }
 
-    @PostMapping
+    @PostMapping("/search")
     @Operation(summary = "Search currencies by filter")
     public Mono<PageResponseDto<CurrencyDto>> search(@RequestBody @NotNull @Valid CurrencySearchRequestDto request) {
         return currencyService.search(

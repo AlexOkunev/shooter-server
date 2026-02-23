@@ -59,11 +59,24 @@ public class PlayerMapper {
                 .map(UUID::fromString)
                 .collect(Collectors.toSet());
 
-        return PlayersFilterParams.builder()
-                .email(request.getFilter().getEmail())
-                .login(request.getFilter().getLogin())
-                .enabled(request.getFilter().getEnabled())
-                .playerUuids(playerUuids)
-                .build();
+        PlayersFilterParams.PlayersFilterParamsBuilder builder = PlayersFilterParams.builder();
+
+        if (!playerUuids.isEmpty()) {
+            builder.playerUuids(playerUuids);
+        }
+
+        if (request.getFilter().hasEmail()) {
+            builder.email(request.getFilter().getEmail());
+        }
+
+        if (request.getFilter().hasLogin()) {
+            builder.login(request.getFilter().getLogin());
+        }
+
+        if (request.getFilter().hasEnabled()) {
+            builder.enabled(request.getFilter().getEnabled());
+        }
+
+        return builder.build();
     }
 }

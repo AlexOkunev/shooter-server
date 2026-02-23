@@ -29,14 +29,14 @@ public class GunController {
     private final PaginationRequestMapper paginationRequestMapper;
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get ammunition")
+    @Operation(summary = "Get gun")
     public Mono<GunDto> getOne(@AuthenticationPrincipal Jwt jwt, @PathVariable int id) {
         return gunService.getOne(id)
                 .map(gunMapper::toDto);
     }
 
-    @PostMapping
-    @Operation(summary = "Search ammunition by filter")
+    @PostMapping("/search")
+    @Operation(summary = "Search gun by filter")
     public Mono<PageResponseDto<GunDto>> search(@RequestBody @NotNull @Valid GunSearchRequestDto request) {
         return gunService.search(
                         gunMapper.toProto(request),

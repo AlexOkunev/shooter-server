@@ -35,7 +35,7 @@ public class AttachmentController {
                 .map(attachmentMapper::toDto);
     }
 
-    @PostMapping
+    @PostMapping("/search")
     @Operation(summary = "Search attachments by filter")
     public Mono<PageResponseDto<AttachmentDto>> search(@RequestBody @NotNull @Valid AttachmentSearchRequestDto request) {
         return attachmentService.search(

@@ -5,6 +5,7 @@ import ru.otus.courses.java.advanced.shooter.server.common.protobuf.PaginationRe
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.CurrenciesFilter;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.CurrencyInfo;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.CurrencyInfoListPage;
+import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.CurrencyWritableData;
 
 import java.util.Collection;
 
@@ -15,4 +16,8 @@ public interface CurrencyService {
     Mono<CurrencyInfoListPage> search(CurrenciesFilter requestFilter, PaginationRequest paginationRequest);
 
     Mono<CurrencyInfoListPage> fetchByIds(Collection<Integer> ids);
+
+    Mono<CurrencyInfo> create(CurrencyWritableData requestDto);
+
+    Mono<CurrencyInfo> update(int currencyId, CurrencyWritableData requestDto);
 }

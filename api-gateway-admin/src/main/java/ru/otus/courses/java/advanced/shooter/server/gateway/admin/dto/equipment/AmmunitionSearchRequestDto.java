@@ -31,6 +31,12 @@ public class AmmunitionSearchRequestDto {
     @Schema(description = "Compatible gun IDs", example = "[10, 11]")
     private List<Integer> compatibleGunIds;
 
+    @Schema(description = "Enabled", example = "true")
+    private Boolean enabled;
+
+    @Schema(description = "Filter by compatible guns that must enabled", example = "true")
+    private Boolean onlyEnabledCompatibleGuns;
+
     @Schema(
             description = "Return ammunition updated after this time",
             example = "2026-02-17T12:34:56+01:00",

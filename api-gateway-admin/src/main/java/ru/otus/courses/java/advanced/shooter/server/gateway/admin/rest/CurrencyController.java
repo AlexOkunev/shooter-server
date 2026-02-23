@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.CurrencyDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.CurrencySaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.CurrencySearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.CurrencyMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationRequestMapper;
@@ -28,6 +29,13 @@ public class CurrencyController {
     private final CurrencyMapper currencyMapper;
     private final PaginationRequestMapper paginationRequestMapper;
 
+    @PostMapping
+    @Operation(summary = "Create currency")
+    public Mono<CurrencyDto> create(@RequestBody @Valid @NotNull CurrencySaveRequestDto dto) {
+        return currencyService.create(currencyMapper.toProto(dto))
+                .map(currencyMapper::toDto);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Get currency")
     public Mono<CurrencyDto> getOne(@AuthenticationPrincipal Jwt jwt, @PathVariable int id) {
@@ -35,7 +43,14 @@ public class CurrencyController {
                 .map(currencyMapper::toDto);
     }
 
-    @PostMapping
+    @PutMapping("/{id}")
+    @Operation(summary = "Update currency")
+    public Mono<CurrencyDto> update(@PathVariable int id, @RequestBody @NotNull @Valid CurrencySaveRequestDto dto) {
+        return currencyService.update(id, currencyMapper.toProto(dto))
+                .map(currencyMapper::toDto);
+    }
+
+    @PostMapping("/search")
     @Operation(summary = "Search currencies by filter")
     public Mono<PageResponseDto<CurrencyDto>> search(@RequestBody @NotNull @Valid CurrencySearchRequestDto request) {
         return currencyService.search(

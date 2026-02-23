@@ -35,6 +35,5 @@ public abstract class PlayerMapper {
     @Mapping(source = "data", target = "items")
     public abstract PageResponseDto<PlayerDto> toPageDto(PlayerInfoListPage playerInfoListPage);
 
-    @Mapping(target = "enabled", constant = "true")
     public abstract PlayersFilter toProto(PlayersSearchRequestDto playersSearchRequestDto);
 }

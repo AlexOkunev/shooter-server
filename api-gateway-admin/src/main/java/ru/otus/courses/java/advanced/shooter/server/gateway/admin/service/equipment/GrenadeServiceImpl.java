@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import ru.otus.courses.java.advanced.shooter.server.common.protobuf.PaginationRequest;
+import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.CreateCurrencyRequest;
+import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.UpdateCurrencyRequest;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.*;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.exception.GrenadeNotFoundException;
 
@@ -74,6 +76,33 @@ public class GrenadeServiceImpl implements GrenadeService {
                 .doOnSubscribe(s -> log.info("gRPC getGrenades start by ids={}", ids))
                 .doOnSuccess(resp -> log.info("gRPC getGrenades success by ids={}", ids))
                 .doOnError(e -> log.error("gRPC getGrenades error by ids={}: err={}", ids, e.getMessage(), e));
+    }
+
+    @Override
+    public Mono<GrenadeInfo> create(GrenadeWritableData data) {
+        CreateGrenadeRequest request = CreateGrenadeRequest.newBuilder()
+                .setData(data)
+                .build();
+
+        return Mono.fromCallable(() -> grenadeServiceAPIBlockingStubObjectFactory.getObject().createGrenade(request))
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnSubscribe(s -> log.info("gRPC createGrenade start"))
+                .doOnSuccess(resp -> log.info("gRPC createGrenade success id={}", resp.getId()))
+                .doOnError(e -> log.error("gRPC createGrenade error err={}", e.getMessage(), e));
+    }
+
+    @Override
+    public Mono<GrenadeInfo> update(int id, GrenadeWritableData data) {
+        UpdateGrenadeRequest request = UpdateGrenadeRequest.newBuilder()
+                .setGrenadeId(id)
+                .setData(data)
+                .build();
+
+        return Mono.fromCallable(() -> grenadeServiceAPIBlockingStubObjectFactory.getObject().updateGrenade(request))
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnSubscribe(s -> log.info("gRPC updateGrenade start"))
+                .doOnSuccess(resp -> log.info("gRPC updateGrenade success id={}", resp.getId()))
+                .doOnError(e -> log.error("gRPC updateGrenade error err={}", e.getMessage(), e));
     }
 }
 //TODO logging

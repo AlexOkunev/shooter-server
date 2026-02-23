@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionSaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.AmmunitionMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationRequestMapper;
@@ -28,6 +29,13 @@ public class AmmunitionController {
     private final AmmunitionMapper ammunitionMapper;
     private final PaginationRequestMapper paginationRequestMapper;
 
+    @PostMapping
+    @Operation(summary = "Create ammunition")
+    public Mono<AmmunitionDto> create(@RequestBody @Valid @NotNull AmmunitionSaveRequestDto dto) {
+        return ammunitionService.create(ammunitionMapper.toProto(dto))
+                .map(ammunitionMapper::toDto);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Get ammunition")
     public Mono<AmmunitionDto> getOne(@AuthenticationPrincipal Jwt jwt, @PathVariable int id) {
@@ -35,7 +43,14 @@ public class AmmunitionController {
                 .map(ammunitionMapper::toDto);
     }
 
-    @PostMapping
+    @PutMapping("/{id}")
+    @Operation(summary = "Update ammunition")
+    public Mono<AmmunitionDto> update(@PathVariable int id, @RequestBody @NotNull @Valid AmmunitionSaveRequestDto dto) {
+        return ammunitionService.update(id, ammunitionMapper.toProto(dto))
+                .map(ammunitionMapper::toDto);
+    }
+
+    @PostMapping("/search")
     @Operation(summary = "Search ammunition by filter")
     public Mono<PageResponseDto<AmmunitionDto>> search(@RequestBody @NotNull @Valid AmmunitionSearchRequestDto request) {
         return ammunitionService.search(

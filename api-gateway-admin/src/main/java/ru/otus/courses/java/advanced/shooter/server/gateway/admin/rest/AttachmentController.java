@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AttachmentDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AttachmentSaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AttachmentSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.AttachmentMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationRequestMapper;
@@ -28,6 +29,13 @@ public class AttachmentController {
     private final AttachmentMapper attachmentMapper;
     private final PaginationRequestMapper paginationRequestMapper;
 
+    @PostMapping
+    @Operation(summary = "Create gun")
+    public Mono<AttachmentDto> create(@RequestBody @Valid @NotNull AttachmentSaveRequestDto dto) {
+        return attachmentService.create(attachmentMapper.toProto(dto))
+                .map(attachmentMapper::toDto);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Get attachment")
     public Mono<AttachmentDto> getOne(@AuthenticationPrincipal Jwt jwt, @PathVariable int id) {
@@ -35,7 +43,14 @@ public class AttachmentController {
                 .map(attachmentMapper::toDto);
     }
 
-    @PostMapping
+    @PutMapping("/{id}")
+    @Operation(summary = "Update attachment")
+    public Mono<AttachmentDto> update(@PathVariable int id, @RequestBody @NotNull @Valid AttachmentSaveRequestDto dto) {
+        return attachmentService.update(id, attachmentMapper.toProto(dto))
+                .map(attachmentMapper::toDto);
+    }
+
+    @PostMapping("/search")
     @Operation(summary = "Search attachments by filter")
     public Mono<PageResponseDto<AttachmentDto>> search(@RequestBody @NotNull @Valid AttachmentSearchRequestDto request) {
         return attachmentService.search(

@@ -33,7 +33,7 @@ public class PlayerController {
                 .map(playerMapper::toDto);
     }
 
-    @PostMapping
+    @PostMapping("/search")
     @Operation(summary = "Search players by filter")
     public Mono<PageResponseDto<PlayerDto>> searchPlayers(@RequestBody @NotNull @Valid PlayersSearchRequestDto request) {
         return playerService.searchPlayers(

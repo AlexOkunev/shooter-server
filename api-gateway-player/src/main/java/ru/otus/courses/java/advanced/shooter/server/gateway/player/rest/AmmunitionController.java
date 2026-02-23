@@ -35,7 +35,7 @@ public class AmmunitionController {
                 .map(ammunitionMapper::toDto);
     }
 
-    @PostMapping
+    @PostMapping("/search")
     @Operation(summary = "Search ammunition by filter")
     public Mono<PageResponseDto<AmmunitionDto>> search(@RequestBody @NotNull @Valid AmmunitionSearchRequestDto request) {
         return ammunitionService.search(

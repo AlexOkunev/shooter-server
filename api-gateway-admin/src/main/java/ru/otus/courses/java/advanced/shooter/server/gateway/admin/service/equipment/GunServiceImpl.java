@@ -10,6 +10,10 @@ import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 import ru.otus.courses.java.advanced.shooter.server.common.protobuf.PaginationRequest;
 import ru.otus.courses.java.advanced.shooter.server.common.protobuf.RelatedEntitiesInclusionMode;
+import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.AmmunitionInfo;
+import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.AmmunitionWritableData;
+import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.CreateAmmunitionRequest;
+import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.UpdateAmmunitionRequest;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.*;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.exception.GunNotFoundException;
 
@@ -43,7 +47,7 @@ public class GunServiceImpl implements GunService {
         GetGunsRequest request = GetGunsRequest.newBuilder()
                 .setFilter(requestFilter)
                 .setPaginationRequest(paginationRequest)
-                .setRelatedEntitiesInclusionMode(RelatedEntitiesInclusionMode.INCLUDE_ONLY_ENABLED)
+                .setRelatedEntitiesInclusionMode(RelatedEntitiesInclusionMode.INCLUDE_ALL)
                 .build();
 
         return Mono.fromCallable(() -> gunServiceAPIBlockingStubObjectFactory.getObject().getGuns(request))
@@ -69,7 +73,7 @@ public class GunServiceImpl implements GunService {
                         .setPage(0)
                         .setCount(ids.size())
                         .build())
-                .setRelatedEntitiesInclusionMode(RelatedEntitiesInclusionMode.INCLUDE_ONLY_ENABLED)
+                .setRelatedEntitiesInclusionMode(RelatedEntitiesInclusionMode.INCLUDE_ALL)
                 .build();
 
         return Mono.fromCallable(() -> gunServiceAPIBlockingStubObjectFactory.getObject().getGuns(request))
@@ -77,6 +81,33 @@ public class GunServiceImpl implements GunService {
                 .doOnSubscribe(s -> log.info("gRPC getGuns start by ids={}", ids))
                 .doOnSuccess(resp -> log.info("gRPC getGuns success by ids={}", ids))
                 .doOnError(e -> log.error("gRPC getGuns error by ids={}: err={}", ids, e.getMessage(), e));
+    }
+
+    @Override
+    public Mono<GunInfo> create(GunWritableData data) {
+        CreateGunRequest request = CreateGunRequest.newBuilder()
+                .setData(data)
+                .build();
+
+        return Mono.fromCallable(() -> gunServiceAPIBlockingStubObjectFactory.getObject().createGun(request))
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnSubscribe(s -> log.info("gRPC createGun start"))
+                .doOnSuccess(resp -> log.info("gRPC createGun success id={}", resp.getId()))
+                .doOnError(e -> log.error("gRPC createGun error err={}", e.getMessage(), e));
+    }
+
+    @Override
+    public Mono<GunInfo> update(int id, GunWritableData data) {
+        UpdateGunRequest request = UpdateGunRequest.newBuilder()
+                .setGunId(id)
+                .setData(data)
+                .build();
+
+        return Mono.fromCallable(() -> gunServiceAPIBlockingStubObjectFactory.getObject().updateGun(request))
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnSubscribe(s -> log.info("gRPC updateGun start"))
+                .doOnSuccess(resp -> log.info("gRPC updateGun success id={}", resp.getId()))
+                .doOnError(e -> log.error("gRPC updateGun error err={}", e.getMessage(), e));
     }
 }
 //TODO logging

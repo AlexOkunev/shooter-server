@@ -4,9 +4,11 @@ import org.mapstruct.*;
 import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.DateMapper;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.GrenadeInfo;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.GrenadeInfoListPage;
+import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.GrenadeWritableData;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.GrenadesFilter;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GrenadeDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GrenadeSaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GrenadeSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationInfoDtoMapper;
 
@@ -34,6 +36,7 @@ public abstract class GrenadeMapper {
     @Mapping(source = "data", target = "items")
     public abstract PageResponseDto<GrenadeDto> toPageDto(GrenadeInfoListPage grenadeInfoListPage);
 
-    @Mapping(target = "enabled", constant = "true")
     public abstract GrenadesFilter toProto(GrenadeSearchRequestDto requestDto);
+
+    public abstract GrenadeWritableData toProto(GrenadeSaveRequestDto requestDto);
 }

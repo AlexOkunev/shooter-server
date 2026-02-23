@@ -40,12 +40,9 @@ public class PlayersSearchRequestDto {
     private String email;
 
     @Schema(description = "Player is enabled", example = "true")
-    @Builder.Default
-    private boolean enabled = true;
+    private Boolean enabled;
 
-    @Schema(
-            description = "Pagination request"
-    )
+    @Schema(description = "Pagination request")
     @NotNull
     @Valid
     private PaginationRequestDto paginationRequest;

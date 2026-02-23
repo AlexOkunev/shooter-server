@@ -5,8 +5,10 @@ import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.D
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.AmmunitionFilter;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.AmmunitionInfo;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.AmmunitionInfoListPage;
+import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.AmmunitionWritableData;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionSaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.GunReducedMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationInfoDtoMapper;
@@ -36,7 +38,7 @@ public abstract class AmmunitionMapper {
     @Mapping(source = "data", target = "items")
     public abstract PageResponseDto<AmmunitionDto> toPageDto(AmmunitionInfoListPage ammunitionInfoListPage);
 
-    @Mapping(target = "enabled", constant = "true")
-    @Mapping(target = "onlyEnabledCompatibleGuns", constant = "true")
     public abstract AmmunitionFilter toProto(AmmunitionSearchRequestDto requestDto);
+
+    public abstract AmmunitionWritableData toProto(AmmunitionSaveRequestDto requestDto);
 }

@@ -40,6 +40,9 @@ public class AttachmentSearchRequestDto {
     )
     private Boolean onlyEnabledCompatibleGuns;
 
+    @Schema(description = "Enabled", example = "true")
+    private Boolean enabled;
+
     @Schema(
             description = "Return attachments updated after given time",
             example = "2026-02-17T12:34:56+01:00"

@@ -28,6 +28,9 @@ public class GrenadeSearchRequestDto {
     @Schema(description = "Grenade name prefix", example = "Frag")
     private String name;
 
+    @Schema(description = "Enabled", example = "true")
+    private Boolean enabled;
+
     @Schema(
             description = "Return grenades updated after given time",
             example = "2026-02-17T12:34:56+01:00"

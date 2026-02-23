@@ -31,6 +31,9 @@ public class GunSearchRequestDto {
     @Schema(description = "Gun type", example = "ASSAULT_RIFLE")
     private GunType type;
 
+    @Schema(description = "Enabled", example = "true")
+    private Boolean enabled;
+
     @Schema(
             description = "Return guns updated after this time",
             example = "2026-02-17T12:34:56+01:00",

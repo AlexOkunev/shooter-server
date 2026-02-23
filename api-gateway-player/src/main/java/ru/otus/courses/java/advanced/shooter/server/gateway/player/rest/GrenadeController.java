@@ -35,7 +35,7 @@ public class GrenadeController {
                 .map(grenadeMapper::toDto);
     }
 
-    @PostMapping
+    @PostMapping("/search")
     @Operation(summary = "Search grenades by filter")
     public Mono<PageResponseDto<GrenadeDto>> search(@RequestBody @NotNull @Valid GrenadeSearchRequestDto request) {
         return grenadeService.search(

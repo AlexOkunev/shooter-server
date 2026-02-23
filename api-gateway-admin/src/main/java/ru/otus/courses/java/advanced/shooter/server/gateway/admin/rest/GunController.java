@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GunDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GunSaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GunSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.GunMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationRequestMapper;
@@ -28,15 +29,29 @@ public class GunController {
     private final GunMapper gunMapper;
     private final PaginationRequestMapper paginationRequestMapper;
 
+    @PostMapping
+    @Operation(summary = "Create gun")
+    public Mono<GunDto> create(@RequestBody @Valid @NotNull GunSaveRequestDto dto) {
+        return gunService.create(gunMapper.toProto(dto))
+                .map(gunMapper::toDto);
+    }
+
     @GetMapping("/{id}")
-    @Operation(summary = "Get ammunition")
+    @Operation(summary = "Get gun")
     public Mono<GunDto> getOne(@AuthenticationPrincipal Jwt jwt, @PathVariable int id) {
         return gunService.getOne(id)
                 .map(gunMapper::toDto);
     }
 
-    @PostMapping
-    @Operation(summary = "Search ammunition by filter")
+    @PutMapping("/{id}")
+    @Operation(summary = "Update gun")
+    public Mono<GunDto> update(@PathVariable int id, @RequestBody @NotNull @Valid GunSaveRequestDto dto) {
+        return gunService.update(id, gunMapper.toProto(dto))
+                .map(gunMapper::toDto);
+    }
+
+    @PostMapping("/search")
+    @Operation(summary = "Search gun by filter")
     public Mono<PageResponseDto<GunDto>> search(@RequestBody @NotNull @Valid GunSearchRequestDto request) {
         return gunService.search(
                         gunMapper.toProto(request),

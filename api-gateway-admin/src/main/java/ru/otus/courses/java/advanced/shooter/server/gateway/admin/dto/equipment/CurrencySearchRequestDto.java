@@ -41,6 +41,12 @@ public class CurrencySearchRequestDto {
     private Boolean canBeBought;
 
     @Schema(
+            description = "Currency is enabled",
+            example = "false"
+    )
+    private Boolean enabled;
+
+    @Schema(
             description = "Whether currency can be given as an award",
             example = "false"
     )

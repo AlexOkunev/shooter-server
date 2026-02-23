@@ -75,6 +75,33 @@ public class CurrencyServiceImpl implements CurrencyService {
                 .doOnSuccess(resp -> log.info("gRPC getCurrencies success by ids={}", ids))
                 .doOnError(e -> log.error("gRPC getCurrencies error by ids={}: err={}", ids, e.getMessage(), e));
     }
+
+    @Override
+    public Mono<CurrencyInfo> create(CurrencyWritableData data) {
+        CreateCurrencyRequest request = CreateCurrencyRequest.newBuilder()
+                .setData(data)
+                .build();
+
+        return Mono.fromCallable(() -> currencyServiceStubObjectFactory.getObject().createCurrency(request))
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnSubscribe(s -> log.info("gRPC createCurrency start"))
+                .doOnSuccess(resp -> log.info("gRPC createCurrency success id={}", resp.getId()))
+                .doOnError(e -> log.error("gRPC createCurrency error err={}", e.getMessage(), e));
+    }
+
+    @Override
+    public Mono<CurrencyInfo> update(int currencyId, CurrencyWritableData data) {
+        UpdateCurrencyRequest request = UpdateCurrencyRequest.newBuilder()
+                .setCurrencyId(currencyId)
+                .setData(data)
+                .build();
+
+        return Mono.fromCallable(() -> currencyServiceStubObjectFactory.getObject().updateCurrency(request))
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnSubscribe(s -> log.info("gRPC updateCurrency start"))
+                .doOnSuccess(resp -> log.info("gRPC updateCurrency success id={}", resp.getId()))
+                .doOnError(e -> log.error("gRPC updateCurrency error err={}", e.getMessage(), e));
+    }
 }
 //TODO logging
 //TODO настроить пулы потоков для отказоустойчивости и производительности

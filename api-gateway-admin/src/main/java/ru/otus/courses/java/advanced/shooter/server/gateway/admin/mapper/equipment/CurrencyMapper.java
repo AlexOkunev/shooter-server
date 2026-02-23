@@ -5,8 +5,10 @@ import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.D
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.CurrenciesFilter;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.CurrencyInfo;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.CurrencyInfoListPage;
+import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.CurrencyWritableData;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.CurrencyDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.CurrencySaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.CurrencySearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationInfoDtoMapper;
 
@@ -34,6 +36,7 @@ public abstract class CurrencyMapper {
     @Mapping(source = "data", target = "items")
     public abstract PageResponseDto<CurrencyDto> toPageDto(CurrencyInfoListPage currencyInfoListPage);
 
-    @Mapping(target = "enabled", constant = "true")
     public abstract CurrenciesFilter toProto(CurrencySearchRequestDto requestDto);
+
+    public abstract CurrencyWritableData toProto(CurrencySaveRequestDto requestDto);
 }

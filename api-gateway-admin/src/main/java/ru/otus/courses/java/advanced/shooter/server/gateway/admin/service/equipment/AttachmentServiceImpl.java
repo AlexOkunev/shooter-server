@@ -12,7 +12,6 @@ import ru.otus.courses.java.advanced.shooter.server.common.protobuf.PaginationRe
 import ru.otus.courses.java.advanced.shooter.server.common.protobuf.RelatedEntitiesInclusionMode;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.*;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.exception.AttachmentNotFoundException;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.equipment.AttachmentService;
 
 import java.util.Collection;
 
@@ -44,7 +43,7 @@ public class AttachmentServiceImpl implements AttachmentService {
         GetAttachmentsRequest request = GetAttachmentsRequest.newBuilder()
                 .setFilter(requestFilter)
                 .setPaginationRequest(paginationRequest)
-                .setCompatibleGunsInclusionMode(RelatedEntitiesInclusionMode.INCLUDE_ONLY_ENABLED)
+                .setCompatibleGunsInclusionMode(RelatedEntitiesInclusionMode.INCLUDE_ALL)
                 .build();
 
         return Mono.fromCallable(() -> attachmentServiceAPIBlockingStubObjectFactory.getObject().getAttachments(request))
@@ -70,7 +69,7 @@ public class AttachmentServiceImpl implements AttachmentService {
                         .setPage(0)
                         .setCount(ids.size())
                         .build())
-                .setCompatibleGunsInclusionMode(RelatedEntitiesInclusionMode.INCLUDE_ONLY_ENABLED)
+                .setCompatibleGunsInclusionMode(RelatedEntitiesInclusionMode.INCLUDE_ALL)
                 .build();
 
         return Mono.fromCallable(() -> attachmentServiceAPIBlockingStubObjectFactory.getObject().getAttachments(request))
@@ -78,6 +77,33 @@ public class AttachmentServiceImpl implements AttachmentService {
                 .doOnSubscribe(s -> log.info("gRPC getAttachments start by ids={}", ids))
                 .doOnSuccess(resp -> log.info("gRPC getAttachments success by ids={}", ids))
                 .doOnError(e -> log.error("gRPC getAttachments error by ids={}: err={}", ids, e.getMessage(), e));
+    }
+
+    @Override
+    public Mono<AttachmentInfo> create(AttachmentWritableData data) {
+        CreateAttachmentRequest request = CreateAttachmentRequest.newBuilder()
+                .setData(data)
+                .build();
+
+        return Mono.fromCallable(() -> attachmentServiceAPIBlockingStubObjectFactory.getObject().createAttachment(request))
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnSubscribe(s -> log.info("gRPC createAttachment start"))
+                .doOnSuccess(resp -> log.info("gRPC createAttachment success id={}", resp.getId()))
+                .doOnError(e -> log.error("gRPC createAttachment error err={}", e.getMessage(), e));
+    }
+
+    @Override
+    public Mono<AttachmentInfo> update(int id, AttachmentWritableData data) {
+        UpdateAttachmentRequest request = UpdateAttachmentRequest.newBuilder()
+                .setAttachmentId(id)
+                .setData(data)
+                .build();
+
+        return Mono.fromCallable(() -> attachmentServiceAPIBlockingStubObjectFactory.getObject().updateAttachment(request))
+                .subscribeOn(Schedulers.boundedElastic())
+                .doOnSubscribe(s -> log.info("gRPC updateAttachment start"))
+                .doOnSuccess(resp -> log.info("gRPC updateAttachment success id={}", resp.getId()))
+                .doOnError(e -> log.error("gRPC updateAttachment error err={}", e.getMessage(), e));
     }
 }
 //TODO logging
