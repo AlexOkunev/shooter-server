@@ -12,9 +12,9 @@ import reactor.core.publisher.Mono;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.inventory.SearchInitialPlayerInventoryRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.inventory.initial.InitialPlayerInventoryItemsPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.inventory.initial.UpdateInitialPlayerInventoryRequestDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.InitialInventoryWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.context.PlayerInventoryInfoMappingContext;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.context.factory.PlayerInventoryInfoMappingContextFactory;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.InitialInventoryWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.context.PlayerInventoryDtoMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.context.factory.PlayerInventoryDtoCachingMappingContextFactory;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationRequestMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.inventory.InitialInventoryService;
 import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.initial.InitialPlayerInventoryItemsPage;
@@ -25,13 +25,13 @@ import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory
 @RestController
 @RequestMapping("/initial-inventory")
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "caches.enabled", havingValue = "false")
-public class InitialInventoryController {
+@ConditionalOnProperty(value = "caches.enabled", havingValue = "true")
+public class InitialInventoryCachingController {
 
     private final InitialInventoryService initialInventoryService;
-    private final InitialInventoryWithInfoContextMapper initialInventoryMapper;
+    private final InitialInventoryWithDtoContextMapper initialInventoryMapper;
     private final PaginationRequestMapper paginationRequestMapper;
-    private final PlayerInventoryInfoMappingContextFactory playerInventoryMappingContextFactory;
+    private final PlayerInventoryDtoCachingMappingContextFactory playerInventoryMappingContextFactory;
 
     @PostMapping("/search")
     @Operation(summary = "Get initial player inventory")
@@ -44,7 +44,7 @@ public class InitialInventoryController {
                 )
                 .cache();
 
-        Mono<PlayerInventoryInfoMappingContext> contextMono = playerInventoryMappingContextFactory.createForInitialItems(itemsPageMono);
+        Mono<PlayerInventoryDtoMappingContext> contextMono = playerInventoryMappingContextFactory.createForInitialItems(itemsPageMono);
 
         return Mono.zip(itemsPageMono, contextMono)
                 .map(tuple -> initialInventoryMapper.toPageDto(tuple.getT1(), tuple.getT2()));

@@ -7,11 +7,14 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachmen
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.GrenadeInfo;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.GunInfo;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.inventory.*;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.inventory.initial.*;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.*;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.context.PlayerInventoryMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.AmmunitionMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.AttachmentMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.GrenadeMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.GunMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.context.PlayerInventoryInfoMappingContext;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationInfoDtoMapper;
-import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.initial.*;
+import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.PlayerInventoryItemInfo;
+import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.PlayerInventoryItemsPage;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,31 +28,26 @@ import java.util.List;
         uses = {
                 DateMapper.class,
                 PaginationInfoDtoMapper.class,
-                EquipmentTypeMapper.class,
                 GrenadeMapper.class,
                 AmmunitionMapper.class,
                 AttachmentMapper.class,
                 GunMapper.class
         }
 )
-public abstract class InitialInventoryMapper {
+public abstract class PlayerInventoryItemWithInfoContextMapper {
 
     @Mapping(source = "data", target = "items")
-    public abstract InitialPlayerInventoryItemsPageResponseDto toPageDto(InitialPlayerInventoryItemsPage page,
-                                                                         @Context PlayerInventoryMappingContext context);
+    public abstract PlayerInventoryItemsPageResponseDto toPageDto(PlayerInventoryItemsPage playerInventoryItemsPage,
+                                                                  @Context PlayerInventoryInfoMappingContext context);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
-    public abstract List<InitialPlayerInventoryItemDto> toDtoList(Collection<InitialPlayerInventoryItemInfo> items,
-                                                                  @Context PlayerInventoryMappingContext context);
+    public abstract List<PlayerInventoryItemDto> toDtoList(Collection<PlayerInventoryItemInfo> playerInventoryItemInfos,
+                                                           @Context PlayerInventoryInfoMappingContext context);
 
     @Mapping(target = "equipment", source = ".")
-    public abstract InitialPlayerInventoryItemDto toDto(InitialPlayerInventoryItemInfo item, @Context PlayerInventoryMappingContext context);
+    public abstract PlayerInventoryItemDto toDto(PlayerInventoryItemInfo item, @Context PlayerInventoryInfoMappingContext context);
 
-    public abstract GetInitialPlayerInventoryRequest.Filter toProto(SearchInitialPlayerInventoryRequestDto dto);
-
-    public abstract UpdateInitialPlayerInventoryRequest toProto(UpdateInitialPlayerInventoryRequestDto dto);
-
-    protected InventoryEquipmentDto toEquipment(InitialPlayerInventoryItemInfo item, @Context PlayerInventoryMappingContext context) {
+    protected InventoryEquipmentDto toEquipment(PlayerInventoryItemInfo item, @Context PlayerInventoryInfoMappingContext context) {
         if (item == null) {
             return null;
         }
@@ -74,8 +72,4 @@ public abstract class InitialInventoryMapper {
 
     @Mapping(target = "gun", source = ".")
     protected abstract GunInventoryEquipmentDto toGunDto(GunInfo ammunitionInfo);
-
-    protected abstract DeletedInitialPlayerInventoryItem toProto(DeletedInitialPlayerInventoryItemDto item);
-
-    protected abstract SavedInitialPlayerInventoryItem toProto(SavedInitialPlayerInventoryItemDto item);
 }

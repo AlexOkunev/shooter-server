@@ -28,6 +28,7 @@
         <shooter.inventory.version>1.0</shooter.inventory.version>
         <shooter.market.version>1.0</shooter.market.version>
         <docker.plugin.version>0.42.0</docker.plugin.version>
+        <shooter.common.version>1.0</shooter.common.version>
     </properties>
 
     <dependencies>
@@ -106,6 +107,12 @@
         <dependency>
             <groupId>io.grpc</groupId>
             <artifactId>grpc-stub</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>ru.otus.courses.java.advanced.shooter.server</groupId>
+            <artifactId>common-utils</artifactId>
+            <version>${shooter.common.version}</version>
         </dependency>
 
         <dependency>

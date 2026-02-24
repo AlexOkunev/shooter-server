@@ -12,6 +12,8 @@ import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.Mo
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.properties.ReferenceDataCachingProperties;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.MoneyBundleRepository;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -42,5 +44,10 @@ public class MoneyBundleCacheServiceImpl extends EntirelyRefreshableCacheService
         log.debug("Load money bundles from page {} size {}", page, size);
         Page<MoneyBundle> dataPage = moneyBundleRepository.findAll(PageRequest.of(page, size));
         return new CacheableDataPage<>(dataPage.getContent(), dataPage.getNumber(), dataPage.getTotalPages());
+    }
+
+    @Override
+    protected List<MoneyBundle> produceDataByIds(Collection<Integer> id) {
+        throw new UnsupportedOperationException("Money bundle caching does not support bulk loading by IDs");
     }
 }

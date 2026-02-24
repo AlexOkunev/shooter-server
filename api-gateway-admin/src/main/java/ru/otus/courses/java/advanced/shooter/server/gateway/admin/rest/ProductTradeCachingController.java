@@ -12,9 +12,9 @@ import reactor.core.publisher.Mono;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.ProductTradeDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.ProductTradePageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.ProductTradeSearchRequestDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.ProductTradeWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.factory.CurrencyInfoMappingContextFactory;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.factory.EquipmentInfoMappingContextFactory;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.ProductTradeWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.factory.CurrencyDtoCachingMappingContextFactory;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.factory.EquipmentDtoCachingMappingContextFactory;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationRequestMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.market.ProductTradeService;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.product.ProductTradeInfo;
@@ -25,14 +25,14 @@ import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.produc
 @RestController
 @RequestMapping("/player/{playerUuid}/market/product-trades")
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "caches.enabled", havingValue = "false")
-public class ProductTradeController {
+@ConditionalOnProperty(value = "caches.enabled", havingValue = "true")
+public class ProductTradeCachingController {
 
     private final ProductTradeService productTradeService;
-    private final ProductTradeWithInfoContextMapper productTradeMapper;
+    private final ProductTradeWithDtoContextMapper productTradeMapper;
     private final PaginationRequestMapper paginationRequestMapper;
-    private final CurrencyInfoMappingContextFactory currencyMappingContextFactory;
-    private final EquipmentInfoMappingContextFactory equipmentMappingContextFactory;
+    private final CurrencyDtoCachingMappingContextFactory currencyMappingContextFactory;
+    private final EquipmentDtoCachingMappingContextFactory equipmentMappingContextFactory;
 
     @GetMapping("/{tradeUuid}")
     @Operation(summary = "Get product trade by UUID")

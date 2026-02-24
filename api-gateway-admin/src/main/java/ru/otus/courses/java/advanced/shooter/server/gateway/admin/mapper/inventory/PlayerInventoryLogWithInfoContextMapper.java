@@ -11,10 +11,10 @@ import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipme
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.AttachmentMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.GrenadeMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.GunMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.context.PlayerInventoryMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.context.PlayerInventoryInfoMappingContext;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationInfoDtoMapper;
-import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.PlayerInventoryItemInfo;
-import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.PlayerInventoryItemsPage;
+import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.log.PlayerInventoryLogEntry;
+import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.log.PlayerInventoryLogPage;
 
 import java.util.Collection;
 import java.util.List;
@@ -34,29 +34,29 @@ import java.util.List;
                 GunMapper.class
         }
 )
-public abstract class PlayerInventoryItemMapper {
+public abstract class PlayerInventoryLogWithInfoContextMapper {
 
     @Mapping(source = "data", target = "items")
-    public abstract PlayerInventoryItemsPageResponseDto toPageDto(PlayerInventoryItemsPage playerInventoryItemsPage,
-                                                                  @Context PlayerInventoryMappingContext context);
+    public abstract PlayerInventoryLogPageResponseDto toPageDto(PlayerInventoryLogPage playerInventoryLogPage,
+                                                                @Context PlayerInventoryInfoMappingContext context);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
-    public abstract List<PlayerInventoryItemDto> toDtoList(Collection<PlayerInventoryItemInfo> playerInventoryItemInfos,
-                                                           @Context PlayerInventoryMappingContext context);
+    public abstract List<PlayerInventoryLogEntryDto> toDtoList(Collection<PlayerInventoryLogEntry> logEntries,
+                                                               @Context PlayerInventoryInfoMappingContext context);
 
     @Mapping(target = "equipment", source = ".")
-    public abstract PlayerInventoryItemDto toDto(PlayerInventoryItemInfo item, @Context PlayerInventoryMappingContext context);
+    public abstract PlayerInventoryLogEntryDto toDto(PlayerInventoryLogEntry logEntry, @Context PlayerInventoryInfoMappingContext context);
 
-    protected InventoryEquipmentDto toEquipment(PlayerInventoryItemInfo item, @Context PlayerInventoryMappingContext context) {
-        if (item == null) {
+    protected InventoryEquipmentDto toEquipment(PlayerInventoryLogEntry logEntry, @Context PlayerInventoryInfoMappingContext context) {
+        if (logEntry == null) {
             return null;
         }
 
-        return switch (item.getEquipmentType()) {
-            case GUN -> toGunDto(context.gunsById().get(item.getEquipmentId()));
-            case GRENADE -> toGrenadeDto(context.grenadesById().get(item.getEquipmentId()));
-            case AMMUNITION -> toAmmunitionDto(context.ammunitionById().get(item.getEquipmentId()));
-            case ATTACHMENT -> toAttachmentDto(context.attachmentsById().get(item.getEquipmentId()));
+        return switch (logEntry.getEquipmentType()) {
+            case GUN -> toGunDto(context.gunsById().get(logEntry.getEquipmentId()));
+            case GRENADE -> toGrenadeDto(context.grenadesById().get(logEntry.getEquipmentId()));
+            case AMMUNITION -> toAmmunitionDto(context.ammunitionById().get(logEntry.getEquipmentId()));
+            case ATTACHMENT -> toAttachmentDto(context.attachmentsById().get(logEntry.getEquipmentId()));
             default -> null;
         };
     }

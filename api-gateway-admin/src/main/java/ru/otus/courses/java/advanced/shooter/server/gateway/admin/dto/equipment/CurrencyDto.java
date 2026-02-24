@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.data.CacheableData;
 
 import java.time.ZonedDateTime;
 
@@ -16,38 +17,23 @@ import java.time.ZonedDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CurrencyDto {
+public class CurrencyDto implements CacheableData<Integer> {
 
-    @Schema(
-            description = "Currency ID",
-            example = "1"
-    )
+    @Schema(description = "Currency ID", example = "1")
     private Integer id;
 
-    @Schema(
-            description = "Indicates if currency is enabled",
-            example = "true"
-    )
+    @Schema(description = "Indicates if currency is enabled", example = "true")
     @Builder.Default
     private boolean enabled = true;
 
-    @Schema(
-            description = "Currency name",
-            example = "Gold"
-    )
+    @Schema(description = "Currency name", example = "Gold")
     private String name;
 
-    @Schema(
-            description = "Whether currency can be bought",
-            example = "true"
-    )
+    @Schema(description = "Whether currency can be bought", example = "true")
     @Builder.Default
     private boolean canBeBought = true;
 
-    @Schema(
-            description = "Whether currency can be given as an award",
-            example = "true"
-    )
+    @Schema(description = "Whether currency can be given as an award", example = "true")
     @Builder.Default
     private boolean canBeGivenAsAward = true;
 

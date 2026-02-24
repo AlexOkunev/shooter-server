@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AttachmentEffectDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AttachmentType;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.data.CacheableData;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -19,13 +18,13 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AttachmentDto {
+public class AttachmentDto implements CacheableData<Integer> {
 
     @Schema(description = "Attachment ID", example = "1")
     private Integer id;
 
     @Schema(description = "Attachment is enabled", example = "true")
-    private Boolean enabled;
+    private boolean enabled;
 
     @Schema(description = "Name", example = "Red Dot Sight")
     private String name;

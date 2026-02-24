@@ -10,7 +10,6 @@ import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.pag
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionSaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionSearchRequestDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.GunReducedMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationInfoDtoMapper;
 
 import java.util.Collection;

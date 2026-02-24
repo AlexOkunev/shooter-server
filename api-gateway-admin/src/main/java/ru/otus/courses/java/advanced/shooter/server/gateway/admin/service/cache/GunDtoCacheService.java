@@ -1,0 +1,116 @@
+package ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.cache;
+
+import io.grpc.Status;
+import io.grpc.StatusRuntimeException;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+import ru.otus.courses.java.advanced.shooter.server.common.protobuf.PaginationRequest;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.data.CacheableDataPage;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.service.IncrementallyRefreshableCacheServiceImplBase;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.structure.impl.SoftReferenceMapCache;
+import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.*;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GunDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.GunMapper;
+
+import java.time.ZonedDateTime;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+
+@Slf4j
+@Service
+public class GunDtoCacheService extends IncrementallyRefreshableCacheServiceImplBase<Integer, GunDto> {
+
+    private final ObjectFactory<GunServiceAPIGrpc.GunServiceAPIBlockingStub> gunServiceAPIBlockingStubObjectFactory;
+    private final GunMapper gunMapper;
+
+    public GunDtoCacheService(
+            @Value("${caches.gun.page-size:100}") int dataPageSize,
+            ObjectFactory<GunServiceAPIGrpc.GunServiceAPIBlockingStub> gunServiceAPIBlockingStubObjectFactory, GunMapper gunMapper
+    ) {
+        super(new SoftReferenceMapCache<>(new ConcurrentHashMap<>()), dataPageSize);
+        this.gunServiceAPIBlockingStubObjectFactory = gunServiceAPIBlockingStubObjectFactory;
+        this.gunMapper = gunMapper;
+    }
+
+    @Override
+    protected CacheableDataPage<GunDto> loadDataPage(int page, int size, ZonedDateTime lastRefreshTime) {
+        log.info("Loading gun data page: page={}, size={}, lastRefreshTime={}", page, size, lastRefreshTime);
+
+        GunInfoListPage guns = gunServiceAPIBlockingStubObjectFactory.getObject().getGuns(
+                GetGunsRequest.newBuilder()
+                        .setFilter(GunsFilter.newBuilder()
+                                .setUpdatedAfter(lastRefreshTime.toInstant().toEpochMilli())
+                                .build())
+                        .setPaginationRequest(PaginationRequest.newBuilder()
+                                .setPage(page)
+                                .setCount(size)
+                                .build())
+                        .build()
+        );
+
+        log.info("Loaded gun data page: page={}, size={}, total pages={}", page, guns.getDataList().size(), guns.getPaginationInfo().getTotalPages());
+
+        guns.getDataList()
+                .forEach(gunInfo -> log.info("Loaded gun {} {}", gunInfo.getId(), gunInfo.getName()));
+
+        return new CacheableDataPage<>(
+                gunMapper.toDtoList(guns.getDataList()),
+                guns.getPaginationInfo().getCurrentPageNumber(),
+                guns.getPaginationInfo().getTotalPages()
+        );
+    }
+
+    @Override
+    protected Optional<GunDto> produceDataById(Integer integer) {
+        try {
+            log.info("Loading gun by ID: {}", integer);
+
+            GunInfo gunInfo = gunServiceAPIBlockingStubObjectFactory.getObject().getGun(
+                    GetGunRequest.newBuilder()
+                            .setGunId(integer)
+                            .build()
+            );
+
+            log.info("Loaded gun by ID: {}", integer);
+
+            return Optional.of(gunMapper.toDto(gunInfo));
+        } catch (StatusRuntimeException e) {
+            if (e.getStatus().getCode() == Status.Code.NOT_FOUND) {
+                log.info("Gun not found by ID: {}", integer);
+                return Optional.empty();
+            }
+
+            throw e;
+        }
+    }
+
+    @Override
+    protected List<GunDto> produceDataByIds(Collection<Integer> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return List.of();
+        }
+
+        log.info("Loading guns by IDs: {}", ids);
+
+        GunInfoListPage guns = gunServiceAPIBlockingStubObjectFactory.getObject().getGuns(
+                GetGunsRequest.newBuilder()
+                        .setFilter(GunsFilter.newBuilder()
+                                .addAllGunIds(ids)
+                                .build())
+                        .setPaginationRequest(PaginationRequest.newBuilder()
+                                .setPage(0)
+                                .setCount(ids.size())
+                                .build())
+                        .build()
+        );
+
+        log.info("Loaded guns by IDs: {}", ids);
+
+        return gunMapper.toDtoList(guns.getDataList());
+    }
+}

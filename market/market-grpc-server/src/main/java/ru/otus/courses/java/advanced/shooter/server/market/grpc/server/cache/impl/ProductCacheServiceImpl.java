@@ -12,6 +12,8 @@ import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.Pr
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.properties.ReferenceDataCachingProperties;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.ProductRepository;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,5 +45,10 @@ public class ProductCacheServiceImpl extends EntirelyRefreshableCacheServiceImpl
         //TODO смотреть какие будут запросы связанных сущностей, мб нужен entity graph как в equipment
         Page<Product> dataPage = productRepository.findAll(PageRequest.of(page, size));
         return new CacheableDataPage<>(dataPage.getContent(), dataPage.getNumber(), dataPage.getTotalPages());
+    }
+
+    @Override
+    protected List<Product> produceDataByIds(Collection<Integer> id) {
+        throw new UnsupportedOperationException("Product caching does not support bulk loading by IDs");
     }
 }

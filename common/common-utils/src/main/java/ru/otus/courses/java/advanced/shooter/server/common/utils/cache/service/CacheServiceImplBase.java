@@ -6,7 +6,9 @@ import lombok.Setter;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.data.CacheableData;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.structure.MyCache;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public abstract class CacheServiceImplBase<ID, T extends CacheableData<ID>> implements CacheService<ID, T> {
 
@@ -47,9 +49,44 @@ public abstract class CacheServiceImplBase<ID, T extends CacheableData<ID>> impl
     }
 
     @Override
+    public List<T> getByIds(Collection<ID> ids) {
+        Map<ID, T> map = getByIdsAsMap(ids);
+        return ids.stream()
+                .map(map::get)
+                .filter(Objects::nonNull)
+                .toList();
+    }
+
+    @Override
+    public Map<ID, T> getByIdsAsMap(Collection<ID> ids) {
+        Map<ID, T> tempMap = ids.stream()
+                .map(id -> dataCache.get(id))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(
+                        T::getId,
+                        Function.identity(),
+                        (existing, replacement) -> existing,
+                        HashMap::new
+                ));
+
+        List<ID> notFoundIds = ids.stream()
+                .filter(id -> !tempMap.containsKey(id))
+                .distinct()
+                .toList();
+
+        List<T> loadedDataList = produceDataByIds(notFoundIds);
+
+        loadedDataList.forEach(data -> tempMap.put(data.getId(), data));
+
+        return Collections.unmodifiableMap(tempMap);
+    }
+
+    @Override
     public void clear() {
         dataCache.clear();
     }
 
     protected abstract Optional<T> produceDataById(ID id);
+
+    protected abstract List<T> produceDataByIds(Collection<ID> id);
 }

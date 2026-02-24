@@ -16,10 +16,10 @@ import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.inventory.PlayerInventoryItemsPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.inventory.PlayerInventoryLogPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.EquipmentTypeMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.PlayerInventoryItemWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.PlayerInventoryLogWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.context.PlayerInventoryInfoMappingContext;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.context.factory.PlayerInventoryInfoMappingContextFactory;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.PlayerInventoryItemWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.PlayerInventoryLogWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.context.PlayerInventoryDtoMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.context.factory.PlayerInventoryDtoCachingMappingContextFactory;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationRequestMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.inventory.PlayerInventoryLogService;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.inventory.PlayerInventoryService;
@@ -31,16 +31,16 @@ import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory
 @RestController
 @RequestMapping("/players/{playerUuid}/inventory")
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "caches.enabled", havingValue = "false")
-public class PlayerInventoryController {
+@ConditionalOnProperty(value = "caches.enabled", havingValue = "true")
+public class PlayerInventoryCachingController {
 
     private final PlayerInventoryService playerInventoryService;
     private final PlayerInventoryLogService playerInventoryLogService;
-    private final PlayerInventoryItemWithInfoContextMapper playerInventoryItemMapper;
-    private final PlayerInventoryLogWithInfoContextMapper playerInventoryLogMapper;
+    private final PlayerInventoryItemWithDtoContextMapper playerInventoryItemMapper;
+    private final PlayerInventoryLogWithDtoContextMapper playerInventoryLogMapper;
     private final PaginationRequestMapper paginationRequestMapper;
     private final EquipmentTypeMapper equipmentTypeMapper;
-    private final PlayerInventoryInfoMappingContextFactory playerInventoryMappingContextFactory;
+    private final PlayerInventoryDtoCachingMappingContextFactory playerInventoryMappingContextFactory;
 
     @GetMapping
     @Operation(summary = "Get player inventory")
@@ -54,7 +54,7 @@ public class PlayerInventoryController {
                 )
                 .cache();
 
-        Mono<PlayerInventoryInfoMappingContext> contextMono = playerInventoryMappingContextFactory.createForItems(itemsPageMono);
+        Mono<PlayerInventoryDtoMappingContext> contextMono = playerInventoryMappingContextFactory.createForItems(itemsPageMono);
 
         return Mono.zip(itemsPageMono, contextMono)
                 .map(tuple -> playerInventoryItemMapper.toPageDto(tuple.getT1(), tuple.getT2()));
@@ -79,7 +79,7 @@ public class PlayerInventoryController {
                 )
                 .cache();
 
-        Mono<PlayerInventoryInfoMappingContext> contextMono = playerInventoryMappingContextFactory.createForLog(logPageMono);
+        Mono<PlayerInventoryDtoMappingContext> contextMono = playerInventoryMappingContextFactory.createForLog(logPageMono);
 
         return Mono.zip(logPageMono, contextMono)
                 .map(tuple -> playerInventoryLogMapper.toPageDto(tuple.getT1(), tuple.getT2()));

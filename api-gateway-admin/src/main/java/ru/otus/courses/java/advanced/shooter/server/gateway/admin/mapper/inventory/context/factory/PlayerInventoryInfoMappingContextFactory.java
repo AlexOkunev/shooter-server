@@ -8,7 +8,7 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunitio
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.AttachmentInfo;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.GrenadeInfo;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.GunInfo;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.context.PlayerInventoryMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.inventory.context.PlayerInventoryInfoMappingContext;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.equipment.AmmunitionService;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.equipment.AttachmentService;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.equipment.GrenadeService;
@@ -25,14 +25,14 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class PlayerInventoryMappingContextFactory {
+public class PlayerInventoryInfoMappingContextFactory {
 
     private final GrenadeService grenadeService;
     private final GunService gunService;
     private final AmmunitionService ammunitionService;
     private final AttachmentService attachmentService;
 
-    public Mono<PlayerInventoryMappingContext> createForInitialItems(Mono<InitialPlayerInventoryItemsPage> itemsPageMono) {
+    public Mono<PlayerInventoryInfoMappingContext> createForInitialItems(Mono<InitialPlayerInventoryItemsPage> itemsPageMono) {
         return itemsPageMono.flatMap(itemsPage ->
                 create(
                         PlayerInventoryUtils.getEquipmentIds(itemsPage, EquipmentType.GRENADE),
@@ -42,7 +42,7 @@ public class PlayerInventoryMappingContextFactory {
                 ));
     }
 
-    public Mono<PlayerInventoryMappingContext> createForItems(Mono<PlayerInventoryItemsPage> itemsPageMono) {
+    public Mono<PlayerInventoryInfoMappingContext> createForItems(Mono<PlayerInventoryItemsPage> itemsPageMono) {
         return itemsPageMono.flatMap(itemsPage ->
                 create(
                         PlayerInventoryUtils.getEquipmentIds(itemsPage, EquipmentType.GRENADE),
@@ -52,7 +52,7 @@ public class PlayerInventoryMappingContextFactory {
                 ));
     }
 
-    public Mono<PlayerInventoryMappingContext> createForLog(Mono<PlayerInventoryLogPage> logPageMono) {
+    public Mono<PlayerInventoryInfoMappingContext> createForLog(Mono<PlayerInventoryLogPage> logPageMono) {
         return logPageMono.flatMap(logPage ->
                 create(
                         PlayerInventoryUtils.getEquipmentIds(logPage, EquipmentType.GRENADE),
@@ -62,10 +62,10 @@ public class PlayerInventoryMappingContextFactory {
                 ));
     }
 
-    private Mono<PlayerInventoryMappingContext> create(Collection<Integer> grenadeIds,
-                                                             Collection<Integer> ammunitionIds,
-                                                             Collection<Integer> attachmentIds,
-                                                             Collection<Integer> gunIds) {
+    private Mono<PlayerInventoryInfoMappingContext> create(Collection<Integer> grenadeIds,
+                                                           Collection<Integer> ammunitionIds,
+                                                           Collection<Integer> attachmentIds,
+                                                           Collection<Integer> gunIds) {
         Mono<Map<Integer, GrenadeInfo>> grenadeInfoMono = grenadeService.fetchByIds(grenadeIds)
                 .map(grenadeInfoListPage -> grenadeInfoListPage.getDataList()
                         .stream()
@@ -91,7 +91,7 @@ public class PlayerInventoryMappingContextFactory {
                 );
 
         return Mono.zip(grenadeInfoMono, ammunitionInfoMono, attachmentInfoMono, gunInfoMono)
-                .map(tuple -> PlayerInventoryMappingContext.builder()
+                .map(tuple -> PlayerInventoryInfoMappingContext.builder()
                         .grenadesById(tuple.getT1())
                         .ammunitionById(tuple.getT2())
                         .attachmentsById(tuple.getT3())

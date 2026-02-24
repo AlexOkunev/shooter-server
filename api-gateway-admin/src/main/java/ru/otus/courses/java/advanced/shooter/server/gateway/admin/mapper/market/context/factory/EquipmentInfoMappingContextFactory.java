@@ -8,7 +8,7 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunitio
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.AttachmentInfo;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.GrenadeInfo;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.GunInfo;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.EquipmentMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.EquipmentInfoMappingContext;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.equipment.AmmunitionService;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.equipment.AttachmentService;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.equipment.GrenadeService;
@@ -27,14 +27,15 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class EquipmentMappingContextFactory {
+//@ConditionalOnProperty(value = "caches.enabled", havingValue = "false")  TODO!!! uncomment
+public class EquipmentInfoMappingContextFactory {
 
     private final GrenadeService grenadeService;
     private final GunService gunService;
     private final AmmunitionService ammunitionService;
     private final AttachmentService attachmentService;
 
-    public Mono<EquipmentMappingContext> createForProducts(Mono<ProductInfoListPage> itemsPageMono) {
+    public Mono<EquipmentInfoMappingContext> createForProducts(Mono<ProductInfoListPage> itemsPageMono) {
         return itemsPageMono.flatMap(itemsPage ->
                 create(
                         EquipmentUtils.getEquipmentIds(itemsPage, EquipmentType.GRENADE),
@@ -44,7 +45,7 @@ public class EquipmentMappingContextFactory {
                 ));
     }
 
-    public Mono<EquipmentMappingContext> createForProduct(Mono<ProductInfo> productInfoMono) {
+    public Mono<EquipmentInfoMappingContext> createForProduct(Mono<ProductInfo> productInfoMono) {
         return productInfoMono.flatMap(productInfo ->
                 create(
                         productInfo.getEquipment().getEquipmentType() == EquipmentType.GRENADE
@@ -58,7 +59,7 @@ public class EquipmentMappingContextFactory {
                 ));
     }
 
-    public Mono<EquipmentMappingContext> createForProductTrades(Mono<ProductTradeInfoListPage> productTradeInfoListPageMono) {
+    public Mono<EquipmentInfoMappingContext> createForProductTrades(Mono<ProductTradeInfoListPage> productTradeInfoListPageMono) {
         return productTradeInfoListPageMono.flatMap(itemsPage ->
                 create(
                         EquipmentUtils.getEquipmentIds(itemsPage, EquipmentType.GRENADE),
@@ -68,7 +69,7 @@ public class EquipmentMappingContextFactory {
                 ));
     }
 
-    public Mono<EquipmentMappingContext> createForProductTrade(Mono<ProductTradeInfo> productTradeInfoMono) {
+    public Mono<EquipmentInfoMappingContext> createForProductTrade(Mono<ProductTradeInfo> productTradeInfoMono) {
         return productTradeInfoMono.flatMap(productInfo ->
                 create(
                         productInfo.getEquipmentType() == EquipmentType.GRENADE
@@ -82,10 +83,10 @@ public class EquipmentMappingContextFactory {
                 ));
     }
 
-    private Mono<EquipmentMappingContext> create(Collection<Integer> grenadeIds,
-                                                 Collection<Integer> ammunitionIds,
-                                                 Collection<Integer> attachmentIds,
-                                                 Collection<Integer> gunIds) {
+    private Mono<EquipmentInfoMappingContext> create(Collection<Integer> grenadeIds,
+                                                     Collection<Integer> ammunitionIds,
+                                                     Collection<Integer> attachmentIds,
+                                                     Collection<Integer> gunIds) {
         Mono<Map<Integer, GrenadeInfo>> grenadeInfoMono = grenadeService.fetchByIds(grenadeIds)
                 .map(grenadeInfoListPage -> grenadeInfoListPage.getDataList()
                         .stream()
@@ -111,7 +112,7 @@ public class EquipmentMappingContextFactory {
                 );
 
         return Mono.zip(grenadeInfoMono, ammunitionInfoMono, attachmentInfoMono, gunInfoMono)
-                .map(tuple -> EquipmentMappingContext.builder()
+                .map(tuple -> EquipmentInfoMappingContext.builder()
                         .grenadesById(tuple.getT1())
                         .ammunitionById(tuple.getT2())
                         .attachmentsById(tuple.getT3())

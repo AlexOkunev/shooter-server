@@ -15,9 +15,9 @@ import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.pag
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.ProductDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.ProductPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.SaveProductRequestDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.ProductWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.factory.CurrencyInfoMappingContextFactory;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.factory.EquipmentInfoMappingContextFactory;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.ProductWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.factory.CurrencyDtoCachingMappingContextFactory;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.factory.EquipmentDtoCachingMappingContextFactory;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationRequestMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.market.ProductService;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.product.ProductInfo;
@@ -28,14 +28,14 @@ import ru.otus.courses.java.advanced.shooter.server.market.protobuf.product.Prod
 @RestController
 @RequestMapping("/market/products")
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "caches.enabled", havingValue = "false")
-public class ProductController {
+@ConditionalOnProperty(value = "caches.enabled", havingValue = "true")
+public class ProductCachingController {
 
     private final ProductService productService;
-    private final ProductWithInfoContextMapper productMapper;
+    private final ProductWithDtoContextMapper productMapper;
     private final PaginationRequestMapper paginationRequestMapper;
-    private final CurrencyInfoMappingContextFactory currencyMappingContextFactory;
-    private final EquipmentInfoMappingContextFactory equipmentMappingContextFactory;
+    private final CurrencyDtoCachingMappingContextFactory currencyMappingContextFactory;
+    private final EquipmentDtoCachingMappingContextFactory equipmentMappingContextFactory;
 
     @PostMapping
     @Operation(summary = "Create product")

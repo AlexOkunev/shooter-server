@@ -2,11 +2,13 @@ package ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market
 
 import org.mapstruct.*;
 import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.DateMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.initial.*;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.CurrencyMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.PlayerAccountLogEntryDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.PlayerAccountLogPageResponseDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.CurrencyInfoMappingContext;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.helper.CurrencyMappingHelper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationInfoDtoMapper;
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.initial.*;
+import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.log.PlayerAccountLogEntry;
+import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.log.PlayerAccountLogPage;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,26 +25,20 @@ import java.util.List;
                 CurrencyMappingHelper.class
         }
 )
-public abstract class InitialPlayerAccountMapper {
+public abstract class PlayerAccountLogWithInfoContextMapper {
 
     @Mapping(source = "data", target = "items")
-    public abstract InitialPlayerAccountItemsPageResponseDto toPageDto(InitialPlayerAccountItemsPage page,
-                                                                       @Context CurrencyMappingContext context);
+    public abstract PlayerAccountLogPageResponseDto toPageDto(PlayerAccountLogPage playerAccountLogPage,
+                                                              @Context CurrencyInfoMappingContext context);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
-    public abstract List<InitialPlayerAccountItemDto> toDtoList(Collection<InitialPlayerAccountItemInfo> items,
-                                                                @Context CurrencyMappingContext context);
+    public abstract List<PlayerAccountLogEntryDto> toDtoList(Collection<PlayerAccountLogEntry> items,
+                                                             @Context CurrencyInfoMappingContext context);
 
     @Mapping(
             target = "currency",
             source = "currencyId",
             qualifiedByName = CurrencyMappingHelper.NamedMethods.NAMED_TO_CURRENCY_DTO
     )
-    public abstract InitialPlayerAccountItemDto toDto(InitialPlayerAccountItemInfo item, @Context CurrencyMappingContext context);
-
-    public abstract GetInitialPlayerAccountRequest.Filter toProto(InitialPlayerAccountSearchRequestDto dto);
-
-    public abstract UpdateInitialPlayerAccountRequest toProto(UpdateInitialPlayerAccountRequestDto dto);
-
-    protected abstract SavedInitialPlayerAccountItemRequest toProto(SavedInitialPlayerAccountItemDto item);
+    public abstract PlayerAccountLogEntryDto toDto(PlayerAccountLogEntry item, @Context CurrencyInfoMappingContext context);
 }

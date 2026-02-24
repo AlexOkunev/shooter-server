@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.data.CacheableData;
 
 import java.time.ZonedDateTime;
 
@@ -16,10 +17,10 @@ import java.time.ZonedDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GrenadeDto {
+public class GrenadeDto implements CacheableData<Integer> {
 
     @Schema(description = "Grenade ID", example = "1")
-    private int id;
+    private Integer id;
 
     @Schema(description = "Grenade is enabled", example = "true")
     private boolean enabled;

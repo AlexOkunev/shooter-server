@@ -13,6 +13,8 @@ import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.Re
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.properties.ReferenceDataCachingProperties;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.ReferenceEquipmentRepository;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -43,5 +45,10 @@ public class ReferenceEquipmentCacheServiceImpl extends EntirelyRefreshableCache
         log.debug("Load equipment page {} size {}", page, size);
         Page<ReferenceEquipment> dataPage = referenceEquipmentRepository.findAll(PageRequest.of(page, size));
         return new CacheableDataPage<>(dataPage.getContent(), dataPage.getNumber(), dataPage.getTotalPages());
+    }
+
+    @Override
+    protected List<ReferenceEquipment> produceDataByIds(Collection<ReferenceEquipmentId> id) {
+        throw new UnsupportedOperationException("Reference equipment caching does not support bulk loading by IDs");
     }
 }

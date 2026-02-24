@@ -12,8 +12,8 @@ import reactor.core.publisher.Mono;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.MoneyBundleTradeDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.MoneyBundleTradePageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.MoneyBundleTradeSearchRequestDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.MoneyBundleTradeWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.factory.CurrencyInfoMappingContextFactory;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.MoneyBundleTradeWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.factory.CurrencyDtoCachingMappingContextFactory;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationRequestMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.market.MoneyBundleTradeService;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.money.bundle.MoneyBundleTradeInfo;
@@ -24,13 +24,13 @@ import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.money.
 @RestController
 @RequestMapping("/player/{playerUuid}/market/money-bundle-trades")
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "caches.enabled", havingValue = "false")
-public class MoneyBundleTradeController {
+@ConditionalOnProperty(value = "caches.enabled", havingValue = "true")
+public class MoneyBundleTradeCachingController {
 
     private final MoneyBundleTradeService moneyBundleTradeService;
-    private final MoneyBundleTradeWithInfoContextMapper moneyBundleTradeMapper;
+    private final MoneyBundleTradeWithDtoContextMapper moneyBundleTradeMapper;
     private final PaginationRequestMapper paginationRequestMapper;
-    private final CurrencyInfoMappingContextFactory currencyMappingContextFactory;
+    private final CurrencyDtoCachingMappingContextFactory currencyMappingContextFactory;
 
     @GetMapping("/{tradeUuid}")
     @Operation(summary = "Get money bundle trade by UUID")

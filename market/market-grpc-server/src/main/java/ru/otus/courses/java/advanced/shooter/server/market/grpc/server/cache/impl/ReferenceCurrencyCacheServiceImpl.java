@@ -12,6 +12,8 @@ import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.entity.Re
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.properties.ReferenceDataCachingProperties;
 import ru.otus.courses.java.advanced.shooter.server.market.grpc.server.repository.ReferenceCurrencyRepository;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -42,5 +44,10 @@ public class ReferenceCurrencyCacheServiceImpl extends EntirelyRefreshableCacheS
         log.debug("Load currencies from page {} size {}", page, size);
         Page<ReferenceCurrency> dataPage = referenceCurrencyRepository.findAll(PageRequest.of(page, size));
         return new CacheableDataPage<>(dataPage.getContent(), dataPage.getNumber(), dataPage.getTotalPages());
+    }
+
+    @Override
+    protected List<ReferenceCurrency> produceDataByIds(Collection<Integer> id) {
+        throw new UnsupportedOperationException("Reference currency caching does not support bulk loading by IDs");
     }
 }

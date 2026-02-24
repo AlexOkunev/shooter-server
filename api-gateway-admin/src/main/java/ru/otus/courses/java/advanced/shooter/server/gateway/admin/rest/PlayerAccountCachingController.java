@@ -15,10 +15,10 @@ import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.pag
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.PlayerAccountItemDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.PlayerAccountItemPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.PlayerAccountLogPageResponseDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.PlayerAccountItemWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.PlayerAccountLogWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.CurrencyInfoMappingContext;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.factory.CurrencyInfoMappingContextFactory;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.PlayerAccountItemWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.PlayerAccountLogWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.CurrencyDtoMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.factory.CurrencyDtoCachingMappingContextFactory;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationRequestMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.market.PlayerAccountLogService;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.market.PlayerAccountService;
@@ -31,15 +31,15 @@ import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.log.
 @RestController
 @RequestMapping("/players/{playerUuid}/account")
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "caches.enabled", havingValue = "false")
-public class PlayerAccountController {
+@ConditionalOnProperty(value = "caches.enabled", havingValue = "true")
+public class PlayerAccountCachingController {
 
     private final PlayerAccountService playerAccountService;
-    private final PlayerAccountItemWithInfoContextMapper playerAccountItemMapper;
+    private final PlayerAccountItemWithDtoContextMapper playerAccountItemMapper;
     private final PlayerAccountLogService playerAccountLogService;
-    private final PlayerAccountLogWithInfoContextMapper playerAccountLogMapper;
+    private final PlayerAccountLogWithDtoContextMapper playerAccountLogMapper;
     private final PaginationRequestMapper paginationRequestMapper;
-    private final CurrencyInfoMappingContextFactory currencyMappingContextFactory;
+    private final CurrencyDtoCachingMappingContextFactory currencyMappingContextFactory;
 
     @GetMapping
     @Operation(summary = "Get player account")
@@ -53,7 +53,7 @@ public class PlayerAccountController {
                 )
                 .cache();
 
-        Mono<CurrencyInfoMappingContext> contextMono = currencyMappingContextFactory.createForItems(itemsPageMono);
+        Mono<CurrencyDtoMappingContext> contextMono = currencyMappingContextFactory.createForItems(itemsPageMono);
 
         return Mono.zip(itemsPageMono, contextMono)
                 .map(tuple -> playerAccountItemMapper.toPageDto(tuple.getT1(), tuple.getT2()));
@@ -76,7 +76,7 @@ public class PlayerAccountController {
         Mono<PlayerAccountItemInfo> itemMono = playerAccountService.giveCurrency(playerUuid, currencyId, amount)
                 .cache();
 
-        Mono<CurrencyInfoMappingContext> contextMono = currencyMappingContextFactory.createForItem(itemMono);
+        Mono<CurrencyDtoMappingContext> contextMono = currencyMappingContextFactory.createForItem(itemMono);
 
         return Mono.zip(itemMono, contextMono)
                 .map(tuple -> playerAccountItemMapper.toDto(tuple.getT1(), tuple.getT2()));
@@ -92,7 +92,7 @@ public class PlayerAccountController {
         Mono<PlayerAccountItemInfo> itemMono = playerAccountService.takeAwayCurrency(playerUuid, currencyId, amount)
                 .cache();
 
-        Mono<CurrencyInfoMappingContext> contextMono = currencyMappingContextFactory.createForItem(itemMono);
+        Mono<CurrencyDtoMappingContext> contextMono = currencyMappingContextFactory.createForItem(itemMono);
 
         return Mono.zip(itemMono, contextMono)
                 .map(tuple -> playerAccountItemMapper.toDto(tuple.getT1(), tuple.getT2()));
@@ -110,7 +110,7 @@ public class PlayerAccountController {
                 )
                 .cache();
 
-        Mono<CurrencyInfoMappingContext> contextMono = currencyMappingContextFactory.createForLog(logPageMono);
+        Mono<CurrencyDtoMappingContext> contextMono = currencyMappingContextFactory.createForLog(logPageMono);
 
         return Mono.zip(logPageMono, contextMono)
                 .map(tuple -> playerAccountLogMapper.toPageDto(tuple.getT1(), tuple.getT2()));

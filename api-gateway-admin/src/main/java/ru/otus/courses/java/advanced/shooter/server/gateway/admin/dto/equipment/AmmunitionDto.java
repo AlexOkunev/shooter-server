@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.data.CacheableData;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -17,25 +18,25 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AmmunitionDto {
+public class AmmunitionDto implements CacheableData<Integer> {
 
     @Schema(description = "Ammunition identifier", example = "1", format = "int32")
     private Integer id;
 
     @Schema(description = "Indicates if ammunition is enabled", example = "true")
-    private Boolean enabled;
+    private boolean enabled;
 
     @Schema(description = "Ammunition name", example = "9x19 FMJ")
     private String name;
 
     @Schema(description = "Bullet speed", example = "380", format = "int32")
-    private Integer speed;
+    private int speed;
 
     @Schema(description = "Mean damage value", example = "35", format = "int32")
-    private Integer damageMeanValue;
+    private int damageMeanValue;
 
     @Schema(description = "Damage variance", example = "5", format = "int32")
-    private Integer damageVariance;
+    private int damageVariance;
 
     @Schema(
             description = "Compatible guns (reduced info)",

@@ -5,7 +5,7 @@ import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.D
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.MoneyBundleTradeDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.MoneyBundleTradePageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.market.MoneyBundleTradeSearchRequestDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.CurrencyMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.CurrencyInfoMappingContext;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.helper.CurrencyMappingHelper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationInfoDtoMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.money.bundle.GetMoneyBundleTradesRequest;
@@ -27,22 +27,22 @@ import java.util.List;
                 CurrencyMappingHelper.class
         }
 )
-public abstract class MoneyBundleTradeMapper {
+public abstract class MoneyBundleTradeWithInfoContextMapper {
 
     @Mapping(source = "data", target = "items")
     public abstract MoneyBundleTradePageResponseDto toPageDto(MoneyBundleTradeInfoListPage page,
-                                                              @Context CurrencyMappingContext context);
+                                                              @Context CurrencyInfoMappingContext context);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     public abstract List<MoneyBundleTradeDto> toDtoList(Collection<MoneyBundleTradeInfo> items,
-                                                        @Context CurrencyMappingContext context);
+                                                        @Context CurrencyInfoMappingContext context);
 
     @Mapping(
             target = "currency",
             source = "currencyId",
             qualifiedByName = CurrencyMappingHelper.NamedMethods.NAMED_TO_CURRENCY_DTO
     )
-    public abstract MoneyBundleTradeDto toDto(MoneyBundleTradeInfo item, @Context CurrencyMappingContext context);
+    public abstract MoneyBundleTradeDto toDto(MoneyBundleTradeInfo item, @Context CurrencyInfoMappingContext context);
 
     public abstract GetMoneyBundleTradesRequest.Filter toProto(MoneyBundleTradeSearchRequestDto requestDto);
 }
