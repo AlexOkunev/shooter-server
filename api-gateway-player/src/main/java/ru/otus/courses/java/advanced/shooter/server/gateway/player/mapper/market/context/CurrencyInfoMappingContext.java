@@ -7,7 +7,7 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.
 import java.util.Map;
 
 @Builder
-public record CurrencyMappingContext(
+public record CurrencyInfoMappingContext(
         @Context Map<Integer, CurrencyInfo> currenciesById
 ) {
 

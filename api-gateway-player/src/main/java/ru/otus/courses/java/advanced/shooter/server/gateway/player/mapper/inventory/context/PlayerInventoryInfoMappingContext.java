@@ -1,4 +1,4 @@
-package ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context;
+package ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.inventory.context;
 
 import lombok.Builder;
 import org.mapstruct.Context;
@@ -10,7 +10,7 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.GunIn
 import java.util.Map;
 
 @Builder
-public record EquipmentMappingContext(
+public record PlayerInventoryInfoMappingContext(
         @Context Map<Integer, GrenadeInfo> grenadesById,
         @Context Map<Integer, AmmunitionInfo> ammunitionById,
         @Context Map<Integer, AttachmentInfo> attachmentsById,

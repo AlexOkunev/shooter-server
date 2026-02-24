@@ -14,17 +14,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.common.page.PaginationRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.inventory.PlayerInventoryItemsPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.inventory.PlayerInventoryLogPageResponseDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.common.page.PaginationRequestDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.inventory.PlayerInventoryItemWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.inventory.PlayerInventoryLogWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.inventory.context.PlayerInventoryInfoMappingContext;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.inventory.context.factory.PlayerInventoryInfoMappingContextFactory;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.inventory.PlayerInventoryItemWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.inventory.PlayerInventoryLogWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.inventory.context.factory.PlayerInventoryDtoCachingMappingContextFactory;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationRequestMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.cache.PlayerCacheService;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.inventory.PlayerInventoryLogService;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.inventory.PlayerInventoryService;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.player.PlayerService;
 import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.PlayerInventoryItemsPage;
 import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.log.PlayerInventoryLogPage;
 
@@ -33,16 +32,16 @@ import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory
 @RestController
 @RequestMapping("/players/current/inventory")
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "caches.enabled", havingValue = "false")
-public class PlayerInventoryController {
+@ConditionalOnProperty(value = "caches.enabled", havingValue = "true")
+public class PlayerInventoryCachingController {
 
-    private final PlayerService playerService;
+    private final PlayerCacheService playerCacheService;
     private final PlayerInventoryService playerInventoryService;
     private final PlayerInventoryLogService playerInventoryLogService;
-    private final PlayerInventoryItemWithInfoContextMapper playerInventoryItemMapper;
-    private final PlayerInventoryLogWithInfoContextMapper playerInventoryLogMapper;
+    private final PlayerInventoryItemWithDtoContextMapper playerInventoryItemMapper;
+    private final PlayerInventoryLogWithDtoContextMapper playerInventoryLogMapper;
     private final PaginationRequestMapper paginationRequestMapper;
-    private final PlayerInventoryInfoMappingContextFactory playerInventoryMappingContextFactory;
+    private final PlayerInventoryDtoCachingMappingContextFactory playerInventoryMappingContextFactory;
 
     @GetMapping
     @Operation(summary = "Get current player inventory")
@@ -52,16 +51,18 @@ public class PlayerInventoryController {
     ) {
         String keycloakId = jwt.getSubject();
 
-        Mono<PlayerInventoryItemsPage> itemsPageMono = playerService.getPlayerInfo(keycloakId)
-                .flatMap(playerInfo -> playerInventoryService.getPlayerInventoryItemsPage(
-                        playerInfo.getPlayerUuid(),
-                        paginationRequestMapper.toProto(paginationRequest)
-                ))
-                .cache();
+        Mono<PlayerInventoryItemsPage> itemsPageMono =
+                Mono.fromCallable(() -> playerCacheService.getByKeycloakId(keycloakId))
+                        .flatMap(playerInfo -> playerInventoryService.getPlayerInventoryItemsPage(
+                                playerInfo.getPlayerUuid(),
+                                paginationRequestMapper.toProto(paginationRequest)
+                        ))
+                        .cache();
 
-        Mono<PlayerInventoryInfoMappingContext> contextMono = playerInventoryMappingContextFactory.createForItems(itemsPageMono);
-
-        return Mono.zip(itemsPageMono, contextMono)
+        return Mono.zip(
+                        itemsPageMono,
+                        playerInventoryMappingContextFactory.createForItems(itemsPageMono)
+                )
                 .map(tuple -> playerInventoryItemMapper.toPageDto(tuple.getT1(), tuple.getT2()));
     }
 
@@ -73,16 +74,18 @@ public class PlayerInventoryController {
     ) {
         String keycloakId = jwt.getSubject();
 
-        Mono<PlayerInventoryLogPage> logPageMono = playerService.getPlayerInfo(keycloakId)
-                .flatMap(playerInfo -> playerInventoryLogService.getPlayerInventoryLogPage(
-                        playerInfo.getPlayerUuid(),
-                        paginationRequestMapper.toProto(paginationRequest)
-                ))
-                .cache();
+        Mono<PlayerInventoryLogPage> logPageMono =
+                Mono.fromCallable(() -> playerCacheService.getByKeycloakId(keycloakId))
+                        .flatMap(playerInfo -> playerInventoryLogService.getPlayerInventoryLogPage(
+                                playerInfo.getPlayerUuid(),
+                                paginationRequestMapper.toProto(paginationRequest)
+                        ))
+                        .cache();
 
-        Mono<PlayerInventoryInfoMappingContext> contextMono = playerInventoryMappingContextFactory.createForLog(logPageMono);
-
-        return Mono.zip(logPageMono, contextMono)
+        return Mono.zip(
+                        logPageMono,
+                        playerInventoryMappingContextFactory.createForLog(logPageMono)
+                )
                 .map(tuple -> playerInventoryLogMapper.toPageDto(tuple.getT1(), tuple.getT2()));
     }
 }

@@ -15,7 +15,7 @@ scheduling:
   pool-size: 5
 
 caches:
-  enabled: false
+  enabled: true
   currency:
     page-size: 100
     refresh-by-schedule-enabled: true

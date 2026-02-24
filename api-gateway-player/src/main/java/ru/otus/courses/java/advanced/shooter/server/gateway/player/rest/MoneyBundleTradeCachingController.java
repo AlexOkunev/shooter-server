@@ -15,11 +15,11 @@ import reactor.core.publisher.Mono;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.MoneyBundleTradeDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.MoneyBundleTradePageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.MoneyBundleTradeSearchRequestDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.MoneyBundleTradeWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.factory.CurrencyInfoMappingContextFactory;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.MoneyBundleTradeWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.factory.CurrencyDtoCachingMappingContextFactory;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationRequestMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.cache.PlayerCacheService;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.market.MoneyBundleTradeService;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.player.PlayerService;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.money.bundle.MoneyBundleTradeInfo;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.money.bundle.MoneyBundleTradeInfoListPage;
 
@@ -28,14 +28,14 @@ import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.money.
 @RestController
 @RequestMapping("/player/current/market/money-bundle-trades")
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "caches.enabled", havingValue = "false")
-public class MoneyBundleTradeController {
+@ConditionalOnProperty(value = "caches.enabled", havingValue = "true")
+public class MoneyBundleTradeCachingController {
 
-    private final PlayerService playerService;
+    private final PlayerCacheService playerCacheService;
     private final MoneyBundleTradeService moneyBundleTradeService;
-    private final MoneyBundleTradeWithInfoContextMapper moneyBundleTradeMapper;
+    private final MoneyBundleTradeWithDtoContextMapper moneyBundleTradeMapper;
     private final PaginationRequestMapper paginationRequestMapper;
-    private final CurrencyInfoMappingContextFactory currencyMappingContextFactory;
+    private final CurrencyDtoCachingMappingContextFactory currencyMappingContextFactory;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -43,9 +43,10 @@ public class MoneyBundleTradeController {
     public Mono<MoneyBundleTradeDto> create(@AuthenticationPrincipal Jwt jwt, @RequestParam Integer moneyBundleId) {
         String keycloakId = jwt.getSubject();
 
-        Mono<MoneyBundleTradeInfo> moneyBundleTradeInfoMono = playerService.getPlayerInfo(keycloakId)
-                .flatMap(playerInfo -> moneyBundleTradeService.createTrade(playerInfo.getPlayerUuid(), moneyBundleId))
-                .cache();
+        Mono<MoneyBundleTradeInfo> moneyBundleTradeInfoMono =
+                Mono.fromCallable(() -> playerCacheService.getByKeycloakId(keycloakId))
+                        .flatMap(playerInfo -> moneyBundleTradeService.createTrade(playerInfo.getPlayerUuid(), moneyBundleId))
+                        .cache();
 
         return Mono.zip(
                         moneyBundleTradeInfoMono,
@@ -59,9 +60,10 @@ public class MoneyBundleTradeController {
     public Mono<MoneyBundleTradeDto> performPayment(@AuthenticationPrincipal Jwt jwt, @PathVariable String tradeUuid) {
         String keycloakId = jwt.getSubject();
 
-        Mono<MoneyBundleTradeInfo> moneyBundleTradeInfoMono = playerService.getPlayerInfo(keycloakId)
-                .flatMap(playerInfo -> moneyBundleTradeService.performPayment(playerInfo.getPlayerUuid(), tradeUuid))
-                .cache();
+        Mono<MoneyBundleTradeInfo> moneyBundleTradeInfoMono =
+                Mono.fromCallable(() -> playerCacheService.getByKeycloakId(keycloakId))
+                        .flatMap(playerInfo -> moneyBundleTradeService.performPayment(playerInfo.getPlayerUuid(), tradeUuid))
+                        .cache();
 
         return Mono.zip(
                         moneyBundleTradeInfoMono,
@@ -75,9 +77,10 @@ public class MoneyBundleTradeController {
     public Mono<MoneyBundleTradeDto> fetchOne(@AuthenticationPrincipal Jwt jwt, @PathVariable String tradeUuid) {
         String keycloakId = jwt.getSubject();
 
-        Mono<MoneyBundleTradeInfo> moneyBundleTradeInfoMono = playerService.getPlayerInfo(keycloakId)
-                .flatMap(playerInfo -> moneyBundleTradeService.fetchOne(playerInfo.getPlayerUuid(), tradeUuid))
-                .cache();
+        Mono<MoneyBundleTradeInfo> moneyBundleTradeInfoMono =
+                Mono.fromCallable(() -> playerCacheService.getByKeycloakId(keycloakId))
+                        .flatMap(playerInfo -> moneyBundleTradeService.fetchOne(playerInfo.getPlayerUuid(), tradeUuid))
+                        .cache();
 
         return Mono.zip(
                         moneyBundleTradeInfoMono,
@@ -94,14 +97,15 @@ public class MoneyBundleTradeController {
     ) {
         String keycloakId = jwt.getSubject();
 
-        Mono<MoneyBundleTradeInfoListPage> moneyBundleTradeInfoListPageMono = playerService.getPlayerInfo(keycloakId)
-                .flatMap(playerInfo -> moneyBundleTradeService.fetchPage(
-                                playerInfo.getPlayerUuid(),
-                                moneyBundleTradeMapper.toProto(requestDto),
-                                paginationRequestMapper.toProto(requestDto.getPaginationRequest())
+        Mono<MoneyBundleTradeInfoListPage> moneyBundleTradeInfoListPageMono =
+                Mono.fromCallable(() -> playerCacheService.getByKeycloakId(keycloakId))
+                        .flatMap(playerInfo -> moneyBundleTradeService.fetchPage(
+                                        playerInfo.getPlayerUuid(),
+                                        moneyBundleTradeMapper.toProto(requestDto),
+                                        paginationRequestMapper.toProto(requestDto.getPaginationRequest())
+                                )
                         )
-                )
-                .cache();
+                        .cache();
 
         return Mono.zip(
                         moneyBundleTradeInfoListPageMono,

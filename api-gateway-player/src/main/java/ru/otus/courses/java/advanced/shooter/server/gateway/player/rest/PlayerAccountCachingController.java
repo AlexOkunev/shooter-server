@@ -1,3 +1,4 @@
+
 package ru.otus.courses.java.advanced.shooter.server.gateway.player.rest;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,14 +18,13 @@ import reactor.core.publisher.Mono;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.common.page.PaginationRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.PlayerAccountItemPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.PlayerAccountLogPageResponseDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.PlayerAccountItemWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.PlayerAccountLogWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.CurrencyInfoMappingContext;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.factory.CurrencyInfoMappingContextFactory;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.PlayerAccountItemWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.PlayerAccountLogWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.factory.CurrencyDtoCachingMappingContextFactory;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationRequestMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.cache.PlayerCacheService;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.market.PlayerAccountLogService;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.market.PlayerAccountService;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.player.PlayerService;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.PlayerAccountItemsPage;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.log.PlayerAccountLogPage;
 
@@ -33,16 +33,16 @@ import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.log.
 @RestController
 @RequestMapping("/players/current/account")
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "caches.enabled", havingValue = "false")
-public class PlayerAccountController {
+@ConditionalOnProperty(value = "caches.enabled", havingValue = "true")
+public class PlayerAccountCachingController {
 
-    private final PlayerService playerService;
+    private final PlayerCacheService playerCacheService;
     private final PlayerAccountService playerAccountService;
-    private final PlayerAccountItemWithInfoContextMapper playerAccountItemMapper;
+    private final PlayerAccountItemWithDtoContextMapper playerAccountItemMapper;
     private final PlayerAccountLogService playerAccountLogService;
-    private final PlayerAccountLogWithInfoContextMapper playerAccountLogMapper;
+    private final PlayerAccountLogWithDtoContextMapper playerAccountLogMapper;
     private final PaginationRequestMapper paginationRequestMapper;
-    private final CurrencyInfoMappingContextFactory currencyMappingContextFactory;
+    private final CurrencyDtoCachingMappingContextFactory currencyMappingContextFactory;
 
     @GetMapping
     @Operation(summary = "Get current player account")
@@ -52,16 +52,18 @@ public class PlayerAccountController {
     ) {
         String keycloakId = jwt.getSubject();
 
-        Mono<PlayerAccountItemsPage> itemsPageMono = playerService.getPlayerInfo(keycloakId)
-                .flatMap(playerInfo -> playerAccountService.getPlayerAccountItemsPage(
-                        playerInfo.getPlayerUuid(),
-                        paginationRequestMapper.toProto(paginationRequest)
-                ))
-                .cache();
+        Mono<PlayerAccountItemsPage> itemsPageMono =
+                Mono.fromCallable(() -> playerCacheService.getByKeycloakId(keycloakId))
+                        .flatMap(playerInfo -> playerAccountService.getPlayerAccountItemsPage(
+                                playerInfo.getPlayerUuid(),
+                                paginationRequestMapper.toProto(paginationRequest)
+                        ))
+                        .cache();
 
-        Mono<CurrencyInfoMappingContext> contextMono = currencyMappingContextFactory.createForItems(itemsPageMono);
-
-        return Mono.zip(itemsPageMono, contextMono)
+        return Mono.zip(
+                        itemsPageMono,
+                        currencyMappingContextFactory.createForItems(itemsPageMono)
+                )
                 .map(tuple -> playerAccountItemMapper.toPageDto(tuple.getT1(), tuple.getT2()));
     }
 
@@ -73,16 +75,18 @@ public class PlayerAccountController {
     ) {
         String keycloakId = jwt.getSubject();
 
-        Mono<PlayerAccountLogPage> logPageMono = playerService.getPlayerInfo(keycloakId)
-                .flatMap(playerInfo -> playerAccountLogService.getPlayerAccountLogPage(
-                        playerInfo.getPlayerUuid(),
-                        paginationRequestMapper.toProto(paginationRequest)
-                ))
-                .cache();
+        Mono<PlayerAccountLogPage> logPageMono =
+                Mono.fromCallable(() -> playerCacheService.getByKeycloakId(keycloakId))
+                        .flatMap(playerInfo -> playerAccountLogService.getPlayerAccountLogPage(
+                                playerInfo.getPlayerUuid(),
+                                paginationRequestMapper.toProto(paginationRequest)
+                        ))
+                        .cache();
 
-        Mono<CurrencyInfoMappingContext> contextMono = currencyMappingContextFactory.createForLog(logPageMono);
-
-        return Mono.zip(logPageMono, contextMono)
+        return Mono.zip(
+                        logPageMono,
+                        currencyMappingContextFactory.createForLog(logPageMono)
+                )
                 .map(tuple -> playerAccountLogMapper.toPageDto(tuple.getT1(), tuple.getT2()));
     }
 }

@@ -1,7 +1,6 @@
 package ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market;
 
 import org.mapstruct.*;
-import org.springframework.security.core.parameters.P;
 import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.DateMapper;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.AmmunitionInfo;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.AttachmentInfo;
@@ -12,8 +11,8 @@ import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipm
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.AttachmentMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.GrenadeMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.GunMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.CurrencyMappingContext;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.EquipmentMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.CurrencyInfoMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.EquipmentInfoMappingContext;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.helper.CurrencyMappingHelper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationInfoDtoMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.product.ProductEquipmentInfo;
@@ -39,18 +38,18 @@ import java.util.List;
                 GunMapper.class
         }
 )
-public abstract class ProductMapper {
+public abstract class ProductWithInfoContextMapper {
 
     @Mapping(source = "data", target = "items")
     public abstract ProductPageResponseDto toPageDto(ProductInfoListPage productInfoListPage,
-                                                     @Context CurrencyMappingContext currencyMappingContext,
-                                                     @Context EquipmentMappingContext equipmentMappingContext
+                                                     @Context CurrencyInfoMappingContext currencyMappingContext,
+                                                     @Context EquipmentInfoMappingContext equipmentMappingContext
     );
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     public abstract List<ProductDto> toDtoList(Collection<ProductInfo> items,
-                                               @Context CurrencyMappingContext currencyMappingContext,
-                                               @Context EquipmentMappingContext equipmentMappingContext
+                                               @Context CurrencyInfoMappingContext currencyMappingContext,
+                                               @Context EquipmentInfoMappingContext equipmentMappingContext
     );
 
     @Mappings({
@@ -73,11 +72,11 @@ public abstract class ProductMapper {
             )
     })
     public abstract ProductDto toDto(ProductInfo item,
-                                     @Context CurrencyMappingContext currencyMappingContext,
-                                     @Context EquipmentMappingContext equipmentMappingContext
+                                     @Context CurrencyInfoMappingContext currencyMappingContext,
+                                     @Context EquipmentInfoMappingContext equipmentMappingContext
     );
 
-    protected ProductEquipmentDto toEquipment(ProductEquipmentInfo equipment, @Context EquipmentMappingContext context) {
+    protected ProductEquipmentDto toEquipment(ProductEquipmentInfo equipment, @Context EquipmentInfoMappingContext context) {
         if (equipment == null) {
             return null;
         }

@@ -11,7 +11,7 @@ import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipm
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.AttachmentMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.GrenadeMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.GunMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.inventory.context.PlayerInventoryMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.inventory.context.PlayerInventoryInfoMappingContext;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationInfoDtoMapper;
 import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.log.PlayerInventoryLogEntry;
 import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.log.PlayerInventoryLogPage;
@@ -34,20 +34,20 @@ import java.util.List;
                 GunMapper.class
         }
 )
-public abstract class PlayerInventoryLogMapper {
+public abstract class PlayerInventoryLogWithInfoContextMapper {
 
     @Mapping(source = "data", target = "items")
     public abstract PlayerInventoryLogPageResponseDto toPageDto(PlayerInventoryLogPage playerInventoryLogPage,
-                                                                @Context PlayerInventoryMappingContext context);
+                                                                @Context PlayerInventoryInfoMappingContext context);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     public abstract List<PlayerInventoryLogEntryDto> toDtoList(Collection<PlayerInventoryLogEntry> logEntries,
-                                                               @Context PlayerInventoryMappingContext context);
+                                                               @Context PlayerInventoryInfoMappingContext context);
 
     @Mapping(target = "equipment", source = ".")
-    public abstract PlayerInventoryLogEntryDto toDto(PlayerInventoryLogEntry logEntry, @Context PlayerInventoryMappingContext context);
+    public abstract PlayerInventoryLogEntryDto toDto(PlayerInventoryLogEntry logEntry, @Context PlayerInventoryInfoMappingContext context);
 
-    protected InventoryEquipmentDto toEquipment(PlayerInventoryLogEntry logEntry, @Context PlayerInventoryMappingContext context) {
+    protected InventoryEquipmentDto toEquipment(PlayerInventoryLogEntry logEntry, @Context PlayerInventoryInfoMappingContext context) {
         if (logEntry == null) {
             return null;
         }

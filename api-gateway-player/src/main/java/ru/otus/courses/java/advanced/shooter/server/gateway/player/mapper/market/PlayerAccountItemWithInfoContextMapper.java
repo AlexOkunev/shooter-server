@@ -4,7 +4,7 @@ import org.mapstruct.*;
 import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.DateMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.PlayerAccountItemDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.PlayerAccountItemPageResponseDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.CurrencyMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.CurrencyInfoMappingContext;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.helper.CurrencyMappingHelper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationInfoDtoMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.PlayerAccountItemInfo;
@@ -25,20 +25,20 @@ import java.util.List;
                 CurrencyMappingHelper.class
         }
 )
-public abstract class PlayerAccountItemMapper {
+public abstract class PlayerAccountItemWithInfoContextMapper {
 
     @Mapping(source = "data", target = "items")
     public abstract PlayerAccountItemPageResponseDto toPageDto(PlayerAccountItemsPage playerInventoryLogPage,
-                                                               @Context CurrencyMappingContext context);
+                                                               @Context CurrencyInfoMappingContext context);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     public abstract List<PlayerAccountItemDto> toDtoList(Collection<PlayerAccountItemInfo> items,
-                                                         @Context CurrencyMappingContext context);
+                                                         @Context CurrencyInfoMappingContext context);
 
     @Mapping(
             target = "currency",
             source = "currencyId",
             qualifiedByName = CurrencyMappingHelper.NamedMethods.NAMED_TO_CURRENCY_DTO
     )
-    public abstract PlayerAccountItemDto toDto(PlayerAccountItemInfo item, @Context CurrencyMappingContext context);
+    public abstract PlayerAccountItemDto toDto(PlayerAccountItemInfo item, @Context CurrencyInfoMappingContext context);
 }

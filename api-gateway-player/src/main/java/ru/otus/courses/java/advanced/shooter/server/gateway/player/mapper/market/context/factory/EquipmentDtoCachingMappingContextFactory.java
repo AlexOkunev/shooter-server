@@ -1,20 +1,20 @@
-package ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.factory;
+package ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.factory;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import ru.otus.courses.java.advanced.shooter.server.equipment.contract.EquipmentType;
-import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.AmmunitionInfo;
-import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.AttachmentInfo;
-import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.GrenadeInfo;
-import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.GunInfo;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.market.context.EquipmentInfoMappingContext;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.equipment.AmmunitionService;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.equipment.AttachmentService;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.equipment.GrenadeService;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.equipment.GunService;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.util.market.EquipmentUtils;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.AmmunitionDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.AttachmentDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.GrenadeDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.GunDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.inventory.context.EquipmentDtoMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.cache.AmmunitionDtoCacheService;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.cache.AttachmentDtoCacheService;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.cache.GrenadeDtoCacheService;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.cache.GunDtoCacheService;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.util.market.EquipmentUtils;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.product.ProductInfo;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.product.ProductInfoListPage;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.product.ProductTradeInfo;
@@ -23,20 +23,18 @@ import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.produc
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "caches.enabled", havingValue = "false")
-public class EquipmentInfoMappingContextFactory {
+@ConditionalOnProperty(value = "caches.enabled", havingValue = "true")
+public class EquipmentDtoCachingMappingContextFactory {
 
-    private final GrenadeService grenadeService;
-    private final GunService gunService;
-    private final AmmunitionService ammunitionService;
-    private final AttachmentService attachmentService;
+    private final GrenadeDtoCacheService grenadeDtoCacheService;
+    private final GunDtoCacheService gunDtoCacheService;
+    private final AmmunitionDtoCacheService ammunitionDtoCacheService;
+    private final AttachmentDtoCacheService attachmentDtoCacheService;
 
-    public Mono<EquipmentInfoMappingContext> createForProducts(Mono<ProductInfoListPage> itemsPageMono) {
+    public Mono<EquipmentDtoMappingContext> createForProducts(Mono<ProductInfoListPage> itemsPageMono) {
         return itemsPageMono.flatMap(itemsPage ->
                 create(
                         EquipmentUtils.getEquipmentIds(itemsPage, EquipmentType.GRENADE),
@@ -46,7 +44,7 @@ public class EquipmentInfoMappingContextFactory {
                 ));
     }
 
-    public Mono<EquipmentInfoMappingContext> createForProduct(Mono<ProductInfo> productInfoMono) {
+    public Mono<EquipmentDtoMappingContext> createForProduct(Mono<ProductInfo> productInfoMono) {
         return productInfoMono.flatMap(productInfo ->
                 create(
                         productInfo.getEquipment().getEquipmentType() == EquipmentType.GRENADE
@@ -60,7 +58,7 @@ public class EquipmentInfoMappingContextFactory {
                 ));
     }
 
-    public Mono<EquipmentInfoMappingContext> createForProductTrades(Mono<ProductTradeInfoListPage> productTradeInfoListPageMono) {
+    public Mono<EquipmentDtoMappingContext> createForProductTrades(Mono<ProductTradeInfoListPage> productTradeInfoListPageMono) {
         return productTradeInfoListPageMono.flatMap(itemsPage ->
                 create(
                         EquipmentUtils.getEquipmentIds(itemsPage, EquipmentType.GRENADE),
@@ -70,7 +68,7 @@ public class EquipmentInfoMappingContextFactory {
                 ));
     }
 
-    public Mono<EquipmentInfoMappingContext> createForProductTrade(Mono<ProductTradeInfo> productTradeInfoMono) {
+    public Mono<EquipmentDtoMappingContext> createForProductTrade(Mono<ProductTradeInfo> productTradeInfoMono) {
         return productTradeInfoMono.flatMap(productInfo ->
                 create(
                         productInfo.getEquipmentType() == EquipmentType.GRENADE
@@ -84,36 +82,28 @@ public class EquipmentInfoMappingContextFactory {
                 ));
     }
 
-    private Mono<EquipmentInfoMappingContext> create(Collection<Integer> grenadeIds,
-                                                     Collection<Integer> ammunitionIds,
-                                                     Collection<Integer> attachmentIds,
-                                                     Collection<Integer> gunIds) {
-        Mono<Map<Integer, GrenadeInfo>> grenadeInfoMono = grenadeService.fetchByIds(grenadeIds)
-                .map(grenadeInfoListPage -> grenadeInfoListPage.getDataList()
-                        .stream()
-                        .collect(Collectors.toMap(GrenadeInfo::getId, Function.identity()))
-                );
+    private Mono<EquipmentDtoMappingContext> create(Collection<Integer> grenadeIds,
+                                                    Collection<Integer> ammunitionIds,
+                                                    Collection<Integer> attachmentIds,
+                                                    Collection<Integer> gunIds) {
+        Mono<Map<Integer, GrenadeDto>> grenadeInfoMono = Mono.fromCallable(() ->
+                grenadeDtoCacheService.getByIdsAsMap(grenadeIds)
+        );
 
-        Mono<Map<Integer, AmmunitionInfo>> ammunitionInfoMono = ammunitionService.fetchByIds(ammunitionIds)
-                .map(ammunitionInfoListPage -> ammunitionInfoListPage.getDataList()
-                        .stream()
-                        .collect(Collectors.toMap(AmmunitionInfo::getId, Function.identity()))
-                );
+        Mono<Map<Integer, AmmunitionDto>> ammunitionInfoMono = Mono.fromCallable(() ->
+                ammunitionDtoCacheService.getByIdsAsMap(ammunitionIds)
+        );
 
-        Mono<Map<Integer, AttachmentInfo>> attachmentInfoMono = attachmentService.fetchByIds(attachmentIds)
-                .map(attachmentInfoListPage -> attachmentInfoListPage.getDataList()
-                        .stream()
-                        .collect(Collectors.toMap(AttachmentInfo::getId, Function.identity()))
-                );
+        Mono<Map<Integer, AttachmentDto>> attachmentInfoMono = Mono.fromCallable(() ->
+                attachmentDtoCacheService.getByIdsAsMap(attachmentIds)
+        );
 
-        Mono<Map<Integer, GunInfo>> gunInfoMono = gunService.fetchByIds(gunIds)
-                .map(gunInfoListPage -> gunInfoListPage.getDataList()
-                        .stream()
-                        .collect(Collectors.toMap(GunInfo::getId, Function.identity()))
-                );
+        Mono<Map<Integer, GunDto>> gunInfoMono = Mono.fromCallable(() ->
+                gunDtoCacheService.getByIdsAsMap(gunIds)
+        );
 
         return Mono.zip(grenadeInfoMono, ammunitionInfoMono, attachmentInfoMono, gunInfoMono)
-                .map(tuple -> EquipmentInfoMappingContext.builder()
+                .map(tuple -> EquipmentDtoMappingContext.builder()
                         .grenadesById(tuple.getT1())
                         .ammunitionById(tuple.getT2())
                         .attachmentsById(tuple.getT3())

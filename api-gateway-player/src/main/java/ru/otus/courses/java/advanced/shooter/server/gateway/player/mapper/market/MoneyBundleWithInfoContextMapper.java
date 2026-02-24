@@ -4,7 +4,7 @@ import org.mapstruct.*;
 import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.DateMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.MoneyBundleDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.MoneyBundlePageResponseDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.CurrencyMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.CurrencyInfoMappingContext;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.helper.CurrencyMappingHelper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationInfoDtoMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.money.bundle.MoneyBundleInfo;
@@ -25,20 +25,20 @@ import java.util.List;
                 CurrencyMappingHelper.class
         }
 )
-public abstract class MoneyBundleMapper {
+public abstract class MoneyBundleWithInfoContextMapper {
 
     @Mapping(source = "data", target = "items")
     public abstract MoneyBundlePageResponseDto toPageDto(MoneyBundleInfoListPage page,
-                                                         @Context CurrencyMappingContext context);
+                                                         @Context CurrencyInfoMappingContext context);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     public abstract List<MoneyBundleDto> toDtoList(Collection<MoneyBundleInfo> items,
-                                                   @Context CurrencyMappingContext context);
+                                                   @Context CurrencyInfoMappingContext context);
 
     @Mapping(
             target = "currency",
             source = "currencyId",
             qualifiedByName = CurrencyMappingHelper.NamedMethods.NAMED_TO_CURRENCY_DTO
     )
-    public abstract MoneyBundleDto toDto(MoneyBundleInfo item, @Context CurrencyMappingContext context);
+    public abstract MoneyBundleDto toDto(MoneyBundleInfo item, @Context CurrencyInfoMappingContext context);
 }

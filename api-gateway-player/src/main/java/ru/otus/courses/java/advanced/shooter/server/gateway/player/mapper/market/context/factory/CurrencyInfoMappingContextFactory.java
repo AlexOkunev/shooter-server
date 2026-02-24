@@ -1,10 +1,11 @@
 package ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.factory;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.CurrencyInfo;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.CurrencyMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.CurrencyInfoMappingContext;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.equipment.CurrencyService;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.util.market.PlayerAccountUtils;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.PlayerAccountItemsPage;
@@ -26,26 +27,27 @@ import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
-public class CurrencyMappingContextFactory {
+@ConditionalOnProperty(value = "caches.enabled", havingValue = "false")
+public class CurrencyInfoMappingContextFactory {
 
     private final CurrencyService currencyService;
 
-    public Mono<CurrencyMappingContext> createForItems(Mono<PlayerAccountItemsPage> itemsPageMono) {
+    public Mono<CurrencyInfoMappingContext> createForItems(Mono<PlayerAccountItemsPage> itemsPageMono) {
         return itemsPageMono.flatMap(itemsPage ->
                 create(PlayerAccountUtils.getCurrencyIds(itemsPage)));
     }
 
-    public Mono<CurrencyMappingContext> createForLog(Mono<PlayerAccountLogPage> logPageMono) {
+    public Mono<CurrencyInfoMappingContext> createForLog(Mono<PlayerAccountLogPage> logPageMono) {
         return logPageMono.flatMap(logPage ->
                 create(PlayerAccountUtils.getCurrencyIds(logPage)));
     }
 
-    public Mono<CurrencyMappingContext> createForMoneyBundle(Mono<MoneyBundleInfo> moneyBundleInfoMono) {
+    public Mono<CurrencyInfoMappingContext> createForMoneyBundle(Mono<MoneyBundleInfo> moneyBundleInfoMono) {
         return moneyBundleInfoMono.flatMap(moneyBundleInfo ->
                 create(List.of(moneyBundleInfo.getCurrencyId())));
     }
 
-    public Mono<CurrencyMappingContext> createForMoneyBundles(Mono<MoneyBundleInfoListPage> moneyBundleInfoListPageMono) {
+    public Mono<CurrencyInfoMappingContext> createForMoneyBundles(Mono<MoneyBundleInfoListPage> moneyBundleInfoListPageMono) {
         return moneyBundleInfoListPageMono.flatMap(moneyBundleInfoListPage -> {
             Set<Integer> currencyIds = moneyBundleInfoListPage.getDataList().stream()
                     .map(MoneyBundleInfo::getCurrencyId)
@@ -55,12 +57,12 @@ public class CurrencyMappingContextFactory {
         });
     }
 
-    public Mono<CurrencyMappingContext> createForMoneyBundleTrade(Mono<MoneyBundleTradeInfo> moneyBundleTradeInfoMono) {
+    public Mono<CurrencyInfoMappingContext> createForMoneyBundleTrade(Mono<MoneyBundleTradeInfo> moneyBundleTradeInfoMono) {
         return moneyBundleTradeInfoMono.flatMap(moneyBundleTradeInfo ->
                 create(List.of(moneyBundleTradeInfo.getCurrencyId())));
     }
 
-    public Mono<CurrencyMappingContext> createForMoneyBundleTrades(Mono<MoneyBundleTradeInfoListPage> moneyBundleTradeInfoListPageMono) {
+    public Mono<CurrencyInfoMappingContext> createForMoneyBundleTrades(Mono<MoneyBundleTradeInfoListPage> moneyBundleTradeInfoListPageMono) {
         return moneyBundleTradeInfoListPageMono.flatMap(moneyBundleTradeInfoListPage -> {
             Set<Integer> currencyIds = moneyBundleTradeInfoListPage.getDataList().stream()
                     .map(MoneyBundleTradeInfo::getCurrencyId)
@@ -70,12 +72,12 @@ public class CurrencyMappingContextFactory {
         });
     }
 
-    public Mono<CurrencyMappingContext> createForProduct(Mono<ProductInfo> productInfoMono) {
+    public Mono<CurrencyInfoMappingContext> createForProduct(Mono<ProductInfo> productInfoMono) {
         return productInfoMono.flatMap(productInfo ->
                 create(Set.of(productInfo.getPrice().getCurrencyId())));
     }
 
-    public Mono<CurrencyMappingContext> createForProducts(Mono<ProductInfoListPage> productInfoListPageMono) {
+    public Mono<CurrencyInfoMappingContext> createForProducts(Mono<ProductInfoListPage> productInfoListPageMono) {
         return productInfoListPageMono.flatMap(productInfoListPage -> {
             Set<Integer> currencyIds = productInfoListPage.getDataList().stream()
                     .map(productInfo -> productInfo.getPrice().getCurrencyId())
@@ -85,12 +87,12 @@ public class CurrencyMappingContextFactory {
         });
     }
 
-    public Mono<CurrencyMappingContext> createForProductTrade(Mono<ProductTradeInfo> productTradeInfoMono) {
+    public Mono<CurrencyInfoMappingContext> createForProductTrade(Mono<ProductTradeInfo> productTradeInfoMono) {
         return productTradeInfoMono.flatMap(productInfo ->
                 create(Set.of(productInfo.getPriceCurrencyId())));
     }
 
-    public Mono<CurrencyMappingContext> createForProductTrades(Mono<ProductTradeInfoListPage> productTradeInfoListPageMono) {
+    public Mono<CurrencyInfoMappingContext> createForProductTrades(Mono<ProductTradeInfoListPage> productTradeInfoListPageMono) {
         return productTradeInfoListPageMono.flatMap(productInfoListPage -> {
             Set<Integer> currencyIds = productInfoListPage.getDataList().stream()
                     .map(ProductTradeInfo::getPriceCurrencyId)
@@ -100,12 +102,12 @@ public class CurrencyMappingContextFactory {
         });
     }
 
-    private Mono<CurrencyMappingContext> create(Collection<Integer> currencyIds) {
+    private Mono<CurrencyInfoMappingContext> create(Collection<Integer> currencyIds) {
         return currencyService.fetchByIds(currencyIds)
                 .map(currencyInfoListPage -> currencyInfoListPage.getDataList()
                         .stream()
                         .collect(Collectors.toMap(CurrencyInfo::getId, Function.identity()))
                 )
-                .map(CurrencyMappingContext::new);
+                .map(CurrencyInfoMappingContext::new);
     }
 }

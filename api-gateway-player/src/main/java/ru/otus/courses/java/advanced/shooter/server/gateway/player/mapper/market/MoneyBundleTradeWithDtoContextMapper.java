@@ -2,11 +2,11 @@ package ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.marke
 
 import org.mapstruct.*;
 import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.DateMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.CurrencyDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.MoneyBundleTradeDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.MoneyBundleTradePageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.MoneyBundleTradeSearchRequestDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.CurrencyMappingContext;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.helper.CurrencyMappingHelper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.inventory.context.CurrencyDtoMappingContext;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationInfoDtoMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.money.bundle.GetMoneyBundleTradesRequest;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.money.bundle.MoneyBundleTradeInfo;
@@ -23,26 +23,28 @@ import java.util.List;
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         uses = {
                 DateMapper.class,
-                PaginationInfoDtoMapper.class,
-                CurrencyMappingHelper.class
+                PaginationInfoDtoMapper.class
         }
 )
-public abstract class MoneyBundleTradeMapper {
+public abstract class MoneyBundleTradeWithDtoContextMapper {
 
     @Mapping(source = "data", target = "items")
     public abstract MoneyBundleTradePageResponseDto toPageDto(MoneyBundleTradeInfoListPage page,
-                                                              @Context CurrencyMappingContext context);
+                                                              @Context CurrencyDtoMappingContext context);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     public abstract List<MoneyBundleTradeDto> toDtoList(Collection<MoneyBundleTradeInfo> items,
-                                                        @Context CurrencyMappingContext context);
+                                                        @Context CurrencyDtoMappingContext context);
 
     @Mapping(
             target = "currency",
-            source = "currencyId",
-            qualifiedByName = CurrencyMappingHelper.NamedMethods.NAMED_TO_CURRENCY_DTO
+            source = "currencyId"
     )
-    public abstract MoneyBundleTradeDto toDto(MoneyBundleTradeInfo item, @Context CurrencyMappingContext context);
+    public abstract MoneyBundleTradeDto toDto(MoneyBundleTradeInfo item, @Context CurrencyDtoMappingContext context);
 
     public abstract GetMoneyBundleTradesRequest.Filter toProto(MoneyBundleTradeSearchRequestDto requestDto);
+
+    protected CurrencyDto getCurrencyDto(int currencyId, @Context CurrencyDtoMappingContext context) {
+        return context.currenciesById().get(currencyId);
+    }
 }

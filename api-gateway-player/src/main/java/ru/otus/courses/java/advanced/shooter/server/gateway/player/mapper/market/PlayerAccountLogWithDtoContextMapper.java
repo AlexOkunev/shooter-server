@@ -2,10 +2,10 @@ package ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.marke
 
 import org.mapstruct.*;
 import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.DateMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.CurrencyDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.PlayerAccountLogEntryDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.PlayerAccountLogPageResponseDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.CurrencyMappingContext;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.helper.CurrencyMappingHelper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.inventory.context.CurrencyDtoMappingContext;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationInfoDtoMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.log.PlayerAccountLogEntry;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.log.PlayerAccountLogPage;
@@ -21,24 +21,26 @@ import java.util.List;
         nullValueCheckStrategy = NullValueCheckStrategy.ALWAYS,
         uses = {
                 DateMapper.class,
-                PaginationInfoDtoMapper.class,
-                CurrencyMappingHelper.class
+                PaginationInfoDtoMapper.class
         }
 )
-public abstract class PlayerAccountLogMapper {
+public abstract class PlayerAccountLogWithDtoContextMapper {
 
     @Mapping(source = "data", target = "items")
     public abstract PlayerAccountLogPageResponseDto toPageDto(PlayerAccountLogPage playerAccountLogPage,
-                                                              @Context CurrencyMappingContext context);
+                                                              @Context CurrencyDtoMappingContext context);
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     public abstract List<PlayerAccountLogEntryDto> toDtoList(Collection<PlayerAccountLogEntry> items,
-                                                             @Context CurrencyMappingContext context);
+                                                             @Context CurrencyDtoMappingContext context);
 
     @Mapping(
             target = "currency",
-            source = "currencyId",
-            qualifiedByName = CurrencyMappingHelper.NamedMethods.NAMED_TO_CURRENCY_DTO
+            source = "currencyId"
     )
-    public abstract PlayerAccountLogEntryDto toDto(PlayerAccountLogEntry item, @Context CurrencyMappingContext context);
+    public abstract PlayerAccountLogEntryDto toDto(PlayerAccountLogEntry item, @Context CurrencyDtoMappingContext context);
+
+    protected CurrencyDto getCurrencyDto(int currencyId, @Context CurrencyDtoMappingContext context) {
+        return context.currenciesById().get(currencyId);
+    }
 }

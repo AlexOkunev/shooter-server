@@ -11,6 +11,35 @@ spring:
         jwt:
           issuer-uri: http://localhost:7777/realms/shooter-players
 
+scheduling:
+  pool-size: 5
+
+caches:
+  enabled: true
+  currency:
+    page-size: 100
+    refresh-by-schedule-enabled: true
+    refresh-interval-ms: 30000
+  gun:
+    page-size: 100
+    refresh-by-schedule-enabled: true
+    refresh-interval-ms: 30000
+  grenade:
+    page-size: 100
+    refresh-by-schedule-enabled: true
+    refresh-interval-ms: 30000
+  ammunition:
+    page-size: 100
+    refresh-by-schedule-enabled: true
+    refresh-interval-ms: 30000
+  attachment:
+    page-size: 100
+    refresh-by-schedule-enabled: true
+    refresh-interval-ms: 30000
+  player:
+    reset-by-schedule-enabled: true
+    reset-interval-ms: 900000
+
 player-grpc-service:
   server:
     host: localhost

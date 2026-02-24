@@ -15,9 +15,9 @@ import ru.otus.courses.java.advanced.shooter.server.common.protobuf.PaginationRe
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.common.page.PaginationRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.MoneyBundleDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.MoneyBundlePageResponseDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.MoneyBundleWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.CurrencyInfoMappingContext;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.factory.CurrencyInfoMappingContextFactory;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.inventory.context.CurrencyDtoMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.MoneyBundleWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.factory.CurrencyDtoCachingMappingContextFactory;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationRequestMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.market.MoneyBundleService;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.money.bundle.MoneyBundleInfo;
@@ -28,13 +28,13 @@ import ru.otus.courses.java.advanced.shooter.server.market.protobuf.money.bundle
 @RestController
 @RequestMapping("/market/money-bundles")
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "caches.enabled", havingValue = "false")
-public class MoneyBundleController {
+@ConditionalOnProperty(value = "caches.enabled", havingValue = "true")
+public class MoneyBundleCachingController {
 
     private final MoneyBundleService moneyBundleService;
-    private final MoneyBundleWithInfoContextMapper moneyBundleMapper;
+    private final MoneyBundleWithDtoContextMapper moneyBundleMapper;
     private final PaginationRequestMapper paginationRequestMapper;
-    private final CurrencyInfoMappingContextFactory currencyMappingContextFactory;
+    private final CurrencyDtoCachingMappingContextFactory currencyMappingContextFactory;
 
     @GetMapping("/{id}")
     @Operation(summary = "Get money bundle by ID")
@@ -42,7 +42,7 @@ public class MoneyBundleController {
         Mono<MoneyBundleInfo> moneyBundleInfoMono = moneyBundleService.fetchOne(id)
                 .cache();
 
-        Mono<CurrencyInfoMappingContext> contextMono = currencyMappingContextFactory.createForMoneyBundle(moneyBundleInfoMono);
+        Mono<CurrencyDtoMappingContext> contextMono = currencyMappingContextFactory.createForMoneyBundle(moneyBundleInfoMono);
 
         return Mono.zip(moneyBundleInfoMono, contextMono)
                 .map(tuple -> moneyBundleMapper.toDto(tuple.getT1(), tuple.getT2()));
@@ -61,7 +61,7 @@ public class MoneyBundleController {
                 ? moneyBundleService.fetchMoneyBundlesPageByCurrencyId(currencyId, paginationRequestProto).cache()
                 : moneyBundleService.fetchMoneyBundlesPage(paginationRequestProto).cache();
 
-        Mono<CurrencyInfoMappingContext> contextMono = currencyMappingContextFactory.createForMoneyBundles(moneyBundlesMono);
+        Mono<CurrencyDtoMappingContext> contextMono = currencyMappingContextFactory.createForMoneyBundles(moneyBundlesMono);
 
         return Mono.zip(moneyBundlesMono, contextMono)
                 .map(tuple -> moneyBundleMapper.toPageDto(tuple.getT1(), tuple.getT2()));

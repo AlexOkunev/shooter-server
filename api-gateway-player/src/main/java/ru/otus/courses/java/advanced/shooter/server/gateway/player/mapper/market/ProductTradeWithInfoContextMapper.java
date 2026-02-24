@@ -11,8 +11,8 @@ import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipm
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.AttachmentMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.GrenadeMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.GunMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.CurrencyMappingContext;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.EquipmentMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.CurrencyInfoMappingContext;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.EquipmentInfoMappingContext;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.helper.CurrencyMappingHelper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationInfoDtoMapper;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.product.GetProductTradesRequest;
@@ -38,18 +38,18 @@ import java.util.List;
                 GunMapper.class
         }
 )
-public abstract class ProductTradeMapper {
+public abstract class ProductTradeWithInfoContextMapper {
 
     @Mapping(source = "data", target = "items")
     public abstract ProductTradePageResponseDto toPageDto(ProductTradeInfoListPage productTradeInfoListPage,
-                                                          @Context CurrencyMappingContext currencyMappingContext,
-                                                          @Context EquipmentMappingContext equipmentMappingContext
+                                                          @Context CurrencyInfoMappingContext currencyMappingContext,
+                                                          @Context EquipmentInfoMappingContext equipmentMappingContext
     );
 
     @IterableMapping(nullValueMappingStrategy = NullValueMappingStrategy.RETURN_DEFAULT)
     public abstract List<ProductTradeDto> toDtoList(Collection<ProductTradeInfo> items,
-                                                    @Context CurrencyMappingContext currencyMappingContext,
-                                                    @Context EquipmentMappingContext equipmentMappingContext
+                                                    @Context CurrencyInfoMappingContext currencyMappingContext,
+                                                    @Context EquipmentInfoMappingContext equipmentMappingContext
     );
 
     @Mappings({
@@ -64,13 +64,13 @@ public abstract class ProductTradeMapper {
             )
     })
     public abstract ProductTradeDto toDto(ProductTradeInfo item,
-                                          @Context CurrencyMappingContext currencyMappingContext,
-                                          @Context EquipmentMappingContext equipmentMappingContext
+                                          @Context CurrencyInfoMappingContext currencyMappingContext,
+                                          @Context EquipmentInfoMappingContext equipmentMappingContext
     );
 
     public abstract GetProductTradesRequest.Filter toProto(ProductTradeSearchRequestDto requestDto);
 
-    protected ProductEquipmentDto toEquipment(ProductTradeInfo productTradeInfo, @Context EquipmentMappingContext context) {
+    protected ProductEquipmentDto toEquipment(ProductTradeInfo productTradeInfo, @Context EquipmentInfoMappingContext context) {
         if (productTradeInfo == null) {
             return null;
         }

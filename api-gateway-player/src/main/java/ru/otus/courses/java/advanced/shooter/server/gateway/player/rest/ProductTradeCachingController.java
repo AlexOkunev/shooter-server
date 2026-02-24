@@ -15,12 +15,12 @@ import reactor.core.publisher.Mono;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.ProductTradeDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.ProductTradePageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.market.ProductTradeSearchRequestDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.ProductTradeWithInfoContextMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.factory.CurrencyInfoMappingContextFactory;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.factory.EquipmentInfoMappingContextFactory;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.ProductTradeWithDtoContextMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.factory.CurrencyDtoCachingMappingContextFactory;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.market.context.factory.EquipmentDtoCachingMappingContextFactory;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationRequestMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.cache.PlayerCacheService;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.market.ProductTradeService;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.player.PlayerService;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.product.ProductTradeInfo;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.product.ProductTradeInfoListPage;
 
@@ -29,15 +29,15 @@ import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.produc
 @RestController
 @RequestMapping("/player/current/market/product-trades")
 @RequiredArgsConstructor
-@ConditionalOnProperty(value = "caches.enabled", havingValue = "false")
-public class ProductTradeController {
+@ConditionalOnProperty(value = "caches.enabled", havingValue = "true")
+public class ProductTradeCachingController {
 
-    private final PlayerService playerService;
+    private final PlayerCacheService playerCacheService;
     private final ProductTradeService productTradeService;
-    private final ProductTradeWithInfoContextMapper productTradeMapper;
+    private final ProductTradeWithDtoContextMapper productTradeMapper;
     private final PaginationRequestMapper paginationRequestMapper;
-    private final CurrencyInfoMappingContextFactory currencyMappingContextFactory;
-    private final EquipmentInfoMappingContextFactory equipmentMappingContextFactory;
+    private final CurrencyDtoCachingMappingContextFactory currencyMappingContextFactory;
+    private final EquipmentDtoCachingMappingContextFactory equipmentMappingContextFactory;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -45,9 +45,10 @@ public class ProductTradeController {
     public Mono<ProductTradeDto> create(@AuthenticationPrincipal Jwt jwt, @RequestParam Integer productId) {
         String keycloakId = jwt.getSubject();
 
-        Mono<ProductTradeInfo> productTradeInfoMono = playerService.getPlayerInfo(keycloakId)
-                .flatMap(playerInfo -> productTradeService.createTrade(playerInfo.getPlayerUuid(), productId))
-                .cache();
+        Mono<ProductTradeInfo> productTradeInfoMono =
+                Mono.fromCallable(() -> playerCacheService.getByKeycloakId(keycloakId))
+                        .flatMap(playerInfo -> productTradeService.createTrade(playerInfo.getPlayerUuid(), productId))
+                        .cache();
 
         return Mono.zip(
                         productTradeInfoMono,
@@ -63,9 +64,10 @@ public class ProductTradeController {
     public Mono<ProductTradeDto> fetchOne(@AuthenticationPrincipal Jwt jwt, @PathVariable String tradeUuid) {
         String keycloakId = jwt.getSubject();
 
-        Mono<ProductTradeInfo> productTradeInfoMono = playerService.getPlayerInfo(keycloakId)
-                .flatMap(playerInfo -> productTradeService.fetchOne(playerInfo.getPlayerUuid(), tradeUuid))
-                .cache();
+        Mono<ProductTradeInfo> productTradeInfoMono =
+                Mono.fromCallable(() -> playerCacheService.getByKeycloakId(keycloakId))
+                        .flatMap(playerInfo -> productTradeService.fetchOne(playerInfo.getPlayerUuid(), tradeUuid))
+                        .cache();
 
         return Mono.zip(
                         productTradeInfoMono,
@@ -84,14 +86,15 @@ public class ProductTradeController {
     ) {
         String keycloakId = jwt.getSubject();
 
-        Mono<ProductTradeInfoListPage> productTradeInfoListPageMono = playerService.getPlayerInfo(keycloakId)
-                .flatMap(playerInfo -> productTradeService.fetchPage(
-                                playerInfo.getPlayerUuid(),
-                                productTradeMapper.toProto(requestDto),
-                                paginationRequestMapper.toProto(requestDto.getPaginationRequest())
+        Mono<ProductTradeInfoListPage> productTradeInfoListPageMono =
+                Mono.fromCallable(() -> playerCacheService.getByKeycloakId(keycloakId))
+                        .flatMap(playerInfo -> productTradeService.fetchPage(
+                                        playerInfo.getPlayerUuid(),
+                                        productTradeMapper.toProto(requestDto),
+                                        paginationRequestMapper.toProto(requestDto.getPaginationRequest())
+                                )
                         )
-                )
-                .cache();
+                        .cache();
 
         return Mono.zip(
                         productTradeInfoListPageMono,
