@@ -1,23 +1,31 @@
 package ru.otus.courses.java.advanced.shooter.server.gateway.player.service.market;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+import reactor.core.scheduler.Scheduler;
 import ru.otus.courses.java.advanced.shooter.server.common.protobuf.PaginationRequest;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.grpc.client.market.PlayerAccountGrpcClient;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.grpc.client.market.PlayerAccountGrpcClientRateLimitingWrapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.util.GrpcSchedulers;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.GetPlayerAccountRequest;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.PlayerAccountItemsPage;
-import ru.otus.courses.java.advanced.shooter.server.market.protobuf.account.PlayerAccountServiceAPIGrpc;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class PlayerAccountServiceImpl implements PlayerAccountService {
 
-    private final ObjectFactory<PlayerAccountServiceAPIGrpc.PlayerAccountServiceAPIBlockingStub>
-            playerAccountServiceAPIBlockingStubObjectFactory;
+    private final PlayerAccountGrpcClient playerAccountGrpcClient;
+    private final Scheduler marketScheduler;
+
+    public PlayerAccountServiceImpl(
+            @Qualifier(PlayerAccountGrpcClientRateLimitingWrapper.NAME) PlayerAccountGrpcClient playerAccountGrpcClient,
+            @Qualifier(GrpcSchedulers.MARKET) Scheduler marketScheduler
+    ) {
+        this.playerAccountGrpcClient = playerAccountGrpcClient;
+        this.marketScheduler = marketScheduler;
+    }
 
     @Override
     public Mono<PlayerAccountItemsPage> getPlayerAccountItemsPage(String playerUuid, PaginationRequest paginationRequest) {
@@ -27,14 +35,10 @@ public class PlayerAccountServiceImpl implements PlayerAccountService {
                 .setOnlyEnabledCurrencies(true)
                 .build();
 
-        return Mono.fromCallable(() ->
-                        playerAccountServiceAPIBlockingStubObjectFactory.getObject().getPlayerAccount(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> playerAccountGrpcClient.getPlayerAccount(request))
+                .subscribeOn(marketScheduler)
                 .doOnSubscribe(s -> log.info("gRPC getPlayerAccount start playerUuid={}", playerUuid))
                 .doOnSuccess(resp -> log.info("gRPC getPlayerAccount success playerUuid={}", playerUuid))
                 .doOnError(e -> log.error("gRPC getPlayerAccount error playerUuid={} err={}", playerUuid, e.getMessage(), e));
     }
 }
-//TODO logging
-//TODO настроить пулы потоков для отказоустойчивости и производительности
-//TODO возврат default в случае ошибки, но ошибку логировать. тоже для отказоусточивости. подумать, мб сделать везде

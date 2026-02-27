@@ -1,5 +1,7 @@
 package ru.otus.courses.java.advanced.shooter.server.gateway.player.handler;
 
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import org.springframework.http.HttpStatus;
@@ -7,56 +9,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.exception.*;
+import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
 
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalErrorHandler {
 
-    @ExceptionHandler(CurrencyNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Object> handle(CurrencyNotFoundException ex) {
+    @ExceptionHandler(RequestNotPermitted.class)
+    @ResponseStatus(HttpStatus.TOO_MANY_REQUESTS)
+    public Map<String, Object> handle(RequestNotPermitted ex) {
         return Map.of(
-                "status", 404,
-                "error", "Not Found",
+                "status", HttpStatus.TOO_MANY_REQUESTS.value(),
+                "error", HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase(),
                 "message", ex.getMessage()
         );
     }
 
-    @ExceptionHandler(GrenadeNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Object> handle(GrenadeNotFoundException ex) {
+    @ExceptionHandler(CallNotPermittedException.class)
+    @ResponseStatus(HttpStatus.SERVICE_UNAVAILABLE)
+    public Map<String, Object> handle(CallNotPermittedException ex) {
         return Map.of(
-                "status", 404,
-                "error", "Not Found",
+                "status", HttpStatus.SERVICE_UNAVAILABLE.value(),
+                "error", HttpStatus.SERVICE_UNAVAILABLE.getReasonPhrase(),
                 "message", ex.getMessage()
         );
     }
 
-    @ExceptionHandler(GunNotFoundException.class)
+    @ExceptionHandler(ObjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Object> handle(GunNotFoundException ex) {
-        return Map.of(
-                "status", 404,
-                "error", "Not Found",
-                "message", ex.getMessage()
-        );
-    }
-
-    @ExceptionHandler(AmmunitionNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Object> handle(AmmunitionNotFoundException ex) {
-        return Map.of(
-                "status", 404,
-                "error", "Not Found",
-                "message", ex.getMessage()
-        );
-    }
-
-    @ExceptionHandler(AttachmentNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Object> handle(AttachmentNotFoundException ex) {
+    public Map<String, Object> handle(ObjectNotFoundException ex) {
         return Map.of(
                 "status", 404,
                 "error", "Not Found",
@@ -65,7 +47,7 @@ public class GlobalErrorHandler {
     }
 
     @ExceptionHandler(StatusRuntimeException.class)
-    public org.springframework.http.ResponseEntity<Map<String, Object>> handleGrpc(StatusRuntimeException ex) {
+    public ResponseEntity<Map<String, Object>> handleGrpc(StatusRuntimeException ex) {
         Status status = Status.fromThrowable(ex);
 
         HttpStatus httpStatus = grpcToHttp(status.getCode());

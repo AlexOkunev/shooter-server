@@ -4,6 +4,7 @@ import io.grpc.Deadline;
 import io.grpc.ManagedChannel;
 import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -17,8 +18,12 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.G
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.GunServiceAPIGrpc;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.properties.EquipmentGrpcProperties;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static ru.otus.courses.java.advanced.shooter.server.gateway.player.util.GrpcRetryUtils.buildServiceConfig;
+
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class EquipmentGrpcClientConfig {
@@ -37,6 +42,35 @@ public class EquipmentGrpcClientConfig {
 
         if (StringUtils.isNotBlank(equipmentGrpcProperties.getServer().overrideAuthority())) {
             builder.overrideAuthority(equipmentGrpcProperties.getServer().overrideAuthority());
+        }
+
+        if (equipmentGrpcProperties.getRetry().enabled()) {
+            log.info("Enabling retry with props: {}", equipmentGrpcProperties.getRetry());
+            builder.enableRetry();
+            builder.defaultServiceConfig(
+                    buildServiceConfig(
+                            equipmentGrpcProperties.getRetry(),
+                            List.of(
+                                    AmmunitionServiceAPIGrpc.getGetAmmunitionMethod(),
+                                    AmmunitionServiceAPIGrpc.getGetEnabledAmmunitionMethod(),
+                                    AmmunitionServiceAPIGrpc.getGetAmmunitionListMethod(),
+                                    AttachmentServiceAPIGrpc.getGetAttachmentMethod(),
+                                    AttachmentServiceAPIGrpc.getGetEnabledAttachmentMethod(),
+                                    AttachmentServiceAPIGrpc.getGetAttachmentsMethod(),
+                                    GunServiceAPIGrpc.getGetGunMethod(),
+                                    GunServiceAPIGrpc.getGetEnabledGunMethod(),
+                                    GunServiceAPIGrpc.getGetGunsMethod(),
+                                    CurrencyServiceAPIGrpc.getGetCurrencyMethod(),
+                                    CurrencyServiceAPIGrpc.getGetEnabledCurrencyMethod(),
+                                    CurrencyServiceAPIGrpc.getGetCurrenciesMethod(),
+                                    GrenadeServiceAPIGrpc.getGetGrenadeMethod(),
+                                    GrenadeServiceAPIGrpc.getGetEnabledGrenadeMethod(),
+                                    GrenadeServiceAPIGrpc.getGetGrenadesMethod()
+                            )
+                    )
+            );
+
+            builder.maxRetryAttempts(equipmentGrpcProperties.getRetry().maxAttempts());
         }
 
         return builder.build();

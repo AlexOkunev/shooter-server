@@ -1,20 +1,30 @@
 package ru.otus.courses.java.advanced.shooter.server.gateway.player.service.player;
 
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+import reactor.core.scheduler.Scheduler;
 import ru.otus.courses.java.advanced.shooter.server.common.protobuf.PaginationRequest;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.grpc.client.player.PlayerGrpcClient;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.grpc.client.player.PlayerGrpcClientRateLimitingWrapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.util.GrpcSchedulers;
 import ru.otus.courses.java.advanced.shooter.server.players.protobuf.*;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class PlayerServiceImpl implements PlayerService {
 
-    private final ObjectFactory<ShooterPlayersServiceAPIGrpc.ShooterPlayersServiceAPIBlockingStub> playerServiceStubObjectFactory;
+    private final PlayerGrpcClient playerGrpcClient;
+    private final Scheduler playerScheduler;
+
+    public PlayerServiceImpl(
+            @Qualifier(PlayerGrpcClientRateLimitingWrapper.NAME) PlayerGrpcClient playerGrpcClient,
+            @Qualifier(GrpcSchedulers.PLAYER) Scheduler playerScheduler
+    ) {
+        this.playerGrpcClient = playerGrpcClient;
+        this.playerScheduler = playerScheduler;
+    }
 
     @Override
     public Mono<PlayerInfo> getPlayerInfo(String keycloakId) {
@@ -22,8 +32,8 @@ public class PlayerServiceImpl implements PlayerService {
                 .setKeycloakId(keycloakId)
                 .build();
 
-        return Mono.fromCallable(() -> playerServiceStubObjectFactory.getObject().getPlayer(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> playerGrpcClient.getPlayer(request))
+                .subscribeOn(playerScheduler)
                 .doOnSubscribe(s -> log.info("gRPC getPlayer start keycloakId={}", keycloakId))
                 .doOnSuccess(resp -> log.info("gRPC getPlayer success keycloakId={} playerUuid={}",
                         keycloakId, resp != null ? resp.getPlayerUuid() : "null"))
@@ -38,12 +48,10 @@ public class PlayerServiceImpl implements PlayerService {
                 .setPaginationRequest(paginationRequest)
                 .build();
 
-        return Mono.fromCallable(() -> playerServiceStubObjectFactory.getObject().getPlayers(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> playerGrpcClient.getPlayers(request))
+                .subscribeOn(playerScheduler)
                 .doOnSubscribe(s -> log.info("gRPC getPlayers start"))
                 .doOnSuccess(resp -> log.info("gRPC getPlayers success items={}", resp != null ? resp.getDataCount() : 0))
                 .doOnError(e -> log.error("gRPC getPlayers error: {}", e.getMessage(), e));
     }
 }
-//TODO logging
-//TODO настроить пулы потоков для отказоустойчивости и производительности

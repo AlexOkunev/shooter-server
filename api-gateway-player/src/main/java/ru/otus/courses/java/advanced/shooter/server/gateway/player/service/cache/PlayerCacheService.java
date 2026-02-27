@@ -1,16 +1,16 @@
 package ru.otus.courses.java.advanced.shooter.server.gateway.player.service.cache;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.service.ResettableCacheServiceImplBase;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.structure.impl.SoftReferenceMapCache;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.exception.ObjectNotFoundException;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.bean.PlayerCacheEntry;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.GunMapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.grpc.client.player.PlayerGrpcClient;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.grpc.client.player.PlayerGrpcClientRateLimitingWrapper;
 import ru.otus.courses.java.advanced.shooter.server.players.protobuf.GetPlayerRequest;
 import ru.otus.courses.java.advanced.shooter.server.players.protobuf.PlayerInfo;
-import ru.otus.courses.java.advanced.shooter.server.players.protobuf.ShooterPlayersServiceAPIGrpc;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,20 +21,20 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class PlayerCacheService extends ResettableCacheServiceImplBase<String, PlayerCacheEntry> {
 
-    private final ObjectFactory<ShooterPlayersServiceAPIGrpc.ShooterPlayersServiceAPIBlockingStub> shooterPlayersServiceAPIBlockingStubObjectFactory;
+    private final PlayerGrpcClient playerGrpcClient;
 
     public PlayerCacheService(
-            ObjectFactory<ShooterPlayersServiceAPIGrpc.ShooterPlayersServiceAPIBlockingStub> shooterPlayersServiceAPIBlockingStubObjectFactory, GunMapper gunMapper
+            @Qualifier(PlayerGrpcClientRateLimitingWrapper.NAME) PlayerGrpcClient playerGrpcClient
     ) {
         super(new SoftReferenceMapCache<>(new ConcurrentHashMap<>()));
-        this.shooterPlayersServiceAPIBlockingStubObjectFactory = shooterPlayersServiceAPIBlockingStubObjectFactory;
+        this.playerGrpcClient = playerGrpcClient;
     }
 
     @Override
     protected Optional<PlayerCacheEntry> produceDataById(String keycloakId) {
         log.info("Loading player by keycloak ID: {}", keycloakId);
 
-        PlayerInfo playerInfo = shooterPlayersServiceAPIBlockingStubObjectFactory.getObject().getPlayer(
+        PlayerInfo playerInfo = playerGrpcClient.getPlayer(
                 GetPlayerRequest.newBuilder()
                         .setKeycloakId(keycloakId)
                         .build()

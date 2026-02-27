@@ -18,4 +18,7 @@ public class PlayerGrpcProperties {
 
     @Positive
     private int deadlineMs;
+
+    @NotNull
+    private GrpcRetryProperties retry;
 }

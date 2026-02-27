@@ -18,4 +18,7 @@ public class MarketGrpcProperties {
 
     @Positive
     private int deadlineMs;
+
+    @NotNull
+    private GrpcRetryProperties retry;
 }

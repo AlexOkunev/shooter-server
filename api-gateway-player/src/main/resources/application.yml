@@ -44,28 +44,142 @@ player-grpc-service:
   server:
     host: localhost
     port: 6565
-  deadline-ms: 5000
+  deadline-ms: 10000
+  retry:
+    enabled: true
+    max-attempts: 5
+    initial-backoff: 0.2s
+    max-backoff: 2s
+    backoff-multiplier: 1.7
+    retryable-status-codes:
+      - UNAVAILABLE
+      - RESOURCE_EXHAUSTED
+      - DEADLINE_EXCEEDED
+      - INTERNAL
+    throttling:
+      enabled: true
+      max-tokens: 30
+      token-ratio: 0.2
 
 equipment-grpc-service:
   server:
     host: localhost
     port: 6566
-  deadline-ms: 5000
+  deadline-ms: 10000
+  retry:
+    enabled: true
+    max-attempts: 5
+    initial-backoff: 0.2s
+    max-backoff: 2s
+    backoff-multiplier: 1.7
+    retryable-status-codes:
+      - UNAVAILABLE
+      - RESOURCE_EXHAUSTED
+      - DEADLINE_EXCEEDED
+      - INTERNAL
+    throttling:
+      enabled: true
+      max-tokens: 30
+      token-ratio: 0.2
 
 market-grpc-service:
   server:
     host: localhost
     port: 6567
-  deadline-ms: 5000
+  deadline-ms: 10000
+  retry:
+    enabled: true
+    max-attempts: 5
+    initial-backoff: 0.2s
+    max-backoff: 2s
+    backoff-multiplier: 1.7
+    retryable-status-codes:
+      - UNAVAILABLE
+      - RESOURCE_EXHAUSTED
+      - DEADLINE_EXCEEDED
+      - INTERNAL
+    throttling:
+      enabled: true
+      max-tokens: 30
+      token-ratio: 0.2
 
 inventory-grpc-service:
   server:
     host: localhost
     port: 6568
-  deadline-ms: 5000
+  deadline-ms: 10000
+  retry:
+    enabled: true
+    max-attempts: 5
+    initial-backoff: 0.2s
+    max-backoff: 2s
+    backoff-multiplier: 1.7
+    retryable-status-codes:
+      - UNAVAILABLE
+      - RESOURCE_EXHAUSTED
+      - DEADLINE_EXCEEDED
+      - INTERNAL
+    throttling:
+      enabled: true
+      max-tokens: 30
+      token-ratio: 0.2
 
 springdoc:
   swagger-ui:
     path: /swagger-ui
+    tags-sorter: alpha
   api-docs:
     path: /api-docs
+
+resilience4j:
+  ratelimiter:
+    configs:
+      grpc_rps:
+        limit-for-period: 1000
+        limit-refresh-period: 1s
+        timeout-duration: 0s
+      grpc_rpm:
+        limit-for-period: 60000
+        limit-refresh-period: 1m
+        timeout-duration: 0s
+    instances:
+      grpc_equipment_rps:
+        base-config: grpc_rps
+      grpc_equipment_rpm:
+        base-config: grpc_rpm
+      grpc_inventory_rps:
+        base-config: grpc_rps
+      grpc_inventory_rpm:
+        base-config: grpc_rpm
+      grpc_market_rps:
+        base-config: grpc_rps
+      grpc_market_rpm:
+        base-config: grpc_rpm
+      grpc_player_rps:
+        base-config: grpc_rps
+      grpc_player_rpm:
+        base-config: grpc_rpm
+
+equipment-grpc-pool:
+  properties:
+    max-threads: 20
+    max-queued-tasks: 1000
+    thread-name-prefix: "grpc-equipment"
+
+inventory-grpc-pool:
+  properties:
+    max-threads: 20
+    max-queued-tasks: 1000
+    thread-name-prefix: "grpc-inventory"
+
+market-grpc-pool:
+  properties:
+    max-threads: 20
+    max-queued-tasks: 1000
+    thread-name-prefix: "grpc-market"
+
+player-grpc-pool:
+  properties:
+    max-threads: 20
+    max-queued-tasks: 1000
+    thread-name-prefix: "grpc-player"

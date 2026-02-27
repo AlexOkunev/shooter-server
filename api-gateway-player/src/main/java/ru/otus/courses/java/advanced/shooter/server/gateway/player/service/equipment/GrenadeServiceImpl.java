@@ -1,25 +1,32 @@
 package ru.otus.courses.java.advanced.shooter.server.gateway.player.service.equipment;
 
-import io.grpc.Status;
-import io.grpc.StatusRuntimeException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+import reactor.core.scheduler.Scheduler;
 import ru.otus.courses.java.advanced.shooter.server.common.protobuf.PaginationRequest;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.*;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.exception.GrenadeNotFoundException;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.grpc.client.equipment.GrenadeGrpcClient;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.grpc.client.equipment.GrenadeGrpcClientRateLimitingWrapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.util.GrpcSchedulers;
 
 import java.util.Collection;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class GrenadeServiceImpl implements GrenadeService {
 
-    private final ObjectFactory<GrenadeServiceAPIGrpc.GrenadeServiceAPIBlockingStub> grenadeServiceAPIBlockingStubObjectFactory;
+    private final GrenadeGrpcClient grenadeGrpcClient;
+    private final Scheduler equipmentScheduler;
+
+    public GrenadeServiceImpl(
+            @Qualifier(GrenadeGrpcClientRateLimitingWrapper.NAME) GrenadeGrpcClient grenadeGrpcClient,
+            @Qualifier(GrpcSchedulers.EQUIPMENT) Scheduler equipmentScheduler
+    ) {
+        this.grenadeGrpcClient = grenadeGrpcClient;
+        this.equipmentScheduler = equipmentScheduler;
+    }
 
     @Override
     public Mono<GrenadeInfo> getOne(int id) {
@@ -27,14 +34,11 @@ public class GrenadeServiceImpl implements GrenadeService {
                 .setGrenadeId(id)
                 .build();
 
-        return Mono.fromCallable(() -> grenadeServiceAPIBlockingStubObjectFactory.getObject().getEnabledGrenade(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> grenadeGrpcClient.getEnabledGrenade(request))
+                .subscribeOn(equipmentScheduler)
                 .doOnSubscribe(s -> log.info("gRPC getEnabledGrenade start grenadeId={}", id))
                 .doOnSuccess(resp -> log.info("gRPC getEnabledGrenade success grenadeId={}", id))
-                .doOnError(e -> log.error("gRPC getEnabledGrenade error grenadeId={} err={}", id, e.getMessage(), e))
-                .onErrorMap(StatusRuntimeException.class,
-                        e -> e.getStatus().getCode() == Status.Code.NOT_FOUND ? new GrenadeNotFoundException(id) : e
-                );
+                .doOnError(e -> log.error("gRPC getEnabledGrenade error grenadeId={} err={}", id, e.getMessage(), e));
     }
 
     @Override
@@ -44,8 +48,8 @@ public class GrenadeServiceImpl implements GrenadeService {
                 .setPaginationRequest(paginationRequest)
                 .build();
 
-        return Mono.fromCallable(() -> grenadeServiceAPIBlockingStubObjectFactory.getObject().getGrenades(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> grenadeGrpcClient.getGrenades(request))
+                .subscribeOn(equipmentScheduler)
                 .doOnSubscribe(s -> log.info("gRPC getGrenades start"))
                 .doOnSuccess(resp -> log.info("gRPC getGrenades success items={}",
                         resp != null ? resp.getDataCount() : 0))
@@ -69,12 +73,10 @@ public class GrenadeServiceImpl implements GrenadeService {
                         .build())
                 .build();
 
-        return Mono.fromCallable(() -> grenadeServiceAPIBlockingStubObjectFactory.getObject().getGrenades(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> grenadeGrpcClient.getGrenades(request))
+                .subscribeOn(equipmentScheduler)
                 .doOnSubscribe(s -> log.info("gRPC getGrenades start by ids={}", ids))
                 .doOnSuccess(resp -> log.info("gRPC getGrenades success by ids={}", ids))
                 .doOnError(e -> log.error("gRPC getGrenades error by ids={}: err={}", ids, e.getMessage(), e));
     }
 }
-//TODO logging
-//TODO настроить пулы потоков для отказоустойчивости и производительности

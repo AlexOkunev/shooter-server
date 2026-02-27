@@ -3,7 +3,7 @@ package ru.otus.courses.java.advanced.shooter.server.gateway.player.service.cach
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -14,6 +14,8 @@ import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.service.I
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.structure.impl.SoftReferenceMapCache;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.*;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.GunDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.grpc.client.equipment.GunGrpcClient;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.grpc.client.equipment.GunGrpcClientRateLimitingWrapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.GunMapper;
 
 import java.time.ZonedDateTime;
@@ -26,15 +28,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class GunDtoCacheService extends IncrementallyRefreshableCacheServiceImplBase<Integer, GunDto> {
 
-    private final ObjectFactory<GunServiceAPIGrpc.GunServiceAPIBlockingStub> gunServiceAPIBlockingStubObjectFactory;
+    private final GunGrpcClient gunGrpcClient;
     private final GunMapper gunMapper;
 
     public GunDtoCacheService(
             @Value("${caches.gun.page-size:100}") int dataPageSize,
-            ObjectFactory<GunServiceAPIGrpc.GunServiceAPIBlockingStub> gunServiceAPIBlockingStubObjectFactory, GunMapper gunMapper
+            @Qualifier(GunGrpcClientRateLimitingWrapper.NAME) GunGrpcClient gunGrpcClient,
+            GunMapper gunMapper
     ) {
         super(new SoftReferenceMapCache<>(new ConcurrentHashMap<>()), dataPageSize);
-        this.gunServiceAPIBlockingStubObjectFactory = gunServiceAPIBlockingStubObjectFactory;
+        this.gunGrpcClient = gunGrpcClient;
         this.gunMapper = gunMapper;
     }
 
@@ -42,7 +45,7 @@ public class GunDtoCacheService extends IncrementallyRefreshableCacheServiceImpl
     protected CacheableDataPage<GunDto> loadDataPage(int page, int size, ZonedDateTime lastRefreshTime) {
         log.info("Loading gun data page: page={}, size={}, lastRefreshTime={}", page, size, lastRefreshTime);
 
-        GunInfoListPage guns = gunServiceAPIBlockingStubObjectFactory.getObject().getGuns(
+        GunInfoListPage guns = gunGrpcClient.getGuns(
                 GetGunsRequest.newBuilder()
                         .setFilter(GunsFilter.newBuilder()
                                 .setUpdatedAfter(lastRefreshTime.toInstant().toEpochMilli())
@@ -72,7 +75,7 @@ public class GunDtoCacheService extends IncrementallyRefreshableCacheServiceImpl
         try {
             log.info("Loading gun by ID: {}", integer);
 
-            GunInfo gunInfo = gunServiceAPIBlockingStubObjectFactory.getObject().getGun(
+            GunInfo gunInfo = gunGrpcClient.getGun(
                     GetGunRequest.newBuilder()
                             .setGunId(integer)
                             .build()
@@ -99,7 +102,7 @@ public class GunDtoCacheService extends IncrementallyRefreshableCacheServiceImpl
 
         log.info("Loading guns by IDs: {}", ids);
 
-        GunInfoListPage guns = gunServiceAPIBlockingStubObjectFactory.getObject().getGuns(
+        GunInfoListPage guns = gunGrpcClient.getGuns(
                 GetGunsRequest.newBuilder()
                         .setFilter(GunsFilter.newBuilder()
                                 .addAllGunIds(ids)

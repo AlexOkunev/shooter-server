@@ -3,7 +3,7 @@ package ru.otus.courses.java.advanced.shooter.server.gateway.player.service.cach
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -14,6 +14,8 @@ import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.service.I
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.structure.impl.SoftReferenceMapCache;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.*;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.AttachmentDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.grpc.client.equipment.AttachmentGrpcClient;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.grpc.client.equipment.AttachmentGrpcClientRateLimitingWrapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.AttachmentMapper;
 
 import java.time.ZonedDateTime;
@@ -26,15 +28,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class AttachmentDtoCacheService extends IncrementallyRefreshableCacheServiceImplBase<Integer, AttachmentDto> {
 
-    private final ObjectFactory<AttachmentServiceAPIGrpc.AttachmentServiceAPIBlockingStub> attachmentServiceAPIBlockingStubObjectFactory;
+    private final AttachmentGrpcClient attachmentGrpcClient;
     private final AttachmentMapper attachmentMapper;
 
     public AttachmentDtoCacheService(
             @Value("${caches.attachment.page-size:100}") int dataPageSize,
-            ObjectFactory<AttachmentServiceAPIGrpc.AttachmentServiceAPIBlockingStub> attachmentServiceAPIBlockingStubObjectFactory, AttachmentMapper attachmentMapper
+            @Qualifier(AttachmentGrpcClientRateLimitingWrapper.NAME) AttachmentGrpcClient attachmentGrpcClient,
+            AttachmentMapper attachmentMapper
     ) {
         super(new SoftReferenceMapCache<>(new ConcurrentHashMap<>()), dataPageSize);
-        this.attachmentServiceAPIBlockingStubObjectFactory = attachmentServiceAPIBlockingStubObjectFactory;
+        this.attachmentGrpcClient = attachmentGrpcClient;
         this.attachmentMapper = attachmentMapper;
     }
 
@@ -42,7 +45,7 @@ public class AttachmentDtoCacheService extends IncrementallyRefreshableCacheServ
     protected CacheableDataPage<AttachmentDto> loadDataPage(int page, int size, ZonedDateTime lastRefreshTime) {
         log.info("Loading attachment data page: page={}, size={}, lastRefreshTime={}", page, size, lastRefreshTime);
 
-        AttachmentInfoListPage attachments = attachmentServiceAPIBlockingStubObjectFactory.getObject().getAttachments(
+        AttachmentInfoListPage attachments = attachmentGrpcClient.getAttachments(
                 GetAttachmentsRequest.newBuilder()
                         .setFilter(AttachmentsFilter.newBuilder()
                                 .setUpdatedAfter(lastRefreshTime.toInstant().toEpochMilli())
@@ -72,7 +75,7 @@ public class AttachmentDtoCacheService extends IncrementallyRefreshableCacheServ
         try {
             log.info("Loading attachment by ID: {}", integer);
 
-            AttachmentInfo attachmentInfo = attachmentServiceAPIBlockingStubObjectFactory.getObject().getAttachment(
+            AttachmentInfo attachmentInfo = attachmentGrpcClient.getAttachment(
                     GetAttachmentRequest.newBuilder()
                             .setAttachmentId(integer)
                             .build()
@@ -99,7 +102,7 @@ public class AttachmentDtoCacheService extends IncrementallyRefreshableCacheServ
 
         log.info("Loading attachments by IDs: {}", ids);
 
-        AttachmentInfoListPage attachments = attachmentServiceAPIBlockingStubObjectFactory.getObject().getAttachments(
+        AttachmentInfoListPage attachments = attachmentGrpcClient.getAttachments(
                 GetAttachmentsRequest.newBuilder()
                         .setFilter(AttachmentsFilter.newBuilder()
                                 .addAllAttachmentIds(ids)

@@ -4,6 +4,7 @@ import io.grpc.Deadline;
 import io.grpc.ManagedChannel;
 import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -13,8 +14,12 @@ import org.springframework.context.annotation.Scope;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.properties.PlayerGrpcProperties;
 import ru.otus.courses.java.advanced.shooter.server.players.protobuf.ShooterPlayersServiceAPIGrpc;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static ru.otus.courses.java.advanced.shooter.server.gateway.player.util.GrpcRetryUtils.buildServiceConfig;
+
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class PlayerGrpcClientConfig {
@@ -33,6 +38,22 @@ public class PlayerGrpcClientConfig {
 
         if (StringUtils.isNotBlank(playerGrpcProperties.getServer().overrideAuthority())) {
             builder.overrideAuthority(playerGrpcProperties.getServer().overrideAuthority());
+        }
+
+        if (playerGrpcProperties.getRetry().enabled()) {
+            log.info("Enabling retry with props: {}", playerGrpcProperties.getRetry());
+            builder.enableRetry();
+            builder.defaultServiceConfig(
+                    buildServiceConfig(
+                            playerGrpcProperties.getRetry(),
+                            List.of(
+                                    ShooterPlayersServiceAPIGrpc.getGetPlayerMethod(),
+                                    ShooterPlayersServiceAPIGrpc.getGetPlayersMethod()
+                            )
+                    )
+            );
+
+            builder.maxRetryAttempts(playerGrpcProperties.getRetry().maxAttempts());
         }
 
         return builder.build();

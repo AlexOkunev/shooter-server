@@ -3,7 +3,7 @@ package ru.otus.courses.java.advanced.shooter.server.gateway.player.service.cach
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -13,6 +13,8 @@ import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.service.I
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.structure.impl.SoftReferenceMapCache;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.*;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.CurrencyDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.grpc.client.equipment.CurrencyGrpcClient;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.grpc.client.equipment.CurrencyGrpcClientRateLimitingWrapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.CurrencyMapper;
 
 import java.time.ZonedDateTime;
@@ -25,16 +27,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class CurrencyDtoCacheService extends IncrementallyRefreshableCacheServiceImplBase<Integer, CurrencyDto> {
 
-    private final ObjectFactory<CurrencyServiceAPIGrpc.CurrencyServiceAPIBlockingStub> currencyServiceStubObjectFactory;
+    private final CurrencyGrpcClient currencyGrpcClient;
     private final CurrencyMapper currencyMapper;
 
     public CurrencyDtoCacheService(
             @Value("${caches.currency.page-size:100}") int dataPageSize,
-            ObjectFactory<CurrencyServiceAPIGrpc.CurrencyServiceAPIBlockingStub> currencyServiceStubObjectFactory,
+            @Qualifier(CurrencyGrpcClientRateLimitingWrapper.NAME) CurrencyGrpcClient currencyGrpcClient,
             CurrencyMapper currencyMapper
     ) {
         super(new SoftReferenceMapCache<>(new ConcurrentHashMap<>()), dataPageSize);
-        this.currencyServiceStubObjectFactory = currencyServiceStubObjectFactory;
+        this.currencyGrpcClient = currencyGrpcClient;
         this.currencyMapper = currencyMapper;
     }
 
@@ -42,7 +44,7 @@ public class CurrencyDtoCacheService extends IncrementallyRefreshableCacheServic
     protected CacheableDataPage<CurrencyDto> loadDataPage(int page, int size, ZonedDateTime lastRefreshTime) {
         log.info("Loading currency data page: page={}, size={}, lastRefreshTime={}", page, size, lastRefreshTime);
 
-        CurrencyInfoListPage currencies = currencyServiceStubObjectFactory.getObject().getCurrencies(
+        CurrencyInfoListPage currencies = currencyGrpcClient.getCurrencies(
                 GetCurrenciesRequest.newBuilder()
                         .setFilter(CurrenciesFilter.newBuilder()
                                 .setUpdatedAfter(lastRefreshTime.toInstant().toEpochMilli())
@@ -71,7 +73,7 @@ public class CurrencyDtoCacheService extends IncrementallyRefreshableCacheServic
         try {
             log.info("Loading currency by ID: {}", integer);
 
-            CurrencyInfo currencyInfo = currencyServiceStubObjectFactory.getObject().getCurrency(
+            CurrencyInfo currencyInfo = currencyGrpcClient.getCurrency(
                     GetCurrencyRequest.newBuilder()
                             .setCurrencyId(integer)
                             .build()
@@ -98,7 +100,7 @@ public class CurrencyDtoCacheService extends IncrementallyRefreshableCacheServic
 
         log.info("Loading currencies by IDs: {}", ids);
 
-        CurrencyInfoListPage currencies = currencyServiceStubObjectFactory.getObject().getCurrencies(
+        CurrencyInfoListPage currencies = currencyGrpcClient.getCurrencies(
                 GetCurrenciesRequest.newBuilder()
                         .setFilter(CurrenciesFilter.newBuilder()
                                 .addAllCurrencyIds(ids)
