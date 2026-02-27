@@ -6,8 +6,8 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachmen
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.AttachmentInfoListPage;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.AttachmentWritableData;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.AttachmentsFilter;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AttachmentDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AttachmentPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AttachmentSaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AttachmentSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationInfoDtoMapper;
@@ -35,7 +35,7 @@ public abstract class AttachmentMapper {
     public abstract List<AttachmentDto> toDtoList(Collection<AttachmentInfo> attachmentInfos);
 
     @Mapping(source = "data", target = "items")
-    public abstract PageResponseDto<AttachmentDto> toPageDto(AttachmentInfoListPage attachmentInfoListPage);
+    public abstract AttachmentPageResponseDto toPageDto(AttachmentInfoListPage attachmentInfoListPage);
 
     public abstract AttachmentsFilter toProto(AttachmentSearchRequestDto requestDto);
 

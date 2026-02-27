@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.player.PlayerDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.player.PlayerPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.player.PlayersSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationRequestMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.player.PlayerMapper;
@@ -35,7 +35,7 @@ public class PlayerController {
 
     @PostMapping("/search")
     @Operation(summary = "Search players by filter")
-    public Mono<PageResponseDto<PlayerDto>> searchPlayers(@RequestBody @NotNull @Valid PlayersSearchRequestDto request) {
+    public Mono<PlayerPageResponseDto> searchPlayers(@RequestBody @NotNull @Valid PlayersSearchRequestDto request) {
         return playerService.searchPlayers(
                         playerMapper.toProto(request),
                         paginationRequestMapper.toProto(request.getPaginationRequest())

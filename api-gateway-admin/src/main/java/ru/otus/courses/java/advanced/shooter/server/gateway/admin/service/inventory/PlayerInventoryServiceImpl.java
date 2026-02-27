@@ -1,23 +1,35 @@
 package ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.inventory;
 
 import com.google.protobuf.Empty;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+import reactor.core.scheduler.Scheduler;
 import ru.otus.courses.java.advanced.shooter.server.common.protobuf.PaginationRequest;
 import ru.otus.courses.java.advanced.shooter.server.equipment.contract.EquipmentType;
-import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.*;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.grpc.client.inventory.PlayerInventoryGrpcClient;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.grpc.client.inventory.PlayerInventoryGrpcClientRateLimitingWrapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.util.GrpcSchedulers;
+import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.GetPlayerInventoryRequest;
+import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.InitializePlayerInventoryRequest;
+import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.PlayerEquipmentOperationRequest;
+import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.PlayerInventoryItemsPage;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class PlayerInventoryServiceImpl implements PlayerInventoryService {
 
-    private final ObjectFactory<PlayerInventoryServiceAPIGrpc.PlayerInventoryServiceAPIBlockingStub>
-            playerInventoryServiceAPIBlockingStubObjectFactory;
+    private final PlayerInventoryGrpcClient playerInventoryGrpcClient;
+    public final Scheduler schedulerInventory;
+
+    public PlayerInventoryServiceImpl(
+            @Qualifier(PlayerInventoryGrpcClientRateLimitingWrapper.NAME) PlayerInventoryGrpcClient playerInventoryGrpcClient,
+            @Qualifier(GrpcSchedulers.INVENTORY) Scheduler schedulerInventory
+    ) {
+        this.playerInventoryGrpcClient = playerInventoryGrpcClient;
+        this.schedulerInventory = schedulerInventory;
+    }
 
     @Override
     public Mono<PlayerInventoryItemsPage> getPlayerInventoryItemsPage(String playerUuid, PaginationRequest paginationRequest) {
@@ -30,9 +42,8 @@ public class PlayerInventoryServiceImpl implements PlayerInventoryService {
                 .setPaginationRequest(paginationRequest)
                 .build();
 
-        return Mono.fromCallable(() ->
-                        playerInventoryServiceAPIBlockingStubObjectFactory.getObject().getPlayerInventory(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> playerInventoryGrpcClient.getPlayerInventory(request))
+                .subscribeOn(schedulerInventory)
                 .doOnSubscribe(s -> log.info("gRPC getPlayerInventory start playerUuid={}", playerUuid))
                 .doOnSuccess(resp -> log.info("gRPC getPlayerInventory success playerUuid={}", playerUuid))
                 .doOnError(e -> log.error("gRPC getPlayerInventory error playerUuid={} err={}", playerUuid, e.getMessage(), e));
@@ -47,9 +58,8 @@ public class PlayerInventoryServiceImpl implements PlayerInventoryService {
                 .setAmount(amount)
                 .build();
 
-        return Mono.fromCallable(() ->
-                        playerInventoryServiceAPIBlockingStubObjectFactory.getObject().giveEquipment(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> playerInventoryGrpcClient.giveEquipment(request))
+                .subscribeOn(schedulerInventory)
                 .doOnSubscribe(s -> log.info("gRPC giveEquipment start playerUuid={} equipmentType={} equipmentId={} amount={}", playerUuid, equipmentType, equipmentId, amount))
                 .doOnSuccess(resp -> log.info("gRPC giveEquipment success playerUuid={} equipmentType={} equipmentId={} amount={}", playerUuid, equipmentType, equipmentId, amount))
                 .doOnError(e -> log.error("gRPC giveEquipment error playerUuid={} equipmentType={} equipmentId={} amount={} err={}", playerUuid, equipmentType, equipmentId, amount, e.getMessage(), e));
@@ -64,9 +74,8 @@ public class PlayerInventoryServiceImpl implements PlayerInventoryService {
                 .setAmount(amount)
                 .build();
 
-        return Mono.fromCallable(() ->
-                        playerInventoryServiceAPIBlockingStubObjectFactory.getObject().takeAwayEquipment(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> playerInventoryGrpcClient.takeAwayEquipment(request))
+                .subscribeOn(schedulerInventory)
                 .doOnSubscribe(s -> log.info("gRPC takeAwayEquipment start playerUuid={} equipmentType={} equipmentId={} amount={}", playerUuid, equipmentType, equipmentId, amount))
                 .doOnSuccess(resp -> log.info("gRPC takeAwayEquipment success playerUuid={} equipmentType={} equipmentId={} amount={}", playerUuid, equipmentType, equipmentId, amount))
                 .doOnError(e -> log.error("gRPC takeAwayEquipment error playerUuid={} equipmentType={} equipmentId={} amount={} err={}", playerUuid, equipmentType, equipmentId, amount, e.getMessage(), e));
@@ -78,14 +87,10 @@ public class PlayerInventoryServiceImpl implements PlayerInventoryService {
                 .setPlayerUuid(playerUuid)
                 .build();
 
-        return Mono.fromCallable(() ->
-                        playerInventoryServiceAPIBlockingStubObjectFactory.getObject().initializePlayerInventory(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> playerInventoryGrpcClient.initializePlayerInventory(request))
+                .subscribeOn(schedulerInventory)
                 .doOnSubscribe(s -> log.info("gRPC initializeInventory start playerUuid={}", playerUuid))
                 .doOnSuccess(resp -> log.info("gRPC initializeInventory success playerUuid={}", playerUuid))
                 .doOnError(e -> log.error("gRPC initializeInventory error playerUuid={} err={}", playerUuid, e.getMessage(), e));
     }
 }
-//TODO logging
-//TODO настроить пулы потоков для отказоустойчивости и производительности
-//TODO возврат default в случае ошибки, но ошибку логировать. тоже для отказоусточивости. подумать, мб сделать везде

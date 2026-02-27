@@ -3,16 +3,19 @@ package ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.cache
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import ru.otus.courses.java.advanced.shooter.server.common.protobuf.PaginationRequest;
+import ru.otus.courses.java.advanced.shooter.server.common.protobuf.RelatedEntitiesInclusionMode;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.data.CacheableDataPage;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.service.IncrementallyRefreshableCacheServiceImplBase;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.structure.impl.SoftReferenceMapCache;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.*;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.grpc.client.equipment.AmmunitionGrpcClient;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.grpc.client.equipment.AmmunitionGrpcClientRateLimitingWrapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.AmmunitionMapper;
 
 import java.time.ZonedDateTime;
@@ -25,16 +28,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class AmmunitionDtoCacheService extends IncrementallyRefreshableCacheServiceImplBase<Integer, AmmunitionDto> {
 
-    private final ObjectFactory<AmmunitionServiceAPIGrpc.AmmunitionServiceAPIBlockingStub> ammunitionServiceAPIBlockingStubObjectFactory;
+    private final AmmunitionGrpcClient ammunitionGrpcClient;
     private final AmmunitionMapper ammunitionMapper;
 
     public AmmunitionDtoCacheService(
             @Value("${caches.ammunition.page-size:100}") int dataPageSize,
-            ObjectFactory<AmmunitionServiceAPIGrpc.AmmunitionServiceAPIBlockingStub> ammunitionServiceAPIBlockingStubObjectFactory,
+            @Qualifier(AmmunitionGrpcClientRateLimitingWrapper.NAME) AmmunitionGrpcClient ammunitionGrpcClient,
             AmmunitionMapper ammunitionMapper
     ) {
         super(new SoftReferenceMapCache<>(new ConcurrentHashMap<>()), dataPageSize);
-        this.ammunitionServiceAPIBlockingStubObjectFactory = ammunitionServiceAPIBlockingStubObjectFactory;
+        this.ammunitionGrpcClient = ammunitionGrpcClient;
         this.ammunitionMapper = ammunitionMapper;
     }
 
@@ -42,7 +45,7 @@ public class AmmunitionDtoCacheService extends IncrementallyRefreshableCacheServ
     protected CacheableDataPage<AmmunitionDto> loadDataPage(int page, int size, ZonedDateTime lastRefreshTime) {
         log.info("Loading ammunition data page: page={}, size={}, lastRefreshTime={}", page, size, lastRefreshTime);
 
-        AmmunitionInfoListPage ammunitionListPage = ammunitionServiceAPIBlockingStubObjectFactory.getObject().getAmmunitionList(
+        AmmunitionInfoListPage ammunitionListPage = ammunitionGrpcClient.getAmmunitionList(
                 GetAmmunitionListRequest.newBuilder()
                         .setFilter(AmmunitionFilter.newBuilder()
                                 .setUpdatedAfter(lastRefreshTime.toInstant().toEpochMilli())
@@ -51,6 +54,7 @@ public class AmmunitionDtoCacheService extends IncrementallyRefreshableCacheServ
                                 .setPage(page)
                                 .setCount(size)
                                 .build())
+                        .setCompatibleGunsInclusionMode(RelatedEntitiesInclusionMode.INCLUDE_ALL)
                         .build()
         );
 
@@ -71,7 +75,7 @@ public class AmmunitionDtoCacheService extends IncrementallyRefreshableCacheServ
         try {
             log.info("Loading ammunition by ID: {}", integer);
 
-            AmmunitionInfo ammunitionInfo = ammunitionServiceAPIBlockingStubObjectFactory.getObject().getAmmunition(
+            AmmunitionInfo ammunitionInfo = ammunitionGrpcClient.getAmmunition(
                     GetAmmunitionRequest.newBuilder()
                             .setAmmunitionId(integer)
                             .build()
@@ -98,7 +102,7 @@ public class AmmunitionDtoCacheService extends IncrementallyRefreshableCacheServ
 
         log.info("Loading ammunition list by IDs: {}", ids);
 
-        AmmunitionInfoListPage ammunitionListPage = ammunitionServiceAPIBlockingStubObjectFactory.getObject().getAmmunitionList(
+        AmmunitionInfoListPage ammunitionListPage = ammunitionGrpcClient.getAmmunitionList(
                 GetAmmunitionListRequest.newBuilder()
                         .setFilter(AmmunitionFilter.newBuilder()
                                 .addAllAmmunitionIds(ids)

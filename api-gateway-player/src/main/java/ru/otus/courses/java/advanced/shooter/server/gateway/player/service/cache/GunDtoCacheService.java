@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import ru.otus.courses.java.advanced.shooter.server.common.protobuf.PaginationRequest;
+import ru.otus.courses.java.advanced.shooter.server.common.protobuf.RelatedEntitiesInclusionMode;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.data.CacheableDataPage;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.service.IncrementallyRefreshableCacheServiceImplBase;
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.structure.impl.SoftReferenceMapCache;
@@ -50,6 +51,7 @@ public class GunDtoCacheService extends IncrementallyRefreshableCacheServiceImpl
                                 .setPage(page)
                                 .setCount(size)
                                 .build())
+                        .setRelatedEntitiesInclusionMode(RelatedEntitiesInclusionMode.INCLUDE_ONLY_ENABLED)
                         .build()
         );
 

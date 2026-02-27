@@ -10,8 +10,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionSaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.AmmunitionMapper;
@@ -52,7 +52,7 @@ public class AmmunitionController {
 
     @PostMapping("/search")
     @Operation(summary = "Search ammunition by filter")
-    public Mono<PageResponseDto<AmmunitionDto>> search(@RequestBody @NotNull @Valid AmmunitionSearchRequestDto request) {
+    public Mono<AmmunitionPageResponseDto> search(@RequestBody @NotNull @Valid AmmunitionSearchRequestDto request) {
         return ammunitionService.search(
                         ammunitionMapper.toProto(request),
                         paginationRequestMapper.toProto(request.getPaginationRequest())

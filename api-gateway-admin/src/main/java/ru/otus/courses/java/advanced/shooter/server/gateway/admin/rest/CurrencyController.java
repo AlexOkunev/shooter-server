@@ -10,8 +10,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.CurrencyDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.CurrencyPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.CurrencySaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.CurrencySearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.CurrencyMapper;
@@ -52,7 +52,7 @@ public class CurrencyController {
 
     @PostMapping("/search")
     @Operation(summary = "Search currencies by filter")
-    public Mono<PageResponseDto<CurrencyDto>> search(@RequestBody @NotNull @Valid CurrencySearchRequestDto request) {
+    public Mono<CurrencyPageResponseDto> search(@RequestBody @NotNull @Valid CurrencySearchRequestDto request) {
         return currencyService.search(
                         currencyMapper.toProto(request),
                         paginationRequestMapper.toProto(request.getPaginationRequest())

@@ -10,4 +10,3 @@ public class MoneyBundlePageResponseDto extends PageResponseDto<MoneyBundleDto> 
         super(items, paginationInfo);
     }
 }
-//TODO create such wrappers for all pages

@@ -6,8 +6,8 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.GunIn
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.GunInfoListPage;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.GunWritableData;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.gun.GunsFilter;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GunDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GunPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GunSaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GunSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationInfoDtoMapper;
@@ -37,7 +37,7 @@ public abstract class GunMapper {
     public abstract List<GunDto> toDtoList(Collection<GunInfo> gunInfos);
 
     @Mapping(source = "data", target = "items")
-    public abstract PageResponseDto<GunDto> toPageDto(GunInfoListPage gunInfoListPage);
+    public abstract GunPageResponseDto toPageDto(GunInfoListPage gunInfoListPage);
 
     public abstract GunsFilter toProto(GunSearchRequestDto requestDto);
 

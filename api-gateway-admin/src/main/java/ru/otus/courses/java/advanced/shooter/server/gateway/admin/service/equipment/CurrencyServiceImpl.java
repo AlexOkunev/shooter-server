@@ -1,25 +1,32 @@
 package ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.equipment;
 
-import io.grpc.Status;
-import io.grpc.StatusRuntimeException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+import reactor.core.scheduler.Scheduler;
 import ru.otus.courses.java.advanced.shooter.server.common.protobuf.PaginationRequest;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.currency.*;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.exception.CurrencyNotFoundException;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.grpc.client.equipment.CurrencyGrpcClient;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.grpc.client.equipment.CurrencyGrpcClientRateLimitingWrapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.util.GrpcSchedulers;
 
 import java.util.Collection;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class CurrencyServiceImpl implements CurrencyService {
 
-    private final ObjectFactory<CurrencyServiceAPIGrpc.CurrencyServiceAPIBlockingStub> currencyServiceStubObjectFactory;
+    private final CurrencyGrpcClient currencyGrpcClient;
+    private final Scheduler schedulerEquipment;
+
+    public CurrencyServiceImpl(
+            @Qualifier(CurrencyGrpcClientRateLimitingWrapper.NAME) CurrencyGrpcClient currencyGrpcClient,
+            @Qualifier(GrpcSchedulers.EQUIPMENT) Scheduler schedulerEquipment
+    ) {
+        this.currencyGrpcClient = currencyGrpcClient;
+        this.schedulerEquipment = schedulerEquipment;
+    }
 
     @Override
     public Mono<CurrencyInfo> getOne(int id) {
@@ -27,14 +34,11 @@ public class CurrencyServiceImpl implements CurrencyService {
                 .setCurrencyId(id)
                 .build();
 
-        return Mono.fromCallable(() -> currencyServiceStubObjectFactory.getObject().getEnabledCurrency(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> currencyGrpcClient.getEnabledCurrency(request))
+                .subscribeOn(schedulerEquipment)
                 .doOnSubscribe(s -> log.info("gRPC getEnabledCurrency start currencyId={}", id))
                 .doOnSuccess(resp -> log.info("gRPC getEnabledCurrency success currencyId={}", id))
-                .doOnError(e -> log.error("gRPC getEnabledCurrency error currencyId={} err={}", id, e.getMessage(), e))
-                .onErrorMap(StatusRuntimeException.class,
-                        e -> e.getStatus().getCode() == Status.Code.NOT_FOUND ? new CurrencyNotFoundException(id) : e
-                );
+                .doOnError(e -> log.error("gRPC getEnabledCurrency error currencyId={} err={}", id, e.getMessage(), e));
     }
 
     @Override
@@ -44,8 +48,8 @@ public class CurrencyServiceImpl implements CurrencyService {
                 .setPaginationRequest(paginationRequest)
                 .build();
 
-        return Mono.fromCallable(() -> currencyServiceStubObjectFactory.getObject().getCurrencies(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> currencyGrpcClient.getCurrencies(request))
+                .subscribeOn(schedulerEquipment)
                 .doOnSubscribe(s -> log.info("gRPC getCurrencies start"))
                 .doOnSuccess(resp -> log.info("gRPC getCurrencies success items={}",
                         resp != null ? resp.getDataCount() : 0))
@@ -69,8 +73,8 @@ public class CurrencyServiceImpl implements CurrencyService {
                         .build())
                 .build();
 
-        return Mono.fromCallable(() -> currencyServiceStubObjectFactory.getObject().getCurrencies(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> currencyGrpcClient.getCurrencies(request))
+                .subscribeOn(schedulerEquipment)
                 .doOnSubscribe(s -> log.info("gRPC getCurrencies start by ids={}", ids))
                 .doOnSuccess(resp -> log.info("gRPC getCurrencies success by ids={}", ids))
                 .doOnError(e -> log.error("gRPC getCurrencies error by ids={}: err={}", ids, e.getMessage(), e));
@@ -82,8 +86,8 @@ public class CurrencyServiceImpl implements CurrencyService {
                 .setData(data)
                 .build();
 
-        return Mono.fromCallable(() -> currencyServiceStubObjectFactory.getObject().createCurrency(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> currencyGrpcClient.createCurrency(request))
+                .subscribeOn(schedulerEquipment)
                 .doOnSubscribe(s -> log.info("gRPC createCurrency start"))
                 .doOnSuccess(resp -> log.info("gRPC createCurrency success id={}", resp.getId()))
                 .doOnError(e -> log.error("gRPC createCurrency error err={}", e.getMessage(), e));
@@ -96,12 +100,10 @@ public class CurrencyServiceImpl implements CurrencyService {
                 .setData(data)
                 .build();
 
-        return Mono.fromCallable(() -> currencyServiceStubObjectFactory.getObject().updateCurrency(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> currencyGrpcClient.updateCurrency(request))
+                .subscribeOn(schedulerEquipment)
                 .doOnSubscribe(s -> log.info("gRPC updateCurrency start"))
                 .doOnSuccess(resp -> log.info("gRPC updateCurrency success id={}", resp.getId()))
                 .doOnError(e -> log.error("gRPC updateCurrency error err={}", e.getMessage(), e));
     }
 }
-//TODO logging
-//TODO настроить пулы потоков для отказоустойчивости и производительности

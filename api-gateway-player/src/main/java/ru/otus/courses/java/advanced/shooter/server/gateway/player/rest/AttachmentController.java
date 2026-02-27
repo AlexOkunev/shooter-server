@@ -11,8 +11,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.AttachmentDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.AttachmentPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.AttachmentSearchRequestDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.AttachmentMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationRequestMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.equipment.AttachmentService;
@@ -37,7 +37,7 @@ public class AttachmentController {
 
     @PostMapping("/search")
     @Operation(summary = "Search attachments by filter")
-    public Mono<PageResponseDto<AttachmentDto>> search(@RequestBody @NotNull @Valid AttachmentSearchRequestDto request) {
+    public Mono<AttachmentPageResponseDto> search(@RequestBody @NotNull @Valid AttachmentSearchRequestDto request) {
         return attachmentService.search(
                         attachmentMapper.toProto(request),
                         paginationRequestMapper.toProto(request.getPaginationRequest())

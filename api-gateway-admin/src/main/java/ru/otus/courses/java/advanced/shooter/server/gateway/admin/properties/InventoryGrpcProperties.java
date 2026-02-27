@@ -18,4 +18,7 @@ public class InventoryGrpcProperties {
 
     @Positive
     private int deadlineMs;
+
+    @NotNull
+    private GrpcRetryProperties retry;
 }

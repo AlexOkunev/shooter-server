@@ -87,5 +87,3 @@ public class EquipmentGrpcClientConfig {
                 .withDeadline(Deadline.after(equipmentGrpcProperties.getDeadlineMs(), TimeUnit.MILLISECONDS));
     }
 }
-
-//TODO use retry 3 attempts, with bucket. add circuit breaker

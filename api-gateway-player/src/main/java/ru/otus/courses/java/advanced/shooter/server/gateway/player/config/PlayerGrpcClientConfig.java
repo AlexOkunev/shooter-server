@@ -47,5 +47,3 @@ public class PlayerGrpcClientConfig {
                 .withDeadline(Deadline.after(playerGrpcProperties.getDeadlineMs(), TimeUnit.MILLISECONDS));
     }
 }
-
-//TODO use retry 3 attempts, with bucket. add circuit breaker

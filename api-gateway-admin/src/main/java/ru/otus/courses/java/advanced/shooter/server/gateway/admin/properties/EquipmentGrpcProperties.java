@@ -6,7 +6,6 @@ import jakarta.validation.constraints.Positive;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.properties.GrpcServerProperties;
 
 @Data
 @Validated
@@ -19,4 +18,7 @@ public class EquipmentGrpcProperties {
 
     @Positive
     private int deadlineMs;
+
+    @NotNull
+    private GrpcRetryProperties retry;
 }

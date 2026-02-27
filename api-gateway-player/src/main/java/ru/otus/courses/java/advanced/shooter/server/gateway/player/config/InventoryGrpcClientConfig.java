@@ -57,5 +57,3 @@ public class InventoryGrpcClientConfig {
                 .withDeadline(Deadline.after(inventoryGrpcProperties.getDeadlineMs(), TimeUnit.MILLISECONDS));
     }
 }
-
-//TODO use retry 3 attempts, with bucket. add circuit breaker

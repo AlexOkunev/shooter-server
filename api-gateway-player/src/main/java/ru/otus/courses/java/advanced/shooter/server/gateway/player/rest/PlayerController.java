@@ -10,8 +10,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.player.PlayerDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.player.PlayerPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.player.PlayersSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationRequestMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.player.PlayerMapper;
@@ -38,7 +38,7 @@ public class PlayerController {
 
     @PostMapping("/search")
     @Operation(summary = "Search players by filter")
-    public Mono<PageResponseDto<PlayerDto>> searchPlayers(@RequestBody @NotNull @Valid PlayersSearchRequestDto request) {
+    public Mono<PlayerPageResponseDto> searchPlayers(@RequestBody @NotNull @Valid PlayersSearchRequestDto request) {
         return playerService.searchPlayers(
                         playerMapper.toProto(request),
                         paginationRequestMapper.toProto(request.getPaginationRequest())

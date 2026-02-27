@@ -3,7 +3,7 @@ package ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.cache
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -13,6 +13,8 @@ import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.service.I
 import ru.otus.courses.java.advanced.shooter.server.common.utils.cache.structure.impl.SoftReferenceMapCache;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.*;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GrenadeDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.grpc.client.equipment.GrenadeGrpcClient;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.grpc.client.equipment.GrenadeGrpcClientRateLimitingWrapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.GrenadeMapper;
 
 import java.time.ZonedDateTime;
@@ -25,15 +27,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @Service
 public class GrenadeDtoCacheService extends IncrementallyRefreshableCacheServiceImplBase<Integer, GrenadeDto> {
 
-    private final ObjectFactory<GrenadeServiceAPIGrpc.GrenadeServiceAPIBlockingStub> grenadeServiceAPIBlockingStubObjectFactory;
+    private final GrenadeGrpcClient grenadeGrpcClient;
     private final GrenadeMapper grenadeMapper;
 
     public GrenadeDtoCacheService(
             @Value("${caches.grenade.page-size:100}") int dataPageSize,
-            ObjectFactory<GrenadeServiceAPIGrpc.GrenadeServiceAPIBlockingStub> grenadeServiceAPIBlockingStubObjectFactory, GrenadeMapper grenadeMapper
+            @Qualifier(GrenadeGrpcClientRateLimitingWrapper.NAME) GrenadeGrpcClient grenadeGrpcClient,
+            GrenadeMapper grenadeMapper
     ) {
         super(new SoftReferenceMapCache<>(new ConcurrentHashMap<>()), dataPageSize);
-        this.grenadeServiceAPIBlockingStubObjectFactory = grenadeServiceAPIBlockingStubObjectFactory;
+        this.grenadeGrpcClient = grenadeGrpcClient;
         this.grenadeMapper = grenadeMapper;
     }
 
@@ -41,7 +44,7 @@ public class GrenadeDtoCacheService extends IncrementallyRefreshableCacheService
     protected CacheableDataPage<GrenadeDto> loadDataPage(int page, int size, ZonedDateTime lastRefreshTime) {
         log.info("Loading grenade data page: page={}, size={}, lastRefreshTime={}", page, size, lastRefreshTime);
 
-        GrenadeInfoListPage grenades = grenadeServiceAPIBlockingStubObjectFactory.getObject().getGrenades(
+        GrenadeInfoListPage grenades = grenadeGrpcClient.getGrenades(
                 GetGrenadesRequest.newBuilder()
                         .setFilter(GrenadesFilter.newBuilder()
                                 .setUpdatedAfter(lastRefreshTime.toInstant().toEpochMilli())
@@ -70,7 +73,7 @@ public class GrenadeDtoCacheService extends IncrementallyRefreshableCacheService
         try {
             log.info("Loading grenade by ID: {}", integer);
 
-            GrenadeInfo grenadeInfo = grenadeServiceAPIBlockingStubObjectFactory.getObject().getGrenade(
+            GrenadeInfo grenadeInfo = grenadeGrpcClient.getGrenade(
                     GetGrenadeRequest.newBuilder()
                             .setGrenadeId(integer)
                             .build()
@@ -97,7 +100,7 @@ public class GrenadeDtoCacheService extends IncrementallyRefreshableCacheService
 
         log.info("Loading grenades by IDs: {}", ids);
 
-        GrenadeInfoListPage grenades = grenadeServiceAPIBlockingStubObjectFactory.getObject().getGrenades(
+        GrenadeInfoListPage grenades = grenadeGrpcClient.getGrenades(
                 GetGrenadesRequest.newBuilder()
                         .setFilter(GrenadesFilter.newBuilder()
                                 .addAllGrenadeIds(ids)

@@ -10,4 +10,3 @@ public class PlayerInventoryItemsPageResponseDto extends PageResponseDto<PlayerI
         super(items, paginationInfo);
     }
 }
-//TODO create such wrappers for all pages

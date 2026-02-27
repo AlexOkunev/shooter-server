@@ -11,8 +11,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.GunDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.GunPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.GunSearchRequestDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.equipment.GunMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationRequestMapper;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.service.equipment.GunService;
@@ -37,7 +37,7 @@ public class GunController {
 
     @PostMapping("/search")
     @Operation(summary = "Search gun by filter")
-    public Mono<PageResponseDto<GunDto>> search(@RequestBody @NotNull @Valid GunSearchRequestDto request) {
+    public Mono<GunPageResponseDto> search(@RequestBody @NotNull @Valid GunSearchRequestDto request) {
         return gunService.search(
                         gunMapper.toProto(request),
                         paginationRequestMapper.toProto(request.getPaginationRequest())

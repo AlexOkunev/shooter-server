@@ -2,8 +2,8 @@ package ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.playe
 
 import org.mapstruct.*;
 import ru.otus.courses.java.advanced.shooter.server.common.mapping.core.mapper.DateMapper;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.player.PlayerDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.player.PlayerPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.player.PlayersSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationInfoDtoMapper;
 import ru.otus.courses.java.advanced.shooter.server.players.protobuf.PlayerInfo;
@@ -33,7 +33,7 @@ public abstract class PlayerMapper {
     public abstract List<PlayerDto> toDtoList(Collection<PlayerInfo> playerInfos);
 
     @Mapping(source = "data", target = "items")
-    public abstract PageResponseDto<PlayerDto> toPageDto(PlayerInfoListPage playerInfoListPage);
+    public abstract PlayerPageResponseDto toPageDto(PlayerInfoListPage playerInfoListPage);
 
     @Mapping(target = "enabled", constant = "true")
     public abstract PlayersFilter toProto(PlayersSearchRequestDto playersSearchRequestDto);

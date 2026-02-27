@@ -6,8 +6,8 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachmen
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.AttachmentInfoListPage;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.attachment.AttachmentsFilter;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.AttachmentDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.AttachmentPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.equipment.AttachmentSearchRequestDto;
-import ru.otus.courses.java.advanced.shooter.server.gateway.player.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.player.mapper.page.PaginationInfoDtoMapper;
 
 import java.util.Collection;
@@ -33,7 +33,7 @@ public abstract class AttachmentMapper {
     public abstract List<AttachmentDto> toDtoList(Collection<AttachmentInfo> attachmentInfos);
 
     @Mapping(source = "data", target = "items")
-    public abstract PageResponseDto<AttachmentDto> toPageDto(AttachmentInfoListPage attachmentInfoListPage);
+    public abstract AttachmentPageResponseDto toPageDto(AttachmentInfoListPage attachmentInfoListPage);
 
     @Mapping(target = "enabled", constant = "true")
     @Mapping(target = "onlyEnabledCompatibleGuns", constant = "true")

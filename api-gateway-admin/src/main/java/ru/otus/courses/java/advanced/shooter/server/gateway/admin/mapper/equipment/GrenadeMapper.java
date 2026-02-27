@@ -6,8 +6,8 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.G
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.GrenadeInfoListPage;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.GrenadeWritableData;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.grenade.GrenadesFilter;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GrenadeDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GrenadePageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GrenadeSaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GrenadeSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationInfoDtoMapper;
@@ -34,7 +34,7 @@ public abstract class GrenadeMapper {
     public abstract List<GrenadeDto> toDtoList(Collection<GrenadeInfo> grenadeInfos);
 
     @Mapping(source = "data", target = "items")
-    public abstract PageResponseDto<GrenadeDto> toPageDto(GrenadeInfoListPage grenadeInfoListPage);
+    public abstract GrenadePageResponseDto toPageDto(GrenadeInfoListPage grenadeInfoListPage);
 
     public abstract GrenadesFilter toProto(GrenadeSearchRequestDto requestDto);
 

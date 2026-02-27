@@ -4,6 +4,7 @@ import io.grpc.Deadline;
 import io.grpc.ManagedChannel;
 import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -15,8 +16,12 @@ import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory
 import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.initial.InitialPlayerInventoryServiceAPIGrpc;
 import ru.otus.courses.java.advanced.shooter.server.inventory.protobuf.inventory.log.PlayerInventoryLogServiceAPIGrpc;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static ru.otus.courses.java.advanced.shooter.server.gateway.admin.util.GrpcRetryUtils.buildServiceConfig;
+
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class InventoryGrpcClientConfig {
@@ -35,6 +40,23 @@ public class InventoryGrpcClientConfig {
 
         if (StringUtils.isNotBlank(inventoryGrpcProperties.getServer().overrideAuthority())) {
             builder.overrideAuthority(inventoryGrpcProperties.getServer().overrideAuthority());
+        }
+
+        if (inventoryGrpcProperties.getRetry().enabled()) {
+            log.info("Enabling retry with props: {}", inventoryGrpcProperties.getRetry());
+            builder.enableRetry();
+            builder.defaultServiceConfig(
+                    buildServiceConfig(
+                            inventoryGrpcProperties.getRetry(),
+                            List.of(
+                                    PlayerInventoryServiceAPIGrpc.getGetPlayerInventoryMethod(),
+                                    PlayerInventoryLogServiceAPIGrpc.getGetPlayerInventoryLogMethod(),
+                                    InitialPlayerInventoryServiceAPIGrpc.getGetInitialPlayerInventoryMethod()
+                            )
+                    )
+            );
+
+            builder.maxRetryAttempts(inventoryGrpcProperties.getRetry().maxAttempts());
         }
 
         return builder.build();
@@ -67,5 +89,3 @@ public class InventoryGrpcClientConfig {
                 .withDeadline(Deadline.after(inventoryGrpcProperties.getDeadlineMs(), TimeUnit.MILLISECONDS));
     }
 }
-
-//TODO use retry 3 attempts, with bucket. add circuit breaker

@@ -1,26 +1,33 @@
 package ru.otus.courses.java.advanced.shooter.server.gateway.admin.service.equipment;
 
-import io.grpc.Status;
-import io.grpc.StatusRuntimeException;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
+import reactor.core.scheduler.Scheduler;
 import ru.otus.courses.java.advanced.shooter.server.common.protobuf.PaginationRequest;
 import ru.otus.courses.java.advanced.shooter.server.common.protobuf.RelatedEntitiesInclusionMode;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.*;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.exception.AmmunitionNotFoundException;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.grpc.client.equipment.AmmunitionGrpcClient;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.grpc.client.equipment.AmmunitionGrpcClientRateLimitingWrapper;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.util.GrpcSchedulers;
 
 import java.util.Collection;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 public class AmmunitionServiceImpl implements AmmunitionService {
 
-    private final ObjectFactory<AmmunitionServiceAPIGrpc.AmmunitionServiceAPIBlockingStub> ammunitionServiceAPIBlockingStubObjectFactory;
+    private final AmmunitionGrpcClient ammunitionGrpcClient;
+    private final Scheduler schedulerEquipment;
+
+    public AmmunitionServiceImpl(
+            @Qualifier(AmmunitionGrpcClientRateLimitingWrapper.NAME) AmmunitionGrpcClient ammunitionGrpcClient,
+            @Qualifier(GrpcSchedulers.EQUIPMENT) Scheduler schedulerEquipment
+    ) {
+        this.ammunitionGrpcClient = ammunitionGrpcClient;
+        this.schedulerEquipment = schedulerEquipment;
+    }
 
     @Override
     public Mono<AmmunitionInfo> getOne(int id) {
@@ -28,14 +35,11 @@ public class AmmunitionServiceImpl implements AmmunitionService {
                 .setAmmunitionId(id)
                 .build();
 
-        return Mono.fromCallable(() -> ammunitionServiceAPIBlockingStubObjectFactory.getObject().getEnabledAmmunition(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> ammunitionGrpcClient.getEnabledAmmunition(request))
+                .subscribeOn(schedulerEquipment)
                 .doOnSubscribe(s -> log.info("gRPC getEnabledAmmunition start ammunitionId={}", id))
                 .doOnSuccess(resp -> log.info("gRPC getEnabledAmmunition success ammunitionId={}", id))
-                .doOnError(e -> log.error("gRPC getEnabledAmmunition error ammunitionId={} err={}", id, e.getMessage(), e))
-                .onErrorMap(StatusRuntimeException.class,
-                        e -> e.getStatus().getCode() == Status.Code.NOT_FOUND ? new AmmunitionNotFoundException(id) : e
-                );
+                .doOnError(e -> log.error("gRPC getEnabledAmmunition error ammunitionId={} err={}", id, e.getMessage(), e));
     }
 
     @Override
@@ -46,8 +50,8 @@ public class AmmunitionServiceImpl implements AmmunitionService {
                 .setCompatibleGunsInclusionMode(RelatedEntitiesInclusionMode.INCLUDE_ALL)
                 .build();
 
-        return Mono.fromCallable(() -> ammunitionServiceAPIBlockingStubObjectFactory.getObject().getAmmunitionList(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> ammunitionGrpcClient.getAmmunitionList(request))
+                .subscribeOn(schedulerEquipment)
                 .doOnSubscribe(s -> log.info("gRPC getAmmunitionList start"))
                 .doOnSuccess(resp -> log.info("gRPC getAmmunitionList success items={}",
                         resp != null ? resp.getDataCount() : 0))
@@ -72,8 +76,8 @@ public class AmmunitionServiceImpl implements AmmunitionService {
                 .setCompatibleGunsInclusionMode(RelatedEntitiesInclusionMode.INCLUDE_ALL)
                 .build();
 
-        return Mono.fromCallable(() -> ammunitionServiceAPIBlockingStubObjectFactory.getObject().getAmmunitionList(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> ammunitionGrpcClient.getAmmunitionList(request))
+                .subscribeOn(schedulerEquipment)
                 .doOnSubscribe(s -> log.info("gRPC getAmmunitionList start by ids={}", ids))
                 .doOnSuccess(resp -> log.info("gRPC getAmmunitionList success by ids={}", ids))
                 .doOnError(e -> log.error("gRPC getAmmunitionList error by ids={}: err={}", ids, e.getMessage(), e));
@@ -85,8 +89,8 @@ public class AmmunitionServiceImpl implements AmmunitionService {
                 .setData(data)
                 .build();
 
-        return Mono.fromCallable(() -> ammunitionServiceAPIBlockingStubObjectFactory.getObject().createAmmunition(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> ammunitionGrpcClient.createAmmunition(request))
+                .subscribeOn(schedulerEquipment)
                 .doOnSubscribe(s -> log.info("gRPC createAmmunition start"))
                 .doOnSuccess(resp -> log.info("gRPC createAmmunition success id={}", resp.getId()))
                 .doOnError(e -> log.error("gRPC createAmmunition error err={}", e.getMessage(), e));
@@ -99,12 +103,10 @@ public class AmmunitionServiceImpl implements AmmunitionService {
                 .setData(data)
                 .build();
 
-        return Mono.fromCallable(() -> ammunitionServiceAPIBlockingStubObjectFactory.getObject().updateAmmunition(request))
-                .subscribeOn(Schedulers.boundedElastic())
+        return Mono.fromCallable(() -> ammunitionGrpcClient.updateAmmunition(request))
+                .subscribeOn(schedulerEquipment)
                 .doOnSubscribe(s -> log.info("gRPC updateAmmunition start"))
                 .doOnSuccess(resp -> log.info("gRPC updateAmmunition success id={}", resp.getId()))
                 .doOnError(e -> log.error("gRPC updateAmmunition error err={}", e.getMessage(), e));
     }
 }
-//TODO logging
-//TODO настроить пулы потоков для отказоустойчивости и производительности

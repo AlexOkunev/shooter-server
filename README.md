@@ -1,6 +1,7 @@
 # shooter-server
 
-Keycloak для игроков http://localhost:7777/admin/master/console/#/shooter
+Keycloak для игроков http://localhost:7777/admin/master/console/#/shooter-players
+Keycloak для администраторов http://localhost:7778/admin/master/console/#/shooter-admin
 
 Kafka UI http://localhost:8090/
 
@@ -13,4 +14,8 @@ Kafka UI http://localhost:8090/
 --password admin
 /opt/keycloak/bin/kcadm.sh update realms/master -s sslRequired=NONE
 
-Потом выполнить то же самое и в новых реалмах
+Создать реалмы shooter-players и shooter-admin
+
+Выполнить в новых реалмах команды
+/opt/keycloak/bin/kcadm.sh update realms/shooter-players -s sslRequired=NONE
+/opt/keycloak/bin/kcadm.sh update realms/shooter-admin -s sslRequired=NONE

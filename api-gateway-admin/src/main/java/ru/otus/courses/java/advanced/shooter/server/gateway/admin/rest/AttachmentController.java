@@ -10,8 +10,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AttachmentDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AttachmentPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AttachmentSaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AttachmentSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.AttachmentMapper;
@@ -52,7 +52,7 @@ public class AttachmentController {
 
     @PostMapping("/search")
     @Operation(summary = "Search attachments by filter")
-    public Mono<PageResponseDto<AttachmentDto>> search(@RequestBody @NotNull @Valid AttachmentSearchRequestDto request) {
+    public Mono<AttachmentPageResponseDto> search(@RequestBody @NotNull @Valid AttachmentSearchRequestDto request) {
         return attachmentService.search(
                         attachmentMapper.toProto(request),
                         paginationRequestMapper.toProto(request.getPaginationRequest())

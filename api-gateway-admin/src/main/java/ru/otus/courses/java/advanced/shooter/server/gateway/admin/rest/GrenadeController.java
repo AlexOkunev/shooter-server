@@ -10,8 +10,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GrenadeDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GrenadePageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GrenadeSaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.GrenadeSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.equipment.GrenadeMapper;
@@ -52,7 +52,7 @@ public class GrenadeController {
 
     @PostMapping("/search")
     @Operation(summary = "Search grenades by filter")
-    public Mono<PageResponseDto<GrenadeDto>> search(@RequestBody @NotNull @Valid GrenadeSearchRequestDto request) {
+    public Mono<GrenadePageResponseDto> search(@RequestBody @NotNull @Valid GrenadeSearchRequestDto request) {
         return grenadeService.search(
                         grenadeMapper.toProto(request),
                         paginationRequestMapper.toProto(request.getPaginationRequest())

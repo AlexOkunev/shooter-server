@@ -6,8 +6,8 @@ import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunitio
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.AmmunitionInfo;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.AmmunitionInfoListPage;
 import ru.otus.courses.java.advanced.shooter.server.equipment.protobuf.ammunition.AmmunitionWritableData;
-import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.common.page.PageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionDto;
+import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionPageResponseDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionSaveRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.dto.equipment.AmmunitionSearchRequestDto;
 import ru.otus.courses.java.advanced.shooter.server.gateway.admin.mapper.page.PaginationInfoDtoMapper;
@@ -35,7 +35,7 @@ public abstract class AmmunitionMapper {
     public abstract List<AmmunitionDto> toDtoList(Collection<AmmunitionInfo> ammunitionInfos);
 
     @Mapping(source = "data", target = "items")
-    public abstract PageResponseDto<AmmunitionDto> toPageDto(AmmunitionInfoListPage ammunitionInfoListPage);
+    public abstract AmmunitionPageResponseDto toPageDto(AmmunitionInfoListPage ammunitionInfoListPage);
 
     public abstract AmmunitionFilter toProto(AmmunitionSearchRequestDto requestDto);
 

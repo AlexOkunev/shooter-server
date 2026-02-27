@@ -4,6 +4,7 @@ import io.grpc.Deadline;
 import io.grpc.ManagedChannel;
 import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -19,8 +20,12 @@ import ru.otus.courses.java.advanced.shooter.server.market.protobuf.product.Prod
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.money.bundle.MoneyBundleTradeServiceAPIGrpc;
 import ru.otus.courses.java.advanced.shooter.server.market.protobuf.trade.product.ProductTradeServiceAPIGrpc;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static ru.otus.courses.java.advanced.shooter.server.gateway.admin.util.GrpcRetryUtils.buildServiceConfig;
+
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class MarketGrpcClientConfig {
@@ -39,6 +44,33 @@ public class MarketGrpcClientConfig {
 
         if (StringUtils.isNotBlank(marketGrpcProperties.getServer().overrideAuthority())) {
             builder.overrideAuthority(marketGrpcProperties.getServer().overrideAuthority());
+        }
+
+        if (marketGrpcProperties.getRetry().enabled()) {
+            log.info("Enabling retry with props: {}", marketGrpcProperties.getRetry());
+            builder.enableRetry();
+            builder.defaultServiceConfig(
+                    buildServiceConfig(
+                            marketGrpcProperties.getRetry(),
+                            List.of(
+                                    PlayerAccountServiceAPIGrpc.getGetPlayerAccountMethod(),
+                                    PlayerAccountLogServiceAPIGrpc.getGetPlayerAccountLogMethod(),
+                                    MoneyBundleServiceAPIGrpc.getGetMoneyBundleMethod(),
+                                    MoneyBundleServiceAPIGrpc.getGetEnabledMoneyBundleMethod(),
+                                    MoneyBundleServiceAPIGrpc.getGetMoneyBundlesMethod(),
+                                    ProductServiceAPIGrpc.getGetProductMethod(),
+                                    ProductServiceAPIGrpc.getGetEnabledProductMethod(),
+                                    ProductServiceAPIGrpc.getGetProductsMethod(),
+                                    MoneyBundleTradeServiceAPIGrpc.getGetMoneyBundleTradeMethod(),
+                                    MoneyBundleTradeServiceAPIGrpc.getGetMoneyBundleTradesMethod(),
+                                    ProductTradeServiceAPIGrpc.getGetProductTradeMethod(),
+                                    ProductTradeServiceAPIGrpc.getGetProductTradesMethod(),
+                                    InitialPlayerAccountServiceAPIGrpc.getGetInitialPlayerAccountMethod()
+                            )
+                    )
+            );
+
+            builder.maxRetryAttempts(marketGrpcProperties.getRetry().maxAttempts());
         }
 
         return builder.build();
@@ -107,5 +139,3 @@ public class MarketGrpcClientConfig {
                 .withDeadline(Deadline.after(marketGrpcProperties.getDeadlineMs(), TimeUnit.MILLISECONDS));
     }
 }
-
-//TODO use retry 3 attempts, with bucket. add circuit breaker
