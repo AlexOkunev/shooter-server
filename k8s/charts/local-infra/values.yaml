@@ -1,0 +1,39 @@
+kafka:
+  enabled: true
+  node1:
+    serviceName: kafka-node-1
+    host: host.docker.internal
+    port: 9091
+  node2:
+    serviceName: kafka-node-2
+    host: host.docker.internal
+    port: 9092
+  node3:
+    serviceName: kafka-node-3
+    host: host.docker.internal
+    port: 9093
+
+schemaRegistry:
+  enabled: true
+  serviceName: kafka-schema-registry-service
+  host: host.docker.internal
+  port: 8081
+
+postgres:
+  enabled: true
+  services:
+    - serviceName: players-db-service
+      host: host.docker.internal
+      port: 5433
+    - serviceName: equipment-db-service
+      host: host.docker.internal
+      port: 5434
+    - serviceName: inventory-db-service
+      host: host.docker.internal
+      port: 5435
+    - serviceName: market-db-service
+      host: host.docker.internal
+      port: 5436
+    - serviceName: payment-stub-db-service
+      host: host.docker.internal
+      port: 5437

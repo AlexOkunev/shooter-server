@@ -1,0 +1,75 @@
+appName: shooter-server-inventory-grpc
+
+replicas: 1
+terminationGracePeriodSeconds: 30
+
+image:
+  repository: otus-java-advanced/shooter-server-inventory-grpc-server
+  tag: "1.0"
+  pullPolicy: IfNotPresent
+
+grpc:
+  port: 6565
+  shutdownGrace: 20
+  enableReflection: true
+
+db:
+  name: inventory_db
+  serviceName: inventory-db-service
+  secretName: inventory-db-secret
+  port: 5435
+  schema: public
+  jpa:
+    jdbcBatchSize: 100
+    jdbcFetchSize: 400
+
+kafka:
+  node1:
+    serviceName: kafka-node-1
+    port: 9091
+  node2:
+    serviceName: kafka-node-2
+    port: 9092
+  node3:
+    serviceName: kafka-node-3
+    port: 9093
+  schemaRegistry:
+    serviceName: kafka-schema-registry-service
+    port: 8081
+  consumer:
+    enableAutoCommit: false
+    autoOffsetReset: earliest
+    properties:
+      maxPollRecords: 200
+      fetchMaxWaitMs: 500
+      fetchMinBytes: 1
+      maxPollIntervalMs: 300000
+      sessionTimeoutMs: 15000
+      heartbeatIntervalMs: 5000
+  listener:
+    ackMode: record
+
+equipmentKafka:
+  topics: "db.equipment.public.ammunition,db.equipment.public.attachment,db.equipment.public.grenade,db.equipment.public.gun"
+  groupId: "inventory-equipment-consumer-test-8"
+
+playersKafka:
+  topic: "db.public.player"
+  groupId: "inventory-player-message-consumer-test-2"
+
+marketKafkaProductTradeIssueRequired:
+  topic: "db.market.public.product_trade_issue_required_message_outbox"
+  groupId: "inventory-product-trade-issue-required-message-consumer-test-7"
+
+referenceDataCaching:
+  dataPageSize: 100
+  refreshRateSeconds: 600
+  scheduledRefreshCacheEnabled: true
+
+resources:
+  requests:
+    cpu: "1"
+    memory: "1Gi"
+  limits:
+    cpu: "2"
+    memory: "2Gi"

@@ -1,0 +1,1 @@
+kubectl apply -f ../cluster/secrets/payment-stub-db-secret.yaml

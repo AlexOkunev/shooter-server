@@ -1,0 +1,34 @@
+{{- if .Values.kafka.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.kafka.node1.serviceName }}
+spec:
+  type: ExternalName
+  externalName: {{ .Values.kafka.node1.host | quote }}
+  ports:
+    - name: kafka
+      port: {{ .Values.kafka.node1.port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.kafka.node2.serviceName }}
+spec:
+  type: ExternalName
+  externalName: {{ .Values.kafka.node2.host | quote }}
+  ports:
+    - name: kafka
+      port: {{ .Values.kafka.node2.port }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.kafka.node3.serviceName }}
+spec:
+  type: ExternalName
+  externalName: {{ .Values.kafka.node3.host | quote }}
+  ports:
+    - name: kafka
+      port: {{ .Values.kafka.node3.port }}
+{{- end }}

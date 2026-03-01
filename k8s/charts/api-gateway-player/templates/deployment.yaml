@@ -1,0 +1,222 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.appName }}-deployment"
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      containers:
+        - name: "{{ .Values.appName }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+              memory: {{ .Values.resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu | quote }}
+              memory: {{ .Values.resources.limits.memory | quote }}
+
+          env:
+            - name: SERVER_PORT
+              value: {{ .Values.service.port | quote }}
+
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+              value: "http://{{ .Values.keycloak.host }}:{{ .Values.keycloak.port }}/realms/{{ .Values.keycloak.realm }}"
+
+            - name: SCHEDULING_POOL_SIZE
+              value: {{ .Values.scheduling.poolSize | quote }}
+
+            - name: CACHES_ENABLED
+              value: {{ .Values.caches.enabled | quote }}
+
+            - name: CACHES_CURRENCY_PAGE_SIZE
+              value: {{ .Values.caches.currency.pageSize | quote }}
+            - name: CACHES_CURRENCY_REFRESH_BY_SCHEDULE_ENABLED
+              value: {{ .Values.caches.currency.refreshByScheduleEnabled | quote }}
+            - name: CACHES_CURRENCY_REFRESH_INTERVAL_MS
+              value: {{ .Values.caches.currency.refreshIntervalMs | quote }}
+
+            - name: CACHES_GUN_PAGE_SIZE
+              value: {{ .Values.caches.gun.pageSize | quote }}
+            - name: CACHES_GUN_REFRESH_BY_SCHEDULE_ENABLED
+              value: {{ .Values.caches.gun.refreshByScheduleEnabled | quote }}
+            - name: CACHES_GUN_REFRESH_INTERVAL_MS
+              value: {{ .Values.caches.gun.refreshIntervalMs | quote }}
+
+            - name: CACHES_GRENADE_PAGE_SIZE
+              value: {{ .Values.caches.grenade.pageSize | quote }}
+            - name: CACHES_GRENADE_REFRESH_BY_SCHEDULE_ENABLED
+              value: {{ .Values.caches.grenade.refreshByScheduleEnabled | quote }}
+            - name: CACHES_GRENADE_REFRESH_INTERVAL_MS
+              value: {{ .Values.caches.grenade.refreshIntervalMs | quote }}
+
+            - name: CACHES_AMMUNITION_PAGE_SIZE
+              value: {{ .Values.caches.ammunition.pageSize | quote }}
+            - name: CACHES_AMMUNITION_REFRESH_BY_SCHEDULE_ENABLED
+              value: {{ .Values.caches.ammunition.refreshByScheduleEnabled | quote }}
+            - name: CACHES_AMMUNITION_REFRESH_INTERVAL_MS
+              value: {{ .Values.caches.ammunition.refreshIntervalMs | quote }}
+
+            - name: CACHES_ATTACHMENT_PAGE_SIZE
+              value: {{ .Values.caches.attachment.pageSize | quote }}
+            - name: CACHES_ATTACHMENT_REFRESH_BY_SCHEDULE_ENABLED
+              value: {{ .Values.caches.attachment.refreshByScheduleEnabled | quote }}
+            - name: CACHES_ATTACHMENT_REFRESH_INTERVAL_MS
+              value: {{ .Values.caches.attachment.refreshIntervalMs | quote }}
+
+            - name: CACHES_PLAYER_RESET_BY_SCHEDULE_ENABLED
+              value: {{ .Values.caches.player.resetByScheduleEnabled | quote }}
+            - name: CACHES_PLAYER_RESET_INTERVAL_MS
+              value: {{ .Values.caches.player.resetIntervalMs | quote }}
+
+            - name: PLAYER_GRPC_SERVICE_SERVER_HOST
+              value: {{ .Values.grpcServices.player.host | quote }}
+            - name: PLAYER_GRPC_SERVICE_SERVER_PORT
+              value: {{ .Values.grpcServices.player.port | quote }}
+            - name: PLAYER_GRPC_SERVICE_DEADLINE_MS
+              value: {{ .Values.grpcServices.player.deadlineMs | quote }}
+
+            - name: PLAYER_GRPC_SERVICE_RETRY_ENABLED
+              value: {{ .Values.grpcServices.player.retry.enabled | quote }}
+            - name: PLAYER_GRPC_SERVICE_RETRY_MAX_ATTEMPTS
+              value: {{ .Values.grpcServices.player.retry.maxAttempts | quote }}
+            - name: PLAYER_GRPC_SERVICE_RETRY_INITIAL_BACKOFF
+              value: {{ .Values.grpcServices.player.retry.initialBackoff | quote }}
+            - name: PLAYER_GRPC_SERVICE_RETRY_MAX_BACKOFF
+              value: {{ .Values.grpcServices.player.retry.maxBackoff | quote }}
+            - name: PLAYER_GRPC_SERVICE_RETRY_BACKOFF_MULTIPLIER
+              value: {{ .Values.grpcServices.player.retry.backoffMultiplier | quote }}
+            - name: PLAYER_GRPC_SERVICE_RETRY_THROTTLING_ENABLED
+              value: {{ .Values.grpcServices.player.retry.throttling.enabled | quote }}
+            - name: PLAYER_GRPC_SERVICE_RETRY_THROTTLING_MAX_TOKENS
+              value: {{ .Values.grpcServices.player.retry.throttling.maxTokens | quote }}
+            - name: PLAYER_GRPC_SERVICE_RETRY_THROTTLING_TOKEN_RATIO
+              value: {{ .Values.grpcServices.player.retry.throttling.tokenRatio | quote }}
+
+            - name: EQUIPMENT_GRPC_SERVICE_SERVER_HOST
+              value: {{ .Values.grpcServices.equipment.host | quote }}
+            - name: EQUIPMENT_GRPC_SERVICE_SERVER_PORT
+              value: {{ .Values.grpcServices.equipment.port | quote }}
+            - name: EQUIPMENT_GRPC_SERVICE_DEADLINE_MS
+              value: {{ .Values.grpcServices.equipment.deadlineMs | quote }}
+
+            - name: EQUIPMENT_GRPC_SERVICE_RETRY_ENABLED
+              value: {{ .Values.grpcServices.equipment.retry.enabled | quote }}
+            - name: EQUIPMENT_GRPC_SERVICE_RETRY_MAX_ATTEMPTS
+              value: {{ .Values.grpcServices.equipment.retry.maxAttempts | quote }}
+            - name: EQUIPMENT_GRPC_SERVICE_RETRY_INITIAL_BACKOFF
+              value: {{ .Values.grpcServices.equipment.retry.initialBackoff | quote }}
+            - name: EQUIPMENT_GRPC_SERVICE_RETRY_MAX_BACKOFF
+              value: {{ .Values.grpcServices.equipment.retry.maxBackoff | quote }}
+            - name: EQUIPMENT_GRPC_SERVICE_RETRY_BACKOFF_MULTIPLIER
+              value: {{ .Values.grpcServices.equipment.retry.backoffMultiplier | quote }}
+            - name: EQUIPMENT_GRPC_SERVICE_RETRY_THROTTLING_ENABLED
+              value: {{ .Values.grpcServices.equipment.retry.throttling.enabled | quote }}
+            - name: EQUIPMENT_GRPC_SERVICE_RETRY_THROTTLING_MAX_TOKENS
+              value: {{ .Values.grpcServices.equipment.retry.throttling.maxTokens | quote }}
+            - name: EQUIPMENT_GRPC_SERVICE_RETRY_THROTTLING_TOKEN_RATIO
+              value: {{ .Values.grpcServices.equipment.retry.throttling.tokenRatio | quote }}
+
+            - name: MARKET_GRPC_SERVICE_SERVER_HOST
+              value: {{ .Values.grpcServices.market.host | quote }}
+            - name: MARKET_GRPC_SERVICE_SERVER_PORT
+              value: {{ .Values.grpcServices.market.port | quote }}
+            - name: MARKET_GRPC_SERVICE_DEADLINE_MS
+              value: {{ .Values.grpcServices.market.deadlineMs | quote }}
+
+            - name: MARKET_GRPC_SERVICE_RETRY_ENABLED
+              value: {{ .Values.grpcServices.market.retry.enabled | quote }}
+            - name: MARKET_GRPC_SERVICE_RETRY_MAX_ATTEMPTS
+              value: {{ .Values.grpcServices.market.retry.maxAttempts | quote }}
+            - name: MARKET_GRPC_SERVICE_RETRY_INITIAL_BACKOFF
+              value: {{ .Values.grpcServices.market.retry.initialBackoff | quote }}
+            - name: MARKET_GRPC_SERVICE_RETRY_MAX_BACKOFF
+              value: {{ .Values.grpcServices.market.retry.maxBackoff | quote }}
+            - name: MARKET_GRPC_SERVICE_RETRY_BACKOFF_MULTIPLIER
+              value: {{ .Values.grpcServices.market.retry.backoffMultiplier | quote }}
+            - name: MARKET_GRPC_SERVICE_RETRY_THROTTLING_ENABLED
+              value: {{ .Values.grpcServices.market.retry.throttling.enabled | quote }}
+            - name: MARKET_GRPC_SERVICE_RETRY_THROTTLING_MAX_TOKENS
+              value: {{ .Values.grpcServices.market.retry.throttling.maxTokens | quote }}
+            - name: MARKET_GRPC_SERVICE_RETRY_THROTTLING_TOKEN_RATIO
+              value: {{ .Values.grpcServices.market.retry.throttling.tokenRatio | quote }}
+
+            - name: INVENTORY_GRPC_SERVICE_SERVER_HOST
+              value: {{ .Values.grpcServices.inventory.host | quote }}
+            - name: INVENTORY_GRPC_SERVICE_SERVER_PORT
+              value: {{ .Values.grpcServices.inventory.port | quote }}
+            - name: INVENTORY_GRPC_SERVICE_DEADLINE_MS
+              value: {{ .Values.grpcServices.inventory.deadlineMs | quote }}
+
+            - name: INVENTORY_GRPC_SERVICE_RETRY_ENABLED
+              value: {{ .Values.grpcServices.inventory.retry.enabled | quote }}
+            - name: INVENTORY_GRPC_SERVICE_RETRY_MAX_ATTEMPTS
+              value: {{ .Values.grpcServices.inventory.retry.maxAttempts | quote }}
+            - name: INVENTORY_GRPC_SERVICE_RETRY_INITIAL_BACKOFF
+              value: {{ .Values.grpcServices.inventory.retry.initialBackoff | quote }}
+            - name: INVENTORY_GRPC_SERVICE_RETRY_MAX_BACKOFF
+              value: {{ .Values.grpcServices.inventory.retry.maxBackoff | quote }}
+            - name: INVENTORY_GRPC_SERVICE_RETRY_BACKOFF_MULTIPLIER
+              value: {{ .Values.grpcServices.inventory.retry.backoffMultiplier | quote }}
+            - name: INVENTORY_GRPC_SERVICE_RETRY_THROTTLING_ENABLED
+              value: {{ .Values.grpcServices.inventory.retry.throttling.enabled | quote }}
+            - name: INVENTORY_GRPC_SERVICE_RETRY_THROTTLING_MAX_TOKENS
+              value: {{ .Values.grpcServices.inventory.retry.throttling.maxTokens | quote }}
+            - name: INVENTORY_GRPC_SERVICE_RETRY_THROTTLING_TOKEN_RATIO
+              value: {{ .Values.grpcServices.inventory.retry.throttling.tokenRatio | quote }}
+
+            - name: RESILIENCE4J_RATELIMITER_CONFIGS_GRPC_RPS_LIMIT_FOR_PERIOD
+              value: {{ .Values.resilience4j.grpcRps.limitForPeriod | quote }}
+            - name: RESILIENCE4J_RATELIMITER_CONFIGS_GRPC_RPS_LIMIT_REFRESH_PERIOD
+              value: {{ .Values.resilience4j.grpcRps.limitRefreshPeriod | quote }}
+            - name: RESILIENCE4J_RATELIMITER_CONFIGS_GRPC_RPS_TIMEOUT_DURATION
+              value: {{ .Values.resilience4j.grpcRps.timeoutDuration | quote }}
+
+            - name: RESILIENCE4J_RATELIMITER_CONFIGS_GRPC_RPM_LIMIT_FOR_PERIOD
+              value: {{ .Values.resilience4j.grpcRpm.limitForPeriod | quote }}
+            - name: RESILIENCE4J_RATELIMITER_CONFIGS_GRPC_RPM_LIMIT_REFRESH_PERIOD
+              value: {{ .Values.resilience4j.grpcRpm.limitRefreshPeriod | quote }}
+            - name: RESILIENCE4J_RATELIMITER_CONFIGS_GRPC_RPM_TIMEOUT_DURATION
+              value: {{ .Values.resilience4j.grpcRpm.timeoutDuration | quote }}
+
+            - name: EQUIPMENT_GRPC_POOL_PROPERTIES_MAX_THREADS
+              value: {{ .Values.grpcPools.equipment.maxThreads | quote }}
+            - name: EQUIPMENT_GRPC_POOL_PROPERTIES_MAX_QUEUED_TASKS
+              value: {{ .Values.grpcPools.equipment.maxQueuedTasks | quote }}
+            - name: EQUIPMENT_GRPC_POOL_PROPERTIES_THREAD_NAME_PREFIX
+              value: {{ .Values.grpcPools.equipment.threadNamePrefix | quote }}
+
+            - name: INVENTORY_GRPC_POOL_PROPERTIES_MAX_THREADS
+              value: {{ .Values.grpcPools.inventory.maxThreads | quote }}
+            - name: INVENTORY_GRPC_POOL_PROPERTIES_MAX_QUEUED_TASKS
+              value: {{ .Values.grpcPools.inventory.maxQueuedTasks | quote }}
+            - name: INVENTORY_GRPC_POOL_PROPERTIES_THREAD_NAME_PREFIX
+              value: {{ .Values.grpcPools.inventory.threadNamePrefix | quote }}
+
+            - name: MARKET_GRPC_POOL_PROPERTIES_MAX_THREADS
+              value: {{ .Values.grpcPools.market.maxThreads | quote }}
+            - name: MARKET_GRPC_POOL_PROPERTIES_MAX_QUEUED_TASKS
+              value: {{ .Values.grpcPools.market.maxQueuedTasks | quote }}
+            - name: MARKET_GRPC_POOL_PROPERTIES_THREAD_NAME_PREFIX
+              value: {{ .Values.grpcPools.market.threadNamePrefix | quote }}
+
+            - name: PLAYER_GRPC_POOL_PROPERTIES_MAX_THREADS
+              value: {{ .Values.grpcPools.player.maxThreads | quote }}
+            - name: PLAYER_GRPC_POOL_PROPERTIES_MAX_QUEUED_TASKS
+              value: {{ .Values.grpcPools.player.maxQueuedTasks | quote }}
+            - name: PLAYER_GRPC_POOL_PROPERTIES_THREAD_NAME_PREFIX
+              value: {{ .Values.grpcPools.player.threadNamePrefix | quote }}

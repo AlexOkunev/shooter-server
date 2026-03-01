@@ -1,0 +1,15 @@
+{{- if .Values.postgres.enabled }}
+{{- range .Values.postgres.services }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .serviceName }}
+spec:
+  type: ExternalName
+  externalName: {{ .host | quote }}
+  ports:
+    - name: postgres
+      port: {{ .port }}
+---
+{{- end }}
+{{- end }}

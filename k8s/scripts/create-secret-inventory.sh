@@ -1,0 +1,1 @@
+kubectl apply -f ../cluster/secrets/inventory-db-secret.yaml

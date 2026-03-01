@@ -1,0 +1,12 @@
+{{- if .Values.schemaRegistry.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.schemaRegistry.serviceName }}
+spec:
+  type: ExternalName
+  externalName: {{ .Values.schemaRegistry.host | quote }}
+  ports:
+    - name: http
+      port: {{ .Values.schemaRegistry.port }}
+{{- end }}

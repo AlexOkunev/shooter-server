@@ -1,0 +1,175 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.appName }}-deployment"
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.appName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.appName }}
+    spec:
+      terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
+      containers:
+        - name: "{{ .Values.appName }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+
+          ports:
+            - name: grpc
+              containerPort: {{ .Values.grpc.port }}
+
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu | quote }}
+              memory: {{ .Values.resources.requests.memory | quote }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu | quote }}
+              memory: {{ .Values.resources.limits.memory | quote }}
+
+          env:
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://{{ .Values.db.serviceName }}:{{ .Values.db.port }}/{{ .Values.db.name }}"
+
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.secretName }}
+                  key: user
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.secretName }}
+                  key: password
+
+            - name: SPRING_FLYWAY_SCHEMAS
+              value: {{ .Values.db.schema | quote }}
+
+            - name: SPRING_FLYWAY_URL
+              value: "jdbc:postgresql://{{ .Values.db.serviceName }}:{{ .Values.db.port }}/{{ .Values.db.name }}"
+
+            - name: SPRING_FLYWAY_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.secretName }}
+                  key: user
+
+            - name: SPRING_FLYWAY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.db.secretName }}
+                  key: password
+
+            - name: SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_BATCH_SIZE
+              value: {{ .Values.db.jpa.jdbcBatchSize | quote }}
+
+            - name: SPRING_JPA_PROPERTIES_HIBERNATE_JDBC_FETCH_SIZE
+              value: {{ .Values.db.jpa.jdbcFetchSize | quote }}
+
+            - name: SPRING_JPA_PROPERTIES_HIBERNATE_DEFAULT_SCHEMA
+              value: {{ .Values.db.schema | quote }}
+
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: "{{ .Values.kafka.node1.serviceName }}:{{ .Values.kafka.node1.port }},{{ .Values.kafka.node2.serviceName }}:{{ .Values.kafka.node2.port }},{{ .Values.kafka.node3.serviceName }}:{{ .Values.kafka.node3.port }}"
+
+            - name: SPRING_KAFKA_CONSUMER_ENABLE_AUTO_COMMIT
+              value: {{ .Values.kafka.consumer.enableAutoCommit | quote }}
+
+            - name: SPRING_KAFKA_CONSUMER_AUTO_OFFSET_RESET
+              value: {{ .Values.kafka.consumer.autoOffsetReset | quote }}
+
+            - name: SPRING_KAFKA_PRODUCER_PROPERTIES_SCHEMA_REGISTRY_URL
+              value: "http://{{ .Values.kafka.schemaRegistry.serviceName }}:{{ .Values.kafka.schemaRegistry.port }}"
+
+            - name: SPRING_KAFKA_CONSUMER_PROPERTIES_SCHEMA_REGISTRY_URL
+              value: "http://{{ .Values.kafka.schemaRegistry.serviceName }}:{{ .Values.kafka.schemaRegistry.port }}"
+
+            - name: SPRING_KAFKA_CONSUMER_PROPERTIES_MAX_POLL_RECORDS
+              value: {{ .Values.kafka.consumer.properties.maxPollRecords | quote }}
+
+            - name: SPRING_KAFKA_CONSUMER_PROPERTIES_FETCH_MAX_WAIT_MS
+              value: {{ .Values.kafka.consumer.properties.fetchMaxWaitMs | quote }}
+
+            - name: SPRING_KAFKA_CONSUMER_PROPERTIES_FETCH_MIN_BYTES
+              value: {{ .Values.kafka.consumer.properties.fetchMinBytes | quote }}
+
+            - name: SPRING_KAFKA_CONSUMER_PROPERTIES_MAX_POLL_INTERVAL_MS
+              value: {{ .Values.kafka.consumer.properties.maxPollIntervalMs | quote }}
+
+            - name: SPRING_KAFKA_CONSUMER_PROPERTIES_SESSION_TIMEOUT_MS
+              value: {{ .Values.kafka.consumer.properties.sessionTimeoutMs | quote }}
+
+            - name: SPRING_KAFKA_CONSUMER_PROPERTIES_HEARTBEAT_INTERVAL_MS
+              value: {{ .Values.kafka.consumer.properties.heartbeatIntervalMs | quote }}
+
+            - name: SPRING_KAFKA_LISTENER_ACK_MODE
+              value: {{ .Values.kafka.listener.ackMode | quote }}
+
+            - name: GRPC_PORT
+              value: {{ .Values.grpc.port | quote }}
+            - name: GRPC_SHUTDOWN_GRACE
+              value: {{ .Values.grpc.shutdownGrace | quote }}
+            - name: GRPC_ENABLE_REFLECTION
+              value: {{ .Values.grpc.enableReflection | quote }}
+
+            - name: EQUIPMENT_KAFKA_TOPICS
+              value: {{ .Values.equipmentKafka.topics | quote }}
+
+            - name: EQUIPMENT_KAFKA_GROUP_ID
+              value: {{ .Values.equipmentKafka.groupId | quote }}
+
+            - name: CURRENCY_KAFKA_TOPIC
+              value: {{ .Values.currencyKafka.topic | quote }}
+            - name: CURRENCY_KAFKA_GROUP_ID
+              value: {{ .Values.currencyKafka.groupId | quote }}
+
+            - name: PLAYERS_KAFKA_TOPIC
+              value: {{ .Values.playersKafka.topic | quote }}
+            - name: PLAYERS_KAFKA_GROUP_ID
+              value: {{ .Values.playersKafka.groupId | quote }}
+
+            - name: PAYMENT_KAFKA_TOPIC
+              value: {{ .Values.paymentKafka.topic | quote }}
+            - name: PAYMENT_KAFKA_GROUP_ID
+              value: {{ .Values.paymentKafka.groupId | quote }}
+
+            - name: INVENTORY_PRODUCT_TRADE_ISSUANCE_PERFORMED_KAFKA_TOPIC
+              value: {{ .Values.inventoryProductTradeIssuancePerformedKafka.topic | quote }}
+            - name: INVENTORY_PRODUCT_TRADE_ISSUANCE_PERFORMED_KAFKA_GROUP_ID
+              value: {{ .Values.inventoryProductTradeIssuancePerformedKafka.groupId | quote }}
+
+            - name: REFERENCE_DATA_CACHING_DATA_PAGE_SIZE
+              value: {{ .Values.referenceDataCaching.dataPageSize | quote }}
+            - name: REFERENCE_DATA_CACHING_REFRESH_RATE_SECONDS
+              value: {{ .Values.referenceDataCaching.refreshRateSeconds | quote }}
+            - name: REFERENCE_DATA_CACHING_SCHEDULED_REFRESH_CACHE_ENABLED
+              value: {{ .Values.referenceDataCaching.scheduledRefreshCacheEnabled | quote }}
+
+            - name: STUCK_MONEY_BUNDLE_TRADE_PROCESSING_ENABLED
+              value: {{ .Values.stuckMoneyBundleTradeProcessing.enabled | quote }}
+
+            - name: STUCK_MONEY_BUNDLE_TRADE_PROCESSING_PERIOD
+              value: {{ .Values.stuckMoneyBundleTradeProcessing.period | quote }}
+
+            - name: STUCK_MONEY_BUNDLE_TRADE_PROCESSING_PAYMENT_CREATION_WAIT_PROCESSING_ENABLED
+              value: {{ .Values.stuckMoneyBundleTradeProcessing.paymentCreationWaitProcessing.enabled | quote }}
+
+            - name: STUCK_MONEY_BUNDLE_TRADE_PROCESSING_PAYMENT_CREATION_WAIT_PROCESSING_MAX_STUCK_PERIOD
+              value: {{ .Values.stuckMoneyBundleTradeProcessing.paymentCreationWaitProcessing.maxStuckPeriod | quote }}
+
+            - name: STUCK_MONEY_BUNDLE_TRADE_PROCESSING_PAYMENT_PENDING_PROCESSING_ENABLED
+              value: {{ .Values.stuckMoneyBundleTradeProcessing.paymentPendingProcessing.enabled | quote }}
+
+            - name: STUCK_MONEY_BUNDLE_TRADE_PROCESSING_PAYMENT_PENDING_PROCESSING_MAX_STUCK_PERIOD
+              value: {{ .Values.stuckMoneyBundleTradeProcessing.paymentPendingProcessing.maxStuckPeriod | quote }}
+
+            #TODO!!! k8s override authority
+            - name: PAYMENT_STUB_GRPC_HOST
+              value: {{ .Values.paymentStubGrpc.host | quote }}
+            - name: PAYMENT_STUB_GRPC_PORT
+              value: {{ .Values.paymentStubGrpc.port | quote }}
+            - name: PAYMENT_STUB_GRPC_DEADLINE_MS
+              value: {{ .Values.paymentStubGrpc.deadlineMs | quote }}

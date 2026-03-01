@@ -192,7 +192,7 @@
                 <configuration>
                     <images>
                         <image>
-                            <name>otus-java-advanced/shooter-server-api-gateway-player:${project.version}</name>
+                            <name>otus-java-advanced/shooter-server-api-gateway-admin:${project.version}</name>
                             <build>
                                 <dockerFileDir>${project.basedir}</dockerFileDir>
                                 <tags>

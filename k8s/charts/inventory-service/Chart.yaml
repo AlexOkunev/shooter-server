@@ -1,0 +1,6 @@
+apiVersion: v2
+name: shooter-server-inventory-service
+description: Helm chart for shooter-server inventory-service
+type: application
+version: 0.1.0
+appVersion: "1.0.0"

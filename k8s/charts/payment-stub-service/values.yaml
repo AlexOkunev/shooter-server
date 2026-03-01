@@ -1,0 +1,32 @@
+appName: shooter-server-payment-stub-grpc
+
+replicas: 1
+terminationGracePeriodSeconds: 30
+
+image:
+  repository: otus-java-advanced/shooter-server-payment-stub-grpc-server
+  tag: "1.0"
+  pullPolicy: IfNotPresent
+
+grpc:
+  port: 6565
+  shutdownGrace: 20
+  enableReflection: true
+
+db:
+  name: payment_stub_db
+  serviceName: payment-stub-db-service
+  secretName: payment-stub-db-secret
+  port: 5437
+  schema: public
+  jpa:
+    jdbcBatchSize: 100
+    jdbcFetchSize: 400
+
+resources:
+  requests:
+    cpu: "1"
+    memory: "1Gi"
+  limits:
+    cpu: "2"
+    memory: "2Gi"

@@ -1,0 +1,1 @@
+kubectl apply -f ../cluster/secrets/market-db-secret.yaml

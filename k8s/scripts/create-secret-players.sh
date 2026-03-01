@@ -1,0 +1,1 @@
+kubectl apply -f ../cluster/secrets/players-db-secret.yaml

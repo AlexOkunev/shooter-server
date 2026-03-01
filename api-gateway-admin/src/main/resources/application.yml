@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: api-gateway-player
+    name: api-gateway-admin
 
   security:
     oauth2:

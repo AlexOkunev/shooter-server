@@ -19,3 +19,12 @@ Kafka UI http://localhost:8090/
 Выполнить в новых реалмах команды
 /opt/keycloak/bin/kcadm.sh update realms/shooter-players -s sslRequired=NONE
 /opt/keycloak/bin/kcadm.sh update realms/shooter-admin -s sslRequired=NONE
+
+Для локального запуска для работы с кафкой в кубере нужно
+export DOCKER_HOST_IP=host.docker.internal
+
+После этого запустить docker
+docker-compose up
+
+Для получения токенов нужно сделать
+sudo sh -c 'echo "127.0.0.1 host.docker.internal" >> /etc/hosts'
