@@ -28,3 +28,7 @@ docker-compose up
 
 Для получения токенов нужно сделать
 sudo sh -c 'echo "127.0.0.1 host.docker.internal" >> /etc/hosts'
+
+Для доступа через ингресс нужно сделать
+sudo sh -c 'echo "127.0.0.1 admin.shooter.local" >> /etc/hosts'
+sudo sh -c 'echo "127.0.0.1 player.shooter.local" >> /etc/hosts'
