@@ -21,6 +21,8 @@ spec:
           ports:
             - name: http
               containerPort: {{ .Values.service.port }}
+            - name: actuator
+              containerPort: {{ .Values.actuator.port }}
 
           resources:
             requests:
@@ -33,6 +35,9 @@ spec:
           env:
             - name: SERVER_PORT
               value: {{ .Values.service.port | quote }}
+
+            - name: MANAGEMENT_SERVER_PORT
+              value: {{ .Values.actuator.port | quote }}
 
             - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
               value: "http://{{ .Values.keycloak.host }}:{{ .Values.keycloak.port }}/realms/{{ .Values.keycloak.realm }}"

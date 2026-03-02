@@ -21,6 +21,8 @@ spec:
           ports:
             - name: grpc
               containerPort: {{ .Values.grpc.port }}
+            - name: actuator
+              containerPort: {{ .Values.actuator.port }}
 
           resources:
             requests:
@@ -31,6 +33,9 @@ spec:
               memory: {{ .Values.resources.limits.memory | quote }}
 
           env:
+            - name: MANAGEMENT_SERVER_PORT
+              value: {{ .Values.actuator.port | quote }}
+
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:postgresql://{{ .Values.db.serviceName }}:{{ .Values.db.port }}/{{ .Values.db.name }}"
 

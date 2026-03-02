@@ -13,6 +13,9 @@ grpc:
   shutdownGrace: 20
   enableReflection: true
 
+actuator:
+  port: 9090
+
 db:
   name: market_db
   serviceName: market-db-service

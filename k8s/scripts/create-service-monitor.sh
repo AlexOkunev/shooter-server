@@ -1,0 +1,1 @@
+kubectl apply -f ../cluster/monitoring/service-monitors/all-services-service-monitor.yaml

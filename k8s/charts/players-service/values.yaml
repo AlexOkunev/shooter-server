@@ -13,6 +13,9 @@ grpc:
   shutdownGrace: 20
   enableReflection: true
 
+actuator:
+  port: 9090
+
 db:
   name: players_db
   serviceName: players-db-service

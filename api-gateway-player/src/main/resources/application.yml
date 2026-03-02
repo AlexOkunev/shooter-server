@@ -183,3 +183,20 @@ player-grpc-pool:
     max-threads: 20
     max-queued-tasks: 1000
     thread-name-prefix: "grpc-player"
+
+management:
+  server:
+    port: 9090
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
