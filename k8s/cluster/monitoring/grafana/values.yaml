@@ -1,0 +1,12 @@
+grafana:
+  enabled: true
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard
+      folder: /tmp/dashboards
+      searchNamespace: ALL
+
+prometheus-node-exporter:
+  hostRootFsMount:
+    enabled: false

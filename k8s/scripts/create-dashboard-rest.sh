@@ -1,0 +1,1 @@
+kubectl apply -f ../cluster/monitoring/grafana/spring-boot-3-dashboard-rest-configmap.yaml
