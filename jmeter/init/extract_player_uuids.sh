@@ -1,0 +1,2 @@
+"$(brew --prefix libpq)/bin/psql" "postgresql://players_db_user:players_db_user_password@localhost:5433/players_db" \
+  -c "\copy (select player_uuid from public.player where player_uuid is not null order by random() limit 10000) to 'player_uuid_10k_random.csv' csv header"

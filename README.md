@@ -1,4 +1,5 @@
 # shooter-server
+После запуска docker-compose необходимо выполнить скрипт из папки infra 
 
 Keycloak для игроков http://localhost:7777/admin/master/console/#/shooter-players
 Keycloak для администраторов http://localhost:7778/admin/master/console/#/shooter-admin
@@ -39,3 +40,5 @@ kubectl port-forward -n monitoring svc/monitoring-kube-prometheus-prometheus 909
 Grafana
 kubectl port-forward -n monitoring svc/monitoring-grafana 3000:80
 kubectl get secret -n monitoring monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 -d; echo
+
+см оба файла в папке jmeter
