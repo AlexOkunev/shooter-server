@@ -1,32 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Data search">
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Data oepration">
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
-      <boolProp name="TestPlan.functional_mode">false</boolProp>
-      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
     </TestPlan>
     <hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Data search thread group">
-        <intProp name="ThreadGroup.num_threads">400</intProp>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Data operation thread group">
+        <intProp name="ThreadGroup.num_threads">70</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">90</stringProp>
+          <stringProp name="LoopController.loops">300</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Search data HTTP Request">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Operation data HTTP Request">
           <stringProp name="HTTPSampler.domain">player.shooter.local</stringProp>
           <stringProp name="HTTPSampler.port">80</stringProp>
           <stringProp name="HTTPSampler.protocol">http</stringProp>
-          <stringProp name="HTTPSampler.path">/players/current/account/log?count=100&amp;page=0</stringProp>
+          <stringProp name="HTTPSampler.path">/player/current/market/product-trades?productId=1</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <stringProp name="HTTPSampler.method">POST</stringProp>
           <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
           <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
@@ -34,7 +32,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -42,7 +40,7 @@
               </elementProp>
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI0SklpS3lnZjZlM0pnajlzNFQ5SFBFM2JVdWJJSVA1WjlHRGlId2Z6cnYwIn0.eyJleHAiOjE3NzI1NzM2NjQsImlhdCI6MTc3MjU3MDA2NCwiYXV0aF90aW1lIjoxNzcyNTcwMDY0LCJqdGkiOiJvbnJ0YWM6MjZhZjZjN2YtZjc4OS03OGYyLWZhM2ItMjk2MDA1OWM0OGYzIiwiaXNzIjoiaHR0cDovL2hvc3QuZG9ja2VyLmludGVybmFsOjc3NzcvcmVhbG1zL3Nob290ZXItcGxheWVycyIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI5MjExNzhmMy05YWFjLTRiOTYtYjBiNy1kZWZkNmZhNmY1OWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJzaG9vdGVyIiwic2lkIjoiNGE4NzdkMjAtYzAwOC1mOGE1LWQyODUtM2U4M2NjMzQ2OTk3IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1zaG9vdGVyLXBsYXllcnMiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJScnIgUnJyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoibmV3X3VzZXJfMDEiLCJnaXZlbl9uYW1lIjoiUnJyIiwiZmFtaWx5X25hbWUiOiJScnIiLCJlbWFpbCI6Im5ld191c2VyXzAxQG1haWwucnUifQ.YWTk7MxHMYmiNZUQPFxTzH8wRjE9b2GhVzi3DteanHABx9tk1cTr84Wv7U2CiyyY0xESVSxLqvsPNBu_RFndGuBvEkUwNWNfXXkIC3Qe463YiWAbVZqkX4VoQ-JFJyFQpQZ2qm2QFMzKcXdMtgwoV1I5X_1Lco4mDEPyFVAFG5yIEkt36f--OcF2So4erBJRoPmRRsBwSx7d6zmtiCejD5ddzmx11pKNp88e3SaWq5vC0b_4ViCZov88RKlMkqNf4w32LMZp79w1ZabLmuYfYfutNPRTsUvY8pLPZ6hdjmND_AIsHXM4_GEXPzodRHB80ILh0BRisTsfDE7IyICfiA</stringProp>
+                <stringProp name="Header.value">Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI0SklpS3lnZjZlM0pnajlzNFQ5SFBFM2JVdWJJSVA1WjlHRGlId2Z6cnYwIn0.eyJleHAiOjE3NzI2MjA4NDMsImlhdCI6MTc3MjYxNzI0MywiYXV0aF90aW1lIjoxNzcyNjE3MjQzLCJqdGkiOiJvbnJ0YWM6OTA2ZGE4ZmItNzE5My1hMDQxLTZhZGYtMGVmOTMxNmQxYWIxIiwiaXNzIjoiaHR0cDovL2hvc3QuZG9ja2VyLmludGVybmFsOjc3NzcvcmVhbG1zL3Nob290ZXItcGxheWVycyIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI5MjExNzhmMy05YWFjLTRiOTYtYjBiNy1kZWZkNmZhNmY1OWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJzaG9vdGVyIiwic2lkIjoiNDkzM2UxMTAtNjM2Zi1lNjdhLWY2MDgtZGFhMjM5YmRmZTkyIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1zaG9vdGVyLXBsYXllcnMiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJScnIgUnJyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoibmV3X3VzZXJfMDEiLCJnaXZlbl9uYW1lIjoiUnJyIiwiZmFtaWx5X25hbWUiOiJScnIiLCJlbWFpbCI6Im5ld191c2VyXzAxQG1haWwucnUifQ.FIpmJug0SQIQTQAq1bBoaE9-uYKjvUG3avts5UHXrw2hDrrnb4e8SEo8bVUubq2yZ8H2cSgarNQi8q_0F94dlwf-xoIKI1o1SOHU5q8Q_HI1zxsOzkcgl-est9fy4JV9rEJu0tS-UOv4uuUYkOS97_xw1565bF7yKsdSUZSqeN22v5uEdynLzoa_68nMCGImpabUtnyE35Z9--Bjkgqhxf2ul1YRBwodc9TDIXh0sEzyYYWmnxTdnNrtplgcXY6boon5T9AF9KKq-OPDOmvNznNnW0cF7XfK71iYtXHIf5BXfH_9FagSUf93JT-gvTj2WgMi0jhfG8AVABFWb89VAQ</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>
@@ -55,15 +53,6 @@
               <savedValue>0.0</savedValue>
             </doubleProp>
           </ConstantThroughputTimer>
-          <hashTree/>
-          <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Variable Page" enabled="true">
-            <stringProp name="maximumValue">500</stringProp>
-            <stringProp name="minimumValue">0</stringProp>
-            <stringProp name="outputFormat"></stringProp>
-            <boolProp name="perThread">true</boolProp>
-            <stringProp name="randomSeed"></stringProp>
-            <stringProp name="variableName">page</stringProp>
-          </RandomVariableConfig>
           <hashTree/>
         </hashTree>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">

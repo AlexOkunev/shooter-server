@@ -10,12 +10,12 @@
     </TestPlan>
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Operation thread group">
-        <intProp name="ThreadGroup.num_threads">500</intProp>
+        <intProp name="ThreadGroup.num_threads">1000</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">100</stringProp>
+          <stringProp name="LoopController.loops">1000</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
@@ -46,7 +46,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -54,7 +54,7 @@
               </elementProp>
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJmRFpSLWpXakNBWGVqQnBzM0xJaV96Y0FRalNlTC14UGU1bHhjOE5HVVNBIn0.eyJleHAiOjE3NzI1NzA5OTcsImlhdCI6MTc3MjU2NzM5NywiYXV0aF90aW1lIjoxNzcyNTY2MDI5LCJqdGkiOiJvbnJ0YWM6MzdjOTAwODUtNjE4NS0zN2MwLWIzZjQtZDI1ZTc1ODQ1NzMzIiwiaXNzIjoiaHR0cDovL2hvc3QuZG9ja2VyLmludGVybmFsOjc3NzgvcmVhbG1zL3Nob290ZXItYWRtaW4iLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiODQyZWIwYWYtYTBkYS00YjM3LWIwODAtYjk0NmI2NWQ2MWMxIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoic2hvb3Rlci1hZG1pbiIsInNpZCI6IjA0ZWYzNGFhLTFhMTgtMDFjZC0wMDdmLWFlMGFlY2Y4Y2UzNSIsImFjciI6IjAiLCJhbGxvd2VkLW9yaWdpbnMiOlsiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtc2hvb3Rlci1hZG1pbiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IkFkbWluIEFkbWluIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4xIiwiZ2l2ZW5fbmFtZSI6IkFkbWluIiwiZmFtaWx5X25hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW4xQG1haWwucnUifQ.FAo8BdY2oHo2kW5TzWyBKmWjUDVG0-8b1q5x2QP69T4zSbO9U7euYHy2fgmYmeZvNRql0WrZTLjl_dyIM8F2rI8ihKFsCXQZzRXsmX_qyLl4Zz66TUO713WsKs4UQiqWzYDQ-pR_K9T-KBeyYgtykVLkC_LdQ761tjstFZvrD1LkSxeppc3L8T279wAVWfQJ1eezosSWE6QwhUoVrFgCBy0CW1pDeIzveZtZf3dtQJTcyXVx1l7v647TstPldmKM-bKk8U4TnAR8KySx9_7sPCXTYHvZM92EJD-r28tN8ak29bcxlEZIjNOrved4oqA-hWUcrb0Xn9T0ldybPR7glA</stringProp>
+                <stringProp name="Header.value">Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJmRFpSLWpXakNBWGVqQnBzM0xJaV96Y0FRalNlTC14UGU1bHhjOE5HVVNBIn0.eyJleHAiOjE3NzI2MjM2OTMsImlhdCI6MTc3MjYyMDA5MywiYXV0aF90aW1lIjoxNzcyNjIwMDkyLCJqdGkiOiJvbnJ0YWM6MWU5NzE0ZGQtOTFiYS1lMmQ1LTFmODgtNDVmOTcwNjkxNWUyIiwiaXNzIjoiaHR0cDovL2hvc3QuZG9ja2VyLmludGVybmFsOjc3NzgvcmVhbG1zL3Nob290ZXItYWRtaW4iLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiODQyZWIwYWYtYTBkYS00YjM3LWIwODAtYjk0NmI2NWQ2MWMxIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoic2hvb3Rlci1hZG1pbiIsInNpZCI6IjYxYzNhZTYwLWY3NGEtN2NlNC1jM2EzLTQwY2FkNjQyNDYzNSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtc2hvb3Rlci1hZG1pbiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IkFkbWluIEFkbWluIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4xIiwiZ2l2ZW5fbmFtZSI6IkFkbWluIiwiZmFtaWx5X25hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW4xQG1haWwucnUifQ.XvwJERVRGlEDUGV2K5GjITAR5NcJeqvdFT4wanVURjb2JLE4xXAOQNQ27IvaWSpHaMK8mJ2rzAoqmFIiMm2f1Fr4MHVTgSaSkD-Lo9g6y_tih6BEz4hH1KkI4sa62gXq7Q9tjV6RMPOkoUxjgz7F1yk6UkLN2dN6eAKs-YEOgwN4fWsX8Bn79Ag9it1YOeeQarsdB68NSw0JTE7PWpSBHfjWQuINfrhugRX30A_jErpQIuG0Lz3q0IrXgqE_3RW0PotSZeG-f6-XMt-37N9fwkClFkWiBwaK4jZ92hIVC9Sx9oz8CygSvhhT72AGcNoRfvj2-YZ4CKMPkTdEP88hOw</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>
@@ -68,7 +68,7 @@
             </doubleProp>
           </ConstantThroughputTimer>
           <hashTree/>
-          <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Variable Gun">
+          <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Variable Gun" enabled="true">
             <stringProp name="maximumValue">50000</stringProp>
             <stringProp name="minimumValue">1</stringProp>
             <stringProp name="outputFormat"></stringProp>

@@ -5,15 +5,17 @@
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
     </TestPlan>
     <hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Data creation thread group">
-        <intProp name="ThreadGroup.num_threads">500</intProp>
+        <intProp name="ThreadGroup.num_threads">400</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">100</stringProp>
+          <stringProp name="LoopController.loops">130</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
@@ -43,7 +45,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -51,7 +53,7 @@
               </elementProp>
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJmRFpSLWpXakNBWGVqQnBzM0xJaV96Y0FRalNlTC14UGU1bHhjOE5HVVNBIn0.eyJleHAiOjE3NzI1NzA5OTcsImlhdCI6MTc3MjU2NzM5NywiYXV0aF90aW1lIjoxNzcyNTY2MDI5LCJqdGkiOiJvbnJ0YWM6MzdjOTAwODUtNjE4NS0zN2MwLWIzZjQtZDI1ZTc1ODQ1NzMzIiwiaXNzIjoiaHR0cDovL2hvc3QuZG9ja2VyLmludGVybmFsOjc3NzgvcmVhbG1zL3Nob290ZXItYWRtaW4iLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiODQyZWIwYWYtYTBkYS00YjM3LWIwODAtYjk0NmI2NWQ2MWMxIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoic2hvb3Rlci1hZG1pbiIsInNpZCI6IjA0ZWYzNGFhLTFhMTgtMDFjZC0wMDdmLWFlMGFlY2Y4Y2UzNSIsImFjciI6IjAiLCJhbGxvd2VkLW9yaWdpbnMiOlsiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtc2hvb3Rlci1hZG1pbiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IkFkbWluIEFkbWluIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4xIiwiZ2l2ZW5fbmFtZSI6IkFkbWluIiwiZmFtaWx5X25hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW4xQG1haWwucnUifQ.FAo8BdY2oHo2kW5TzWyBKmWjUDVG0-8b1q5x2QP69T4zSbO9U7euYHy2fgmYmeZvNRql0WrZTLjl_dyIM8F2rI8ihKFsCXQZzRXsmX_qyLl4Zz66TUO713WsKs4UQiqWzYDQ-pR_K9T-KBeyYgtykVLkC_LdQ761tjstFZvrD1LkSxeppc3L8T279wAVWfQJ1eezosSWE6QwhUoVrFgCBy0CW1pDeIzveZtZf3dtQJTcyXVx1l7v647TstPldmKM-bKk8U4TnAR8KySx9_7sPCXTYHvZM92EJD-r28tN8ak29bcxlEZIjNOrved4oqA-hWUcrb0Xn9T0ldybPR7glA</stringProp>
+                <stringProp name="Header.value">Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJmRFpSLWpXakNBWGVqQnBzM0xJaV96Y0FRalNlTC14UGU1bHhjOE5HVVNBIn0.eyJleHAiOjE3NzI2MTgyNjUsImlhdCI6MTc3MjYxNDY2NSwiYXV0aF90aW1lIjoxNzcyNjE0NjY0LCJqdGkiOiJvbnJ0YWM6YzE5ZTZmNWItNTQ4MC01MjEyLTllY2UtMDUxN2MwMGI1YTZkIiwiaXNzIjoiaHR0cDovL2hvc3QuZG9ja2VyLmludGVybmFsOjc3NzgvcmVhbG1zL3Nob290ZXItYWRtaW4iLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiODQyZWIwYWYtYTBkYS00YjM3LWIwODAtYjk0NmI2NWQ2MWMxIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoic2hvb3Rlci1hZG1pbiIsInNpZCI6IjgwZDE4ZWIzLTVkNDMtMTRjYy0wN2Y0LTQ4ZDgxNGYxNGU5ZSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtc2hvb3Rlci1hZG1pbiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IkFkbWluIEFkbWluIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4xIiwiZ2l2ZW5fbmFtZSI6IkFkbWluIiwiZmFtaWx5X25hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW4xQG1haWwucnUifQ.AlZQN0EU67g68wCrj4E5qeiYscpSg8qPguE50bscGEDL1i-PVsQT_LBqaBWEzoqjxH-KqEp-9oZdDSRDji9iVrYNmBF-JK4IM_EyTjGcxA_2SoM9xL2EIFMxDFZMJO2MvQd_6sxo9eiqUpMbNxn-aCfKgcJ4AdCzGdpaedfWLkUOpDkBOiWWZ5-IvU_5Q_neez4CzTjXv9YQNpKGIuVHQofjCyM3RdhFdXTai1mjC13PYYO9FFBf4Omx6GA4gQsV26VTszCHcXaK7hkjKGaAnxDqC0UGy_JKF8IgcnjsV_PgngnX2uX8w-KH36Dv4lYLcqowxkdFNKjWJDxNP7we1A</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>
@@ -65,7 +67,7 @@
             </doubleProp>
           </ConstantThroughputTimer>
           <hashTree/>
-          <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Variable Currency">
+          <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Variable Currency" enabled="true">
             <stringProp name="maximumValue">50000</stringProp>
             <stringProp name="minimumValue">1</stringProp>
             <stringProp name="outputFormat"></stringProp>
@@ -74,7 +76,7 @@
             <stringProp name="variableName">currency</stringProp>
           </RandomVariableConfig>
           <hashTree/>
-          <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Variable Amount">
+          <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Variable Amount" enabled="true">
             <stringProp name="maximumValue">100</stringProp>
             <stringProp name="minimumValue">1</stringProp>
             <stringProp name="outputFormat"></stringProp>
@@ -83,7 +85,7 @@
             <stringProp name="variableName">amount</stringProp>
           </RandomVariableConfig>
           <hashTree/>
-          <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Variable Price">
+          <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Variable Price" enabled="true">
             <stringProp name="maximumValue">1000</stringProp>
             <stringProp name="minimumValue">100</stringProp>
             <stringProp name="outputFormat"></stringProp>
@@ -93,7 +95,7 @@
           </RandomVariableConfig>
           <hashTree/>
         </hashTree>
-        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>

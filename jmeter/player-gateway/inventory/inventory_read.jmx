@@ -15,7 +15,7 @@
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
-          <stringProp name="LoopController.loops">90</stringProp>
+          <stringProp name="LoopController.loops">120</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
         </elementProp>
       </ThreadGroup>
@@ -34,7 +34,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -42,7 +42,7 @@
               </elementProp>
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI0SklpS3lnZjZlM0pnajlzNFQ5SFBFM2JVdWJJSVA1WjlHRGlId2Z6cnYwIn0.eyJleHAiOjE3NzI1NzM2NjQsImlhdCI6MTc3MjU3MDA2NCwiYXV0aF90aW1lIjoxNzcyNTcwMDY0LCJqdGkiOiJvbnJ0YWM6MjZhZjZjN2YtZjc4OS03OGYyLWZhM2ItMjk2MDA1OWM0OGYzIiwiaXNzIjoiaHR0cDovL2hvc3QuZG9ja2VyLmludGVybmFsOjc3NzcvcmVhbG1zL3Nob290ZXItcGxheWVycyIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI5MjExNzhmMy05YWFjLTRiOTYtYjBiNy1kZWZkNmZhNmY1OWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJzaG9vdGVyIiwic2lkIjoiNGE4NzdkMjAtYzAwOC1mOGE1LWQyODUtM2U4M2NjMzQ2OTk3IiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1zaG9vdGVyLXBsYXllcnMiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJScnIgUnJyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoibmV3X3VzZXJfMDEiLCJnaXZlbl9uYW1lIjoiUnJyIiwiZmFtaWx5X25hbWUiOiJScnIiLCJlbWFpbCI6Im5ld191c2VyXzAxQG1haWwucnUifQ.YWTk7MxHMYmiNZUQPFxTzH8wRjE9b2GhVzi3DteanHABx9tk1cTr84Wv7U2CiyyY0xESVSxLqvsPNBu_RFndGuBvEkUwNWNfXXkIC3Qe463YiWAbVZqkX4VoQ-JFJyFQpQZ2qm2QFMzKcXdMtgwoV1I5X_1Lco4mDEPyFVAFG5yIEkt36f--OcF2So4erBJRoPmRRsBwSx7d6zmtiCejD5ddzmx11pKNp88e3SaWq5vC0b_4ViCZov88RKlMkqNf4w32LMZp79w1ZabLmuYfYfutNPRTsUvY8pLPZ6hdjmND_AIsHXM4_GEXPzodRHB80ILh0BRisTsfDE7IyICfiA</stringProp>
+                <stringProp name="Header.value">Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICI0SklpS3lnZjZlM0pnajlzNFQ5SFBFM2JVdWJJSVA1WjlHRGlId2Z6cnYwIn0.eyJleHAiOjE3NzI2MjQ3MTQsImlhdCI6MTc3MjYyMTExNCwiYXV0aF90aW1lIjoxNzcyNjE3MjQzLCJqdGkiOiJvbnJ0cnQ6ZDlkM2EzMzYtMTA4OC1iZTRlLWZkNjMtNmZlY2U5NWMzZjJmIiwiaXNzIjoiaHR0cDovL2hvc3QuZG9ja2VyLmludGVybmFsOjc3NzcvcmVhbG1zL3Nob290ZXItcGxheWVycyIsImF1ZCI6ImFjY291bnQiLCJzdWIiOiI5MjExNzhmMy05YWFjLTRiOTYtYjBiNy1kZWZkNmZhNmY1OWEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJzaG9vdGVyIiwic2lkIjoiNDkzM2UxMTAtNjM2Zi1lNjdhLWY2MDgtZGFhMjM5YmRmZTkyIiwiYWNyIjoiMCIsImFsbG93ZWQtb3JpZ2lucyI6WyIvKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsiZGVmYXVsdC1yb2xlcy1zaG9vdGVyLXBsYXllcnMiLCJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIl19LCJyZXNvdXJjZV9hY2Nlc3MiOnsiYWNjb3VudCI6eyJyb2xlcyI6WyJtYW5hZ2UtYWNjb3VudCIsIm1hbmFnZS1hY2NvdW50LWxpbmtzIiwidmlldy1wcm9maWxlIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJScnIgUnJyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoibmV3X3VzZXJfMDEiLCJnaXZlbl9uYW1lIjoiUnJyIiwiZmFtaWx5X25hbWUiOiJScnIiLCJlbWFpbCI6Im5ld191c2VyXzAxQG1haWwucnUifQ.e_2ZXbMzAXIx0CDlxt0cVCaY_p4KOREMwYyMY61u9ReNa-5AqQpCudwgxwvftHuLl7T-CwUXPgDZRpjm1L3K9x7bNL7xOCH8PlMHajg17Fm8kJj97AFfQBr4ASEv58lxncGeEvMHY4R9fJuT3O-RGgGSmIs2ZU3Be8wSL0lB6bGBTn9HoPmI0h5Ab-4emqEqG-uUvp7XtEJIuAYkasxoeU8DeNIzAappPwCn_Q9wb4S0H64QHuR2VGAOIS-IAmRQ_LyplqUHogQPd04JnzdWWfwM7PN1P5TdJAOqXlPqe5AjkoLovjuRTXrStxVw43JgpOD0avmzB95THnmvr2_2lA</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>

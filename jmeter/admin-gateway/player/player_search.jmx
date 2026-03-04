@@ -46,7 +46,7 @@
           </elementProp>
         </HTTPSamplerProxy>
         <hashTree>
-          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+          <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
             <collectionProp name="HeaderManager.headers">
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Content-Type</stringProp>
@@ -54,12 +54,12 @@
               </elementProp>
               <elementProp name="" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJmRFpSLWpXakNBWGVqQnBzM0xJaV96Y0FRalNlTC14UGU1bHhjOE5HVVNBIn0.eyJleHAiOjE3NzI1Njk2MjksImlhdCI6MTc3MjU2NjAyOSwiYXV0aF90aW1lIjoxNzcyNTY2MDI5LCJqdGkiOiJvbnJ0YWM6ZDRmZmM1YmUtYjMzYS01MDM2LTBkZjQtNDcyMjA2Y2YzNjdiIiwiaXNzIjoiaHR0cDovL2hvc3QuZG9ja2VyLmludGVybmFsOjc3NzgvcmVhbG1zL3Nob290ZXItYWRtaW4iLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiODQyZWIwYWYtYTBkYS00YjM3LWIwODAtYjk0NmI2NWQ2MWMxIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoic2hvb3Rlci1hZG1pbiIsInNpZCI6IjA0ZWYzNGFhLTFhMTgtMDFjZC0wMDdmLWFlMGFlY2Y4Y2UzNSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtc2hvb3Rlci1hZG1pbiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IkFkbWluIEFkbWluIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4xIiwiZ2l2ZW5fbmFtZSI6IkFkbWluIiwiZmFtaWx5X25hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW4xQG1haWwucnUifQ.oG2lYmNf2brO3pe924kMn7htoT0euTTpVKVvgPkCfJ1-O9iKZ72AqbBTvUFiCS7reSYMZ_r7o__-EdbpbTCDlzveyMGvfqr6RTRVqHyqTrqNTrwrloBilC76MeXZblcvnUxdYAHreeM5cK7GX7jnFmmvjTWTqwEa6Vut13D84YvFzKyc-YQp-HCH8fkbHRmIqvHFW2C3NYQeff_MeEoiV6FF7LEqHUm9Btc-S6kziJLe8kh9F4MMKQjecLZNAv26ilVg5O3mHW26QJnf2n5WR4qHquotlB-pLWK2jKel1X2ASfEM356tXpLREVHxFOPLK78IePxIWRDCA20zz4_lJw</stringProp>
+                <stringProp name="Header.value">Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJmRFpSLWpXakNBWGVqQnBzM0xJaV96Y0FRalNlTC14UGU1bHhjOE5HVVNBIn0.eyJleHAiOjE3NzI2MTgyNjUsImlhdCI6MTc3MjYxNDY2NSwiYXV0aF90aW1lIjoxNzcyNjE0NjY0LCJqdGkiOiJvbnJ0YWM6YzE5ZTZmNWItNTQ4MC01MjEyLTllY2UtMDUxN2MwMGI1YTZkIiwiaXNzIjoiaHR0cDovL2hvc3QuZG9ja2VyLmludGVybmFsOjc3NzgvcmVhbG1zL3Nob290ZXItYWRtaW4iLCJhdWQiOiJhY2NvdW50Iiwic3ViIjoiODQyZWIwYWYtYTBkYS00YjM3LWIwODAtYjk0NmI2NWQ2MWMxIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoic2hvb3Rlci1hZG1pbiIsInNpZCI6IjgwZDE4ZWIzLTVkNDMtMTRjYy0wN2Y0LTQ4ZDgxNGYxNGU5ZSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiLyoiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbImRlZmF1bHQtcm9sZXMtc2hvb3Rlci1hZG1pbiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6ImVtYWlsIHByb2ZpbGUiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IkFkbWluIEFkbWluIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4xIiwiZ2l2ZW5fbmFtZSI6IkFkbWluIiwiZmFtaWx5X25hbWUiOiJBZG1pbiIsImVtYWlsIjoiYWRtaW4xQG1haWwucnUifQ.AlZQN0EU67g68wCrj4E5qeiYscpSg8qPguE50bscGEDL1i-PVsQT_LBqaBWEzoqjxH-KqEp-9oZdDSRDji9iVrYNmBF-JK4IM_EyTjGcxA_2SoM9xL2EIFMxDFZMJO2MvQd_6sxo9eiqUpMbNxn-aCfKgcJ4AdCzGdpaedfWLkUOpDkBOiWWZ5-IvU_5Q_neez4CzTjXv9YQNpKGIuVHQofjCyM3RdhFdXTai1mjC13PYYO9FFBf4Omx6GA4gQsV26VTszCHcXaK7hkjKGaAnxDqC0UGy_JKF8IgcnjsV_PgngnX2uX8w-KH36Dv4lYLcqowxkdFNKjWJDxNP7we1A</stringProp>
               </elementProp>
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="Constant Throughput Timer">
+          <ConstantThroughputTimer guiclass="TestBeanGUI" testclass="ConstantThroughputTimer" testname="Constant Throughput Timer" enabled="true">
             <intProp name="calcMode">0</intProp>
             <doubleProp>
               <name>throughput</name>
@@ -68,7 +68,7 @@
             </doubleProp>
           </ConstantThroughputTimer>
           <hashTree/>
-          <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Variable Page">
+          <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Variable Page" enabled="true">
             <stringProp name="maximumValue">500</stringProp>
             <stringProp name="minimumValue">0</stringProp>
             <stringProp name="outputFormat"></stringProp>
