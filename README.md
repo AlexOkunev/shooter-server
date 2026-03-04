@@ -42,3 +42,12 @@ kubectl port-forward -n monitoring svc/monitoring-grafana 3000:80
 kubectl get secret -n monitoring monitoring-grafana -o jsonpath="{.data.admin-password}" | base64 -d; echo
 
 см оба файла в папке jmeter
+
+JMH
+Смотреть модуль common/jmh-cache. В нем выполняется тестирование 3 разных потокобезопасных реализаций Map, которые
+могут быть использованы для реализации кэша. В той же папке находится отчет.
+Пропускная способность LockMapWrapper (lock на все операции) — 8,7 ops/us
+Пропускная способность ReadWriteLockMapWrapper (отдельно lock на чтение и запись) — 173 ops/us
+Пропускная способность ConcurrentHashMap — 141 ops/us
+ReadWriteLockMapWrapper показал себя лучше, чем ConcurrentHashMap, что может быть вызвано особенностями теста.
+LockMapWrapper предсказуемо хуже остальных вариантов.

@@ -1,0 +1,2308 @@
+# Detecting actual CPU count: 10 detected
+# JMH version: 1.37
+# VM version: JDK 21.0.2, OpenJDK 64-Bit Server VM, 21.0.2+13-LTS
+# VM invoker: /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5 s each
+# Measurement: 3 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 10 threads (1 group; 5x "concurrentHashMapRead", 5x "concurrentHashMapWrite" in each group), will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap
+# Parameters: (keysCount = 1000000)
+
+# Run progress: 0,00% complete, ETA 00:51:45
+# Fork: 1 of 3
+# Warmup Iteration   1: 118,148 ops/us
+# Warmup Iteration   2: 125,363 ops/us
+# Warmup Iteration   3: 126,766 ops/us
+# Warmup Iteration   4: 129,741 ops/us
+# Warmup Iteration   5: 142,442 ops/us
+Iteration   1: 139,624 ops/us
+                 concurrentHashMapRead:  92,345 ops/us
+                 concurrentHashMapWrite: 47,279 ops/us
+
+Iteration   2: 139,232 ops/us
+                 concurrentHashMapRead:  92,003 ops/us
+                 concurrentHashMapWrite: 47,229 ops/us
+
+Iteration   3: 142,517 ops/us
+                 concurrentHashMapRead:  94,161 ops/us
+                 concurrentHashMapWrite: 48,355 ops/us
+
+
+# Run progress: 3,70% complete, ETA 00:50:03
+# Fork: 2 of 3
+# Warmup Iteration   1: 135,335 ops/us
+# Warmup Iteration   2: 137,310 ops/us
+# Warmup Iteration   3: 142,870 ops/us
+# Warmup Iteration   4: 138,809 ops/us
+# Warmup Iteration   5: 138,795 ops/us
+Iteration   1: 141,245 ops/us
+                 concurrentHashMapRead:  93,903 ops/us
+                 concurrentHashMapWrite: 47,342 ops/us
+
+Iteration   2: 141,964 ops/us
+                 concurrentHashMapRead:  95,098 ops/us
+                 concurrentHashMapWrite: 46,866 ops/us
+
+Iteration   3: 141,877 ops/us
+                 concurrentHashMapRead:  94,905 ops/us
+                 concurrentHashMapWrite: 46,972 ops/us
+
+
+# Run progress: 7,41% complete, ETA 00:48:06
+# Fork: 3 of 3
+# Warmup Iteration   1: 133,168 ops/us
+# Warmup Iteration   2: 141,870 ops/us
+# Warmup Iteration   3: 141,284 ops/us
+# Warmup Iteration   4: 142,606 ops/us
+# Warmup Iteration   5: 138,327 ops/us
+Iteration   1: 140,362 ops/us
+                 concurrentHashMapRead:  93,038 ops/us
+                 concurrentHashMapWrite: 47,324 ops/us
+
+Iteration   2: 141,091 ops/us
+                 concurrentHashMapRead:  93,467 ops/us
+                 concurrentHashMapWrite: 47,623 ops/us
+
+Iteration   3: 141,164 ops/us
+                 concurrentHashMapRead:  93,729 ops/us
+                 concurrentHashMapWrite: 47,435 ops/us
+
+
+
+Result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap":
+  141,008 ±(99.9%) 1,833 ops/us [Average]
+  (min, avg, max) = (139,232, 141,008, 142,517), stdev = 1,091
+  CI (99.9%): [139,175, 142,841] (assumes normal distribution)
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap:concurrentHashMapRead":
+  93,628 ±(99.9%) 1,764 ops/us [Average]
+  (min, avg, max) = (92,003, 93,628, 95,098), stdev = 1,050
+  CI (99.9%): [91,863, 95,392] (assumes normal distribution)
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite":
+  47,381 ±(99.9%) 0,723 ops/us [Average]
+  (min, avg, max) = (46,866, 47,381, 48,355), stdev = 0,430
+  CI (99.9%): [46,657, 48,104] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.2, OpenJDK 64-Bit Server VM, 21.0.2+13-LTS
+# VM invoker: /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5 s each
+# Measurement: 3 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 10 threads (1 group; 5x "lockMapRead", 5x "lockMapWrite" in each group), will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap
+# Parameters: (keysCount = 1000000)
+
+# Run progress: 11,11% complete, ETA 00:46:11
+# Fork: 1 of 3
+# Warmup Iteration   1: 7,819 ops/us
+# Warmup Iteration   2: 8,215 ops/us
+# Warmup Iteration   3: 8,736 ops/us
+# Warmup Iteration   4: 8,692 ops/us
+# Warmup Iteration   5: 8,775 ops/us
+Iteration   1: 8,628 ops/us
+                 lockMapRead:  3,953 ops/us
+                 lockMapWrite: 4,675 ops/us
+
+Iteration   2: 8,748 ops/us
+                 lockMapRead:  3,991 ops/us
+                 lockMapWrite: 4,756 ops/us
+
+Iteration   3: 8,701 ops/us
+                 lockMapRead:  3,997 ops/us
+                 lockMapWrite: 4,704 ops/us
+
+
+# Run progress: 14,81% complete, ETA 00:44:15
+# Fork: 2 of 3
+# Warmup Iteration   1: 8,664 ops/us
+# Warmup Iteration   2: 8,598 ops/us
+# Warmup Iteration   3: 8,890 ops/us
+# Warmup Iteration   4: 8,781 ops/us
+# Warmup Iteration   5: 8,796 ops/us
+Iteration   1: 8,764 ops/us
+                 lockMapRead:  3,957 ops/us
+                 lockMapWrite: 4,807 ops/us
+
+Iteration   2: 8,709 ops/us
+                 lockMapRead:  3,958 ops/us
+                 lockMapWrite: 4,751 ops/us
+
+Iteration   3: 8,769 ops/us
+                 lockMapRead:  3,946 ops/us
+                 lockMapWrite: 4,823 ops/us
+
+
+# Run progress: 18,52% complete, ETA 00:42:19
+# Fork: 3 of 3
+# Warmup Iteration   1: 8,544 ops/us
+# Warmup Iteration   2: 8,476 ops/us
+# Warmup Iteration   3: 8,815 ops/us
+# Warmup Iteration   4: 8,878 ops/us
+# Warmup Iteration   5: 8,783 ops/us
+Iteration   1: 8,671 ops/us
+                 lockMapRead:  4,207 ops/us
+                 lockMapWrite: 4,463 ops/us
+
+Iteration   2: 8,807 ops/us
+                 lockMapRead:  4,232 ops/us
+                 lockMapWrite: 4,575 ops/us
+
+Iteration   3: 8,827 ops/us
+                 lockMapRead:  4,238 ops/us
+                 lockMapWrite: 4,589 ops/us
+
+
+
+Result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap":
+  8,736 ±(99.9%) 0,108 ops/us [Average]
+  (min, avg, max) = (8,628, 8,736, 8,827), stdev = 0,065
+  CI (99.9%): [8,627, 8,844] (assumes normal distribution)
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap:lockMapRead":
+  4,053 ±(99.9%) 0,220 ops/us [Average]
+  (min, avg, max) = (3,946, 4,053, 4,238), stdev = 0,131
+  CI (99.9%): [3,834, 4,273] (assumes normal distribution)
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap:lockMapWrite":
+  4,683 ±(99.9%) 0,201 ops/us [Average]
+  (min, avg, max) = (4,463, 4,683, 4,823), stdev = 0,119
+  CI (99.9%): [4,482, 4,883] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.2, OpenJDK 64-Bit Server VM, 21.0.2+13-LTS
+# VM invoker: /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5 s each
+# Measurement: 3 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 10 threads (1 group; 5x "readWriteLockMapRead", 5x "readWriteLockMapWrite" in each group), will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap
+# Parameters: (keysCount = 1000000)
+
+# Run progress: 22,22% complete, ETA 00:40:23
+# Fork: 1 of 3
+# Warmup Iteration   1: 123,637 ops/us
+# Warmup Iteration   2: 134,377 ops/us
+# Warmup Iteration   3: 158,326 ops/us
+# Warmup Iteration   4: 157,223 ops/us
+# Warmup Iteration   5: 158,065 ops/us
+Iteration   1: 156,941 ops/us
+                 readWriteLockMapRead:  94,840 ops/us
+                 readWriteLockMapWrite: 62,101 ops/us
+
+Iteration   2: 155,653 ops/us
+                 readWriteLockMapRead:  93,942 ops/us
+                 readWriteLockMapWrite: 61,711 ops/us
+
+Iteration   3: 156,297 ops/us
+                 readWriteLockMapRead:  94,571 ops/us
+                 readWriteLockMapWrite: 61,725 ops/us
+
+
+# Run progress: 25,93% complete, ETA 00:38:28
+# Fork: 2 of 3
+# Warmup Iteration   1: 136,433 ops/us
+# Warmup Iteration   2: 135,863 ops/us
+# Warmup Iteration   3: 182,124 ops/us
+# Warmup Iteration   4: 181,212 ops/us
+# Warmup Iteration   5: 182,783 ops/us
+Iteration   1: 180,764 ops/us
+                 readWriteLockMapRead:  120,853 ops/us
+                 readWriteLockMapWrite: 59,911 ops/us
+
+Iteration   2: 180,892 ops/us
+                 readWriteLockMapRead:  121,261 ops/us
+                 readWriteLockMapWrite: 59,632 ops/us
+
+Iteration   3: 179,986 ops/us
+                 readWriteLockMapRead:  120,184 ops/us
+                 readWriteLockMapWrite: 59,802 ops/us
+
+
+# Run progress: 29,63% complete, ETA 00:36:33
+# Fork: 3 of 3
+# Warmup Iteration   1: 134,022 ops/us
+# Warmup Iteration   2: 138,468 ops/us
+# Warmup Iteration   3: 180,603 ops/us
+# Warmup Iteration   4: 181,662 ops/us
+# Warmup Iteration   5: 179,681 ops/us
+Iteration   1: 180,933 ops/us
+                 readWriteLockMapRead:  120,585 ops/us
+                 readWriteLockMapWrite: 60,349 ops/us
+
+Iteration   2: 183,671 ops/us
+                 readWriteLockMapRead:  122,951 ops/us
+                 readWriteLockMapWrite: 60,719 ops/us
+
+Iteration   3: 180,501 ops/us
+                 readWriteLockMapRead:  120,805 ops/us
+                 readWriteLockMapWrite: 59,696 ops/us
+
+
+
+Result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap":
+  172,849 ±(99.9%) 20,939 ops/us [Average]
+  (min, avg, max) = (155,653, 172,849, 183,671), stdev = 12,460
+  CI (99.9%): [151,910, 193,787] (assumes normal distribution)
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap:readWriteLockMapRead":
+  112,221 ±(99.9%) 22,436 ops/us [Average]
+  (min, avg, max) = (93,942, 112,221, 122,951), stdev = 13,352
+  CI (99.9%): [89,785, 134,658] (assumes normal distribution)
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite":
+  60,627 ±(99.9%) 1,647 ops/us [Average]
+  (min, avg, max) = (59,632, 60,627, 62,101), stdev = 0,980
+  CI (99.9%): [58,980, 62,275] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.2, OpenJDK 64-Bit Server VM, 21.0.2+13-LTS
+# VM invoker: /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5 s each
+# Measurement: 3 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 10 threads (1 group; 5x "concurrentHashMapRead", 5x "concurrentHashMapWrite" in each group), will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap
+# Parameters: (keysCount = 1000000)
+
+# Run progress: 33,33% complete, ETA 00:34:37
+# Fork: 1 of 3
+# Warmup Iteration   1: 0,085 ±(99.9%) 0,044 us/op
+# Warmup Iteration   2: 0,081 ±(99.9%) 0,039 us/op
+# Warmup Iteration   3: 0,079 ±(99.9%) 0,041 us/op
+# Warmup Iteration   4: 0,079 ±(99.9%) 0,040 us/op
+# Warmup Iteration   5: 0,078 ±(99.9%) 0,040 us/op
+Iteration   1: 0,078 ±(99.9%) 0,041 us/op
+                 concurrentHashMapRead:  0,053 ±(99.9%) 0,001 us/op
+                 concurrentHashMapWrite: 0,104 ±(99.9%) 0,002 us/op
+
+Iteration   2: 0,079 ±(99.9%) 0,041 us/op
+                 concurrentHashMapRead:  0,053 ±(99.9%) 0,002 us/op
+                 concurrentHashMapWrite: 0,105 ±(99.9%) 0,006 us/op
+
+Iteration   3: 0,079 ±(99.9%) 0,041 us/op
+                 concurrentHashMapRead:  0,053 ±(99.9%) 0,002 us/op
+                 concurrentHashMapWrite: 0,105 ±(99.9%) 0,004 us/op
+
+
+# Run progress: 37,04% complete, ETA 00:32:42
+# Fork: 2 of 3
+# Warmup Iteration   1: 0,087 ±(99.9%) 0,042 us/op
+# Warmup Iteration   2: 0,080 ±(99.9%) 0,038 us/op
+# Warmup Iteration   3: 0,080 ±(99.9%) 0,040 us/op
+# Warmup Iteration   4: 0,079 ±(99.9%) 0,041 us/op
+# Warmup Iteration   5: 0,079 ±(99.9%) 0,040 us/op
+Iteration   1: 0,080 ±(99.9%) 0,041 us/op
+                 concurrentHashMapRead:  0,054 ±(99.9%) 0,002 us/op
+                 concurrentHashMapWrite: 0,106 ±(99.9%) 0,003 us/op
+
+Iteration   2: 0,096 ±(99.9%) 0,047 us/op
+                 concurrentHashMapRead:  0,067 ±(99.9%) 0,004 us/op
+                 concurrentHashMapWrite: 0,126 ±(99.9%) 0,009 us/op
+
+Iteration   3: 0,089 ±(99.9%) 0,046 us/op
+                 concurrentHashMapRead:  0,060 ±(99.9%) 0,017 us/op
+                 concurrentHashMapWrite: 0,118 ±(99.9%) 0,003 us/op
+
+
+# Run progress: 40,74% complete, ETA 00:30:46
+# Fork: 3 of 3
+# Warmup Iteration   1: 0,104 ±(99.9%) 0,065 us/op
+# Warmup Iteration   2: 0,104 ±(99.9%) 0,062 us/op
+# Warmup Iteration   3: 0,097 ±(99.9%) 0,063 us/op
+# Warmup Iteration   4: 0,099 ±(99.9%) 0,063 us/op
+# Warmup Iteration   5: 0,098 ±(99.9%) 0,064 us/op
+Iteration   1: 0,102 ±(99.9%) 0,073 us/op
+                 concurrentHashMapRead:  0,058 ±(99.9%) 0,028 us/op
+                 concurrentHashMapWrite: 0,146 ±(99.9%) 0,070 us/op
+
+Iteration   2: 0,102 ±(99.9%) 0,075 us/op
+                 concurrentHashMapRead:  0,057 ±(99.9%) 0,030 us/op
+                 concurrentHashMapWrite: 0,148 ±(99.9%) 0,075 us/op
+
+Iteration   3: 0,103 ±(99.9%) 0,074 us/op
+                 concurrentHashMapRead:  0,058 ±(99.9%) 0,032 us/op
+                 concurrentHashMapWrite: 0,148 ±(99.9%) 0,068 us/op
+
+
+
+Result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap":
+  0,090 ±(99.9%) 0,018 us/op [Average]
+  (min, avg, max) = (0,078, 0,090, 0,103), stdev = 0,011
+  CI (99.9%): [0,071, 0,108] (assumes normal distribution)
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap:concurrentHashMapRead":
+  0,057 ±(99.9%) 0,007 us/op [Average]
+  (min, avg, max) = (0,053, 0,057, 0,067), stdev = 0,004
+  CI (99.9%): [0,050, 0,064] (assumes normal distribution)
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite":
+  0,123 ±(99.9%) 0,033 us/op [Average]
+  (min, avg, max) = (0,104, 0,123, 0,148), stdev = 0,020
+  CI (99.9%): [0,090, 0,156] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.2, OpenJDK 64-Bit Server VM, 21.0.2+13-LTS
+# VM invoker: /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5 s each
+# Measurement: 3 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 10 threads (1 group; 5x "lockMapRead", 5x "lockMapWrite" in each group), will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap
+# Parameters: (keysCount = 1000000)
+
+# Run progress: 44,44% complete, ETA 00:28:51
+# Fork: 1 of 3
+# Warmup Iteration   1: 1,422 ±(99.9%) 0,051 us/op
+# Warmup Iteration   2: 1,446 ±(99.9%) 0,090 us/op
+# Warmup Iteration   3: 1,371 ±(99.9%) 0,068 us/op
+# Warmup Iteration   4: 1,361 ±(99.9%) 0,110 us/op
+# Warmup Iteration   5: 1,341 ±(99.9%) 0,091 us/op
+Iteration   1: 1,348 ±(99.9%) 0,044 us/op
+                 lockMapRead:  1,376 ±(99.9%) 0,019 us/op
+                 lockMapWrite: 1,321 ±(99.9%) 0,018 us/op
+
+Iteration   2: 1,348 ±(99.9%) 0,077 us/op
+                 lockMapRead:  1,395 ±(99.9%) 0,046 us/op
+                 lockMapWrite: 1,301 ±(99.9%) 0,039 us/op
+
+Iteration   3: 1,338 ±(99.9%) 0,099 us/op
+                 lockMapRead:  1,399 ±(99.9%) 0,053 us/op
+                 lockMapWrite: 1,277 ±(99.9%) 0,030 us/op
+
+
+# Run progress: 48,15% complete, ETA 00:26:55
+# Fork: 2 of 3
+# Warmup Iteration   1: 1,354 ±(99.9%) 0,076 us/op
+# Warmup Iteration   2: 1,349 ±(99.9%) 0,108 us/op
+# Warmup Iteration   3: 1,354 ±(99.9%) 0,025 us/op
+# Warmup Iteration   4: 1,326 ±(99.9%) 0,087 us/op
+# Warmup Iteration   5: 1,332 ±(99.9%) 0,034 us/op
+Iteration   1: 1,331 ±(99.9%) 0,051 us/op
+                 lockMapRead:  1,361 ±(99.9%) 0,064 us/op
+                 lockMapWrite: 1,302 ±(99.9%) 0,041 us/op
+
+Iteration   2: 1,332 ±(99.9%) 0,061 us/op
+                 lockMapRead:  1,369 ±(99.9%) 0,028 us/op
+                 lockMapWrite: 1,294 ±(99.9%) 0,032 us/op
+
+Iteration   3: 1,324 ±(99.9%) 0,062 us/op
+                 lockMapRead:  1,361 ±(99.9%) 0,035 us/op
+                 lockMapWrite: 1,286 ±(99.9%) 0,036 us/op
+
+
+# Run progress: 51,85% complete, ETA 00:25:00
+# Fork: 3 of 3
+# Warmup Iteration   1: 1,526 ±(99.9%) 0,260 us/op
+# Warmup Iteration   2: 1,410 ±(99.9%) 0,173 us/op
+# Warmup Iteration   3: 1,341 ±(99.9%) 0,117 us/op
+# Warmup Iteration   4: 1,365 ±(99.9%) 0,074 us/op
+# Warmup Iteration   5: 1,347 ±(99.9%) 0,111 us/op
+Iteration   1: 1,338 ±(99.9%) 0,096 us/op
+                 lockMapRead:  1,398 ±(99.9%) 0,028 us/op
+                 lockMapWrite: 1,278 ±(99.9%) 0,026 us/op
+
+Iteration   2: 1,348 ±(99.9%) 0,092 us/op
+                 lockMapRead:  1,406 ±(99.9%) 0,040 us/op
+                 lockMapWrite: 1,291 ±(99.9%) 0,013 us/op
+
+Iteration   3: 1,342 ±(99.9%) 0,093 us/op
+                 lockMapRead:  1,400 ±(99.9%) 0,030 us/op
+                 lockMapWrite: 1,284 ±(99.9%) 0,015 us/op
+
+
+
+Result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap":
+  1,339 ±(99.9%) 0,015 us/op [Average]
+  (min, avg, max) = (1,324, 1,339, 1,348), stdev = 0,009
+  CI (99.9%): [1,324, 1,354] (assumes normal distribution)
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap:lockMapRead":
+  1,385 ±(99.9%) 0,030 us/op [Average]
+  (min, avg, max) = (1,361, 1,385, 1,406), stdev = 0,018
+  CI (99.9%): [1,355, 1,415] (assumes normal distribution)
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap:lockMapWrite":
+  1,293 ±(99.9%) 0,023 us/op [Average]
+  (min, avg, max) = (1,277, 1,293, 1,321), stdev = 0,014
+  CI (99.9%): [1,269, 1,316] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.2, OpenJDK 64-Bit Server VM, 21.0.2+13-LTS
+# VM invoker: /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5 s each
+# Measurement: 3 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 10 threads (1 group; 5x "readWriteLockMapRead", 5x "readWriteLockMapWrite" in each group), will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap
+# Parameters: (keysCount = 1000000)
+
+# Run progress: 55,55% complete, ETA 00:23:05
+# Fork: 1 of 3
+# Warmup Iteration   1: 0,090 ±(99.9%) 0,016 us/op
+# Warmup Iteration   2: 0,083 ±(99.9%) 0,010 us/op
+# Warmup Iteration   3: 0,069 ±(99.9%) 0,035 us/op
+# Warmup Iteration   4: 0,069 ±(99.9%) 0,035 us/op
+# Warmup Iteration   5: 0,070 ±(99.9%) 0,035 us/op
+Iteration   1: 0,069 ±(99.9%) 0,036 us/op
+                 readWriteLockMapRead:  0,047 ±(99.9%) 0,002 us/op
+                 readWriteLockMapWrite: 0,091 ±(99.9%) 0,003 us/op
+
+Iteration   2: 0,069 ±(99.9%) 0,036 us/op
+                 readWriteLockMapRead:  0,046 ±(99.9%) 0,001 us/op
+                 readWriteLockMapWrite: 0,092 ±(99.9%) 0,002 us/op
+
+Iteration   3: 0,070 ±(99.9%) 0,036 us/op
+                 readWriteLockMapRead:  0,047 ±(99.9%) 0,001 us/op
+                 readWriteLockMapWrite: 0,093 ±(99.9%) 0,004 us/op
+
+
+# Run progress: 59,26% complete, ETA 00:21:09
+# Fork: 2 of 3
+# Warmup Iteration   1: 0,084 ±(99.9%) 0,016 us/op
+# Warmup Iteration   2: 0,081 ±(99.9%) 0,010 us/op
+# Warmup Iteration   3: 0,069 ±(99.9%) 0,037 us/op
+# Warmup Iteration   4: 0,067 ±(99.9%) 0,034 us/op
+# Warmup Iteration   5: 0,069 ±(99.9%) 0,036 us/op
+Iteration   1: 0,069 ±(99.9%) 0,036 us/op
+                 readWriteLockMapRead:  0,046 ±(99.9%) 0,001 us/op
+                 readWriteLockMapWrite: 0,092 ±(99.9%) 0,004 us/op
+
+Iteration   2: 0,069 ±(99.9%) 0,037 us/op
+                 readWriteLockMapRead:  0,046 ±(99.9%) 0,001 us/op
+                 readWriteLockMapWrite: 0,091 ±(99.9%) 0,009 us/op
+
+Iteration   3: 0,069 ±(99.9%) 0,036 us/op
+                 readWriteLockMapRead:  0,046 ±(99.9%) 0,003 us/op
+                 readWriteLockMapWrite: 0,091 ±(99.9%) 0,002 us/op
+
+
+# Run progress: 62,96% complete, ETA 00:19:14
+# Fork: 3 of 3
+# Warmup Iteration   1: 0,084 ±(99.9%) 0,016 us/op
+# Warmup Iteration   2: 0,082 ±(99.9%) 0,011 us/op
+# Warmup Iteration   3: 0,072 ±(99.9%) 0,039 us/op
+# Warmup Iteration   4: 0,069 ±(99.9%) 0,037 us/op
+# Warmup Iteration   5: 0,069 ±(99.9%) 0,036 us/op
+Iteration   1: 0,070 ±(99.9%) 0,039 us/op
+                 readWriteLockMapRead:  0,047 ±(99.9%) 0,024 us/op
+                 readWriteLockMapWrite: 0,093 ±(99.9%) 0,046 us/op
+
+Iteration   2: 0,070 ±(99.9%) 0,040 us/op
+                 readWriteLockMapRead:  0,047 ±(99.9%) 0,032 us/op
+                 readWriteLockMapWrite: 0,092 ±(99.9%) 0,059 us/op
+
+Iteration   3: 0,070 ±(99.9%) 0,041 us/op
+                 readWriteLockMapRead:  0,047 ±(99.9%) 0,026 us/op
+                 readWriteLockMapWrite: 0,093 ±(99.9%) 0,056 us/op
+
+
+
+Result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap":
+  0,069 ±(99.9%) 0,001 us/op [Average]
+  (min, avg, max) = (0,069, 0,069, 0,070), stdev = 0,001
+  CI (99.9%): [0,068, 0,070] (assumes normal distribution)
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap:readWriteLockMapRead":
+  0,046 ±(99.9%) 0,001 us/op [Average]
+  (min, avg, max) = (0,046, 0,046, 0,047), stdev = 0,001
+  CI (99.9%): [0,046, 0,047] (assumes normal distribution)
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite":
+  0,092 ±(99.9%) 0,001 us/op [Average]
+  (min, avg, max) = (0,091, 0,092, 0,093), stdev = 0,001
+  CI (99.9%): [0,091, 0,093] (assumes normal distribution)
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.2, OpenJDK 64-Bit Server VM, 21.0.2+13-LTS
+# VM invoker: /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5 s each
+# Measurement: 3 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 10 threads (1 group; 5x "concurrentHashMapRead", 5x "concurrentHashMapWrite" in each group), will synchronize iterations
+# Benchmark mode: Sampling time
+# Benchmark: ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap
+# Parameters: (keysCount = 1000000)
+
+# Run progress: 66,67% complete, ETA 00:17:18
+# Fork: 1 of 3
+# Warmup Iteration   1: 0,518 ±(99.9%) 0,117 us/op
+# Warmup Iteration   2: 0,517 ±(99.9%) 0,104 us/op
+# Warmup Iteration   3: 0,454 ±(99.9%) 0,086 us/op
+# Warmup Iteration   4: 0,420 ±(99.9%) 0,066 us/op
+# Warmup Iteration   5: 0,461 ±(99.9%) 0,080 us/op
+Iteration   1: 0,411 ±(99.9%) 0,029 us/op
+                 concurrentHashMapRead:          0,387 ±(99.9%) 0,046 us/op
+                 concurrentHashMapRead:p0.00:    ≈ 0 us/op
+                 concurrentHashMapRead:p0.50:    0,125 us/op
+                 concurrentHashMapRead:p0.90:    0,250 us/op
+                 concurrentHashMapRead:p0.95:    0,333 us/op
+                 concurrentHashMapRead:p0.99:    0,542 us/op
+                 concurrentHashMapRead:p0.999:   6,160 us/op
+                 concurrentHashMapRead:p0.9999:  563,506 us/op
+                 concurrentHashMapRead:p1.00:    26378,240 us/op
+                 concurrentHashMapWrite:         0,430 ±(99.9%) 0,037 us/op
+                 concurrentHashMapWrite:p0.00:   ≈ 0 us/op
+                 concurrentHashMapWrite:p0.50:   0,167 us/op
+                 concurrentHashMapWrite:p0.90:   0,333 us/op
+                 concurrentHashMapWrite:p0.95:   0,458 us/op
+                 concurrentHashMapWrite:p0.99:   0,666 us/op
+                 concurrentHashMapWrite:p0.999:  4,792 us/op
+                 concurrentHashMapWrite:p0.9999: 490,339 us/op
+                 concurrentHashMapWrite:p1.00:   11321,344 us/op
+                 p0.00:                          ≈ 0 us/op
+                 p0.50:                          0,125 us/op
+                 p0.90:                          0,292 us/op
+                 p0.95:                          0,375 us/op
+                 p0.99:                          0,625 us/op
+                 p0.999:                         5,416 us/op
+                 p0.9999:                        523,378 us/op
+                 p1.00:                          26378,240 us/op
+
+Iteration   2: 0,462 ±(99.9%) 0,042 us/op
+                 concurrentHashMapRead:          0,500 ±(99.9%) 0,078 us/op
+                 concurrentHashMapRead:p0.00:    ≈ 0 us/op
+                 concurrentHashMapRead:p0.50:    0,125 us/op
+                 concurrentHashMapRead:p0.90:    0,250 us/op
+                 concurrentHashMapRead:p0.95:    0,333 us/op
+                 concurrentHashMapRead:p0.99:    0,542 us/op
+                 concurrentHashMapRead:p0.999:   8,912 us/op
+                 concurrentHashMapRead:p0.9999:  755,035 us/op
+                 concurrentHashMapRead:p1.00:    52494,336 us/op
+                 concurrentHashMapWrite:         0,431 ±(99.9%) 0,043 us/op
+                 concurrentHashMapWrite:p0.00:   ≈ 0 us/op
+                 concurrentHashMapWrite:p0.50:   0,167 us/op
+                 concurrentHashMapWrite:p0.90:   0,333 us/op
+                 concurrentHashMapWrite:p0.95:   0,458 us/op
+                 concurrentHashMapWrite:p0.99:   0,625 us/op
+                 concurrentHashMapWrite:p0.999:  3,040 us/op
+                 concurrentHashMapWrite:p0.9999: 499,323 us/op
+                 concurrentHashMapWrite:p1.00:   15794,176 us/op
+                 p0.00:                          ≈ 0 us/op
+                 p0.50:                          0,125 us/op
+                 p0.90:                          0,292 us/op
+                 p0.95:                          0,375 us/op
+                 p0.99:                          0,625 us/op
+                 p0.999:                         5,288 us/op
+                 p0.9999:                        608,157 us/op
+                 p1.00:                          52494,336 us/op
+
+Iteration   3: 0,426 ±(99.9%) 0,029 us/op
+                 concurrentHashMapRead:          0,413 ±(99.9%) 0,045 us/op
+                 concurrentHashMapRead:p0.00:    ≈ 0 us/op
+                 concurrentHashMapRead:p0.50:    0,125 us/op
+                 concurrentHashMapRead:p0.90:    0,250 us/op
+                 concurrentHashMapRead:p0.95:    0,333 us/op
+                 concurrentHashMapRead:p0.99:    0,542 us/op
+                 concurrentHashMapRead:p0.999:   9,554 us/op
+                 concurrentHashMapRead:p0.9999:  602,581 us/op
+                 concurrentHashMapRead:p1.00:    15548,416 us/op
+                 concurrentHashMapWrite:         0,438 ±(99.9%) 0,039 us/op
+                 concurrentHashMapWrite:p0.00:   ≈ 0 us/op
+                 concurrentHashMapWrite:p0.50:   0,167 us/op
+                 concurrentHashMapWrite:p0.90:   0,292 us/op
+                 concurrentHashMapWrite:p0.95:   0,417 us/op
+                 concurrentHashMapWrite:p0.99:   0,625 us/op
+                 concurrentHashMapWrite:p0.999:  4,536 us/op
+                 concurrentHashMapWrite:p0.9999: 561,152 us/op
+                 concurrentHashMapWrite:p1.00:   12009,472 us/op
+                 p0.00:                          ≈ 0 us/op
+                 p0.50:                          0,125 us/op
+                 p0.90:                          0,292 us/op
+                 p0.95:                          0,375 us/op
+                 p0.99:                          0,625 us/op
+                 p0.999:                         6,704 us/op
+                 p0.9999:                        578,560 us/op
+                 p1.00:                          15548,416 us/op
+
+
+# Run progress: 70,37% complete, ETA 00:15:23
+# Fork: 2 of 3
+# Warmup Iteration   1: 0,477 ±(99.9%) 0,087 us/op
+# Warmup Iteration   2: 0,667 ±(99.9%) 0,186 us/op
+# Warmup Iteration   3: 0,543 ±(99.9%) 0,124 us/op
+# Warmup Iteration   4: 0,419 ±(99.9%) 0,063 us/op
+# Warmup Iteration   5: 0,456 ±(99.9%) 0,092 us/op
+Iteration   1: 0,416 ±(99.9%) 0,029 us/op
+                 concurrentHashMapRead:          0,415 ±(99.9%) 0,046 us/op
+                 concurrentHashMapRead:p0.00:    ≈ 0 us/op
+                 concurrentHashMapRead:p0.50:    0,125 us/op
+                 concurrentHashMapRead:p0.90:    0,250 us/op
+                 concurrentHashMapRead:p0.95:    0,333 us/op
+                 concurrentHashMapRead:p0.99:    0,542 us/op
+                 concurrentHashMapRead:p0.999:   7,972 us/op
+                 concurrentHashMapRead:p0.9999:  605,441 us/op
+                 concurrentHashMapRead:p1.00:    9699,328 us/op
+                 concurrentHashMapWrite:         0,418 ±(99.9%) 0,038 us/op
+                 concurrentHashMapWrite:p0.00:   ≈ 0 us/op
+                 concurrentHashMapWrite:p0.50:   0,166 us/op
+                 concurrentHashMapWrite:p0.90:   0,292 us/op
+                 concurrentHashMapWrite:p0.95:   0,417 us/op
+                 concurrentHashMapWrite:p0.99:   0,625 us/op
+                 concurrentHashMapWrite:p0.999:  3,624 us/op
+                 concurrentHashMapWrite:p0.9999: 508,590 us/op
+                 concurrentHashMapWrite:p1.00:   12828,672 us/op
+                 p0.00:                          ≈ 0 us/op
+                 p0.50:                          0,125 us/op
+                 p0.90:                          0,292 us/op
+                 p0.95:                          0,375 us/op
+                 p0.99:                          0,625 us/op
+                 p0.999:                         5,368 us/op
+                 p0.9999:                        547,249 us/op
+                 p1.00:                          12828,672 us/op
+
+Iteration   2: 0,427 ±(99.9%) 0,030 us/op
+                 concurrentHashMapRead:          0,451 ±(99.9%) 0,049 us/op
+                 concurrentHashMapRead:p0.00:    ≈ 0 us/op
+                 concurrentHashMapRead:p0.50:    0,125 us/op
+                 concurrentHashMapRead:p0.90:    0,250 us/op
+                 concurrentHashMapRead:p0.95:    0,333 us/op
+                 concurrentHashMapRead:p0.99:    0,542 us/op
+                 concurrentHashMapRead:p0.999:   10,208 us/op
+                 concurrentHashMapRead:p0.9999:  784,295 us/op
+                 concurrentHashMapRead:p1.00:    14073,856 us/op
+                 concurrentHashMapWrite:         0,408 ±(99.9%) 0,037 us/op
+                 concurrentHashMapWrite:p0.00:   ≈ 0 us/op
+                 concurrentHashMapWrite:p0.50:   0,166 us/op
+                 concurrentHashMapWrite:p0.90:   0,292 us/op
+                 concurrentHashMapWrite:p0.95:   0,458 us/op
+                 concurrentHashMapWrite:p0.99:   0,625 us/op
+                 concurrentHashMapWrite:p0.999:  1,958 us/op
+                 concurrentHashMapWrite:p0.9999: 461,209 us/op
+                 concurrentHashMapWrite:p1.00:   10485,760 us/op
+                 p0.00:                          ≈ 0 us/op
+                 p0.50:                          0,125 us/op
+                 p0.90:                          0,292 us/op
+                 p0.95:                          0,375 us/op
+                 p0.99:                          0,625 us/op
+                 p0.999:                         5,160 us/op
+                 p0.9999:                        593,988 us/op
+                 p1.00:                          14073,856 us/op
+
+Iteration   3: 0,413 ±(99.9%) 0,030 us/op
+                 concurrentHashMapRead:          0,399 ±(99.9%) 0,041 us/op
+                 concurrentHashMapRead:p0.00:    ≈ 0 us/op
+                 concurrentHashMapRead:p0.50:    0,125 us/op
+                 concurrentHashMapRead:p0.90:    0,250 us/op
+                 concurrentHashMapRead:p0.95:    0,334 us/op
+                 concurrentHashMapRead:p0.99:    0,542 us/op
+                 concurrentHashMapRead:p0.999:   7,624 us/op
+                 concurrentHashMapRead:p0.9999:  627,712 us/op
+                 concurrentHashMapRead:p1.00:    10338,304 us/op
+                 concurrentHashMapWrite:         0,423 ±(99.9%) 0,043 us/op
+                 concurrentHashMapWrite:p0.00:   ≈ 0 us/op
+                 concurrentHashMapWrite:p0.50:   0,166 us/op
+                 concurrentHashMapWrite:p0.90:   0,292 us/op
+                 concurrentHashMapWrite:p0.95:   0,417 us/op
+                 concurrentHashMapWrite:p0.99:   0,625 us/op
+                 concurrentHashMapWrite:p0.999:  3,111 us/op
+                 concurrentHashMapWrite:p0.9999: 513,094 us/op
+                 concurrentHashMapWrite:p1.00:   31293,440 us/op
+                 p0.00:                          ≈ 0 us/op
+                 p0.50:                          0,125 us/op
+                 p0.90:                          0,292 us/op
+                 p0.95:                          0,375 us/op
+                 p0.99:                          0,625 us/op
+                 p0.999:                         4,872 us/op
+                 p0.9999:                        557,578 us/op
+                 p1.00:                          31293,440 us/op
+
+
+# Run progress: 74,07% complete, ETA 00:13:28
+# Fork: 3 of 3
+# Warmup Iteration   1: 0,557 ±(99.9%) 0,105 us/op
+# Warmup Iteration   2: 0,422 ±(99.9%) 0,082 us/op
+# Warmup Iteration   3: 0,472 ±(99.9%) 0,088 us/op
+# Warmup Iteration   4: 0,444 ±(99.9%) 0,067 us/op
+# Warmup Iteration   5: 0,497 ±(99.9%) 0,148 us/op
+Iteration   1: 0,432 ±(99.9%) 0,031 us/op
+                 concurrentHashMapRead:          0,447 ±(99.9%) 0,053 us/op
+                 concurrentHashMapRead:p0.00:    ≈ 0 us/op
+                 concurrentHashMapRead:p0.50:    0,125 us/op
+                 concurrentHashMapRead:p0.90:    0,250 us/op
+                 concurrentHashMapRead:p0.95:    0,333 us/op
+                 concurrentHashMapRead:p0.99:    0,542 us/op
+                 concurrentHashMapRead:p0.999:   10,000 us/op
+                 concurrentHashMapRead:p0.9999:  657,793 us/op
+                 concurrentHashMapRead:p1.00:    20054,016 us/op
+                 concurrentHashMapWrite:         0,420 ±(99.9%) 0,038 us/op
+                 concurrentHashMapWrite:p0.00:   ≈ 0 us/op
+                 concurrentHashMapWrite:p0.50:   0,166 us/op
+                 concurrentHashMapWrite:p0.90:   0,292 us/op
+                 concurrentHashMapWrite:p0.95:   0,417 us/op
+                 concurrentHashMapWrite:p0.99:   0,625 us/op
+                 concurrentHashMapWrite:p0.999:  2,993 us/op
+                 concurrentHashMapWrite:p0.9999: 525,777 us/op
+                 concurrentHashMapWrite:p1.00:   16482,304 us/op
+                 p0.00:                          ≈ 0 us/op
+                 p0.50:                          0,125 us/op
+                 p0.90:                          0,292 us/op
+                 p0.95:                          0,375 us/op
+                 p0.99:                          0,625 us/op
+                 p0.999:                         5,744 us/op
+                 p0.9999:                        585,670 us/op
+                 p1.00:                          20054,016 us/op
+
+Iteration   2: 0,416 ±(99.9%) 0,027 us/op
+                 concurrentHashMapRead:          0,394 ±(99.9%) 0,043 us/op
+                 concurrentHashMapRead:p0.00:    ≈ 0 us/op
+                 concurrentHashMapRead:p0.50:    0,125 us/op
+                 concurrentHashMapRead:p0.90:    0,250 us/op
+                 concurrentHashMapRead:p0.95:    0,333 us/op
+                 concurrentHashMapRead:p0.99:    0,542 us/op
+                 concurrentHashMapRead:p0.999:   6,952 us/op
+                 concurrentHashMapRead:p0.9999:  577,967 us/op
+                 concurrentHashMapRead:p1.00:    14745,600 us/op
+                 concurrentHashMapWrite:         0,433 ±(99.9%) 0,036 us/op
+                 concurrentHashMapWrite:p0.00:   ≈ 0 us/op
+                 concurrentHashMapWrite:p0.50:   0,166 us/op
+                 concurrentHashMapWrite:p0.90:   0,292 us/op
+                 concurrentHashMapWrite:p0.95:   0,458 us/op
+                 concurrentHashMapWrite:p0.99:   0,625 us/op
+                 concurrentHashMapWrite:p0.999:  4,832 us/op
+                 concurrentHashMapWrite:p0.9999: 585,120 us/op
+                 concurrentHashMapWrite:p1.00:   9748,480 us/op
+                 p0.00:                          ≈ 0 us/op
+                 p0.50:                          0,125 us/op
+                 p0.90:                          0,292 us/op
+                 p0.95:                          0,375 us/op
+                 p0.99:                          0,625 us/op
+                 p0.999:                         5,664 us/op
+                 p0.9999:                        581,759 us/op
+                 p1.00:                          14745,600 us/op
+
+Iteration   3: 0,438 ±(99.9%) 0,036 us/op
+                 concurrentHashMapRead:          0,444 ±(99.9%) 0,061 us/op
+                 concurrentHashMapRead:p0.00:    ≈ 0 us/op
+                 concurrentHashMapRead:p0.50:    0,125 us/op
+                 concurrentHashMapRead:p0.90:    0,250 us/op
+                 concurrentHashMapRead:p0.95:    0,333 us/op
+                 concurrentHashMapRead:p0.99:    0,542 us/op
+                 concurrentHashMapRead:p0.999:   7,248 us/op
+                 concurrentHashMapRead:p0.9999:  569,019 us/op
+                 concurrentHashMapRead:p1.00:    19365,888 us/op
+                 concurrentHashMapWrite:         0,433 ±(99.9%) 0,043 us/op
+                 concurrentHashMapWrite:p0.00:   ≈ 0 us/op
+                 concurrentHashMapWrite:p0.50:   0,166 us/op
+                 concurrentHashMapWrite:p0.90:   0,292 us/op
+                 concurrentHashMapWrite:p0.95:   0,458 us/op
+                 concurrentHashMapWrite:p0.99:   0,625 us/op
+                 concurrentHashMapWrite:p0.999:  2,208 us/op
+                 concurrentHashMapWrite:p0.9999: 540,477 us/op
+                 concurrentHashMapWrite:p1.00:   25493,504 us/op
+                 p0.00:                          ≈ 0 us/op
+                 p0.50:                          0,125 us/op
+                 p0.90:                          0,292 us/op
+                 p0.95:                          0,375 us/op
+                 p0.99:                          0,625 us/op
+                 p0.999:                         4,217 us/op
+                 p0.9999:                        547,840 us/op
+                 p1.00:                          25493,504 us/op
+
+
+
+Result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap":
+  N = 68120698
+  mean =      0,427 ±(99.9%) 0,011 us/op
+
+  Histogram, us/op:
+    [    0,000,  5000,000) = 68120395
+    [ 5000,000, 10000,000) = 260
+    [10000,000, 15000,000) = 32
+    [15000,000, 20000,000) = 6
+    [20000,000, 25000,000) = 1
+    [25000,000, 30000,000) = 2
+    [30000,000, 35000,000) = 1
+    [35000,000, 40000,000) = 0
+    [40000,000, 45000,000) = 0
+    [45000,000, 50000,000) = 0
+    [50000,000, 55000,000) = 1
+
+  Percentiles, us/op:
+      p(0,0000) =        ≈ 0 us/op
+     p(50,0000) =      0,125 us/op
+     p(90,0000) =      0,292 us/op
+     p(95,0000) =      0,375 us/op
+     p(99,0000) =      0,625 us/op
+     p(99,9000) =      5,328 us/op
+     p(99,9900) =    572,416 us/op
+     p(99,9990) =   3706,032 us/op
+     p(99,9999) =   8845,382 us/op
+    p(100,0000) =  52494,336 us/op
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap:concurrentHashMapRead":
+  N = 29942142
+  mean =      0,428 ±(99.9%) 0,017 us/op
+
+  Histogram, us/op:
+    [    0,000,  5000,000) = 29941985
+    [ 5000,000, 10000,000) = 133
+    [10000,000, 15000,000) = 17
+    [15000,000, 20000,000) = 4
+    [20000,000, 25000,000) = 1
+    [25000,000, 30000,000) = 1
+    [30000,000, 35000,000) = 0
+    [35000,000, 40000,000) = 0
+    [40000,000, 45000,000) = 0
+    [45000,000, 50000,000) = 0
+    [50000,000, 55000,000) = 1
+
+  Percentiles, us/op:
+      p(0,0000) =        ≈ 0 us/op
+     p(50,0000) =      0,125 us/op
+     p(90,0000) =      0,250 us/op
+     p(95,0000) =      0,333 us/op
+     p(99,0000) =      0,542 us/op
+     p(99,9000) =      8,288 us/op
+     p(99,9900) =    632,832 us/op
+     p(99,9990) =   3856,706 us/op
+     p(99,9999) =   9544,967 us/op
+    p(100,0000) =  52494,336 us/op
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite":
+  N = 38178556
+  mean =      0,426 ±(99.9%) 0,013 us/op
+
+  Histogram, us/op:
+    [    0,000,  2500,000) = 38177871
+    [ 2500,000,  5000,000) = 539
+    [ 5000,000,  7500,000) = 90
+    [ 7500,000, 10000,000) = 37
+    [10000,000, 12500,000) = 10
+    [12500,000, 15000,000) = 5
+    [15000,000, 17500,000) = 2
+    [17500,000, 20000,000) = 0
+    [20000,000, 22500,000) = 0
+    [22500,000, 25000,000) = 0
+    [25000,000, 27500,000) = 1
+    [27500,000, 30000,000) = 0
+    [30000,000, 32500,000) = 1
+    [32500,000, 35000,000) = 0
+    [35000,000, 37500,000) = 0
+
+  Percentiles, us/op:
+      p(0,0000) =        ≈ 0 us/op
+     p(50,0000) =      0,166 us/op
+     p(90,0000) =      0,292 us/op
+     p(95,0000) =      0,458 us/op
+     p(99,0000) =      0,625 us/op
+     p(99,9000) =      3,416 us/op
+     p(99,9900) =    516,608 us/op
+     p(99,9990) =   3597,166 us/op
+     p(99,9999) =   8414,062 us/op
+    p(100,0000) =  31293,440 us/op
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.2, OpenJDK 64-Bit Server VM, 21.0.2+13-LTS
+# VM invoker: /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5 s each
+# Measurement: 3 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 10 threads (1 group; 5x "lockMapRead", 5x "lockMapWrite" in each group), will synchronize iterations
+# Benchmark mode: Sampling time
+# Benchmark: ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap
+# Parameters: (keysCount = 1000000)
+
+# Run progress: 77,78% complete, ETA 00:11:32
+# Fork: 1 of 3
+# Warmup Iteration   1: 2,427 ±(99.9%) 0,097 us/op
+# Warmup Iteration   2: 2,657 ±(99.9%) 0,083 us/op
+# Warmup Iteration   3: 2,422 ±(99.9%) 0,070 us/op
+# Warmup Iteration   4: 2,466 ±(99.9%) 0,077 us/op
+# Warmup Iteration   5: 2,468 ±(99.9%) 0,072 us/op
+Iteration   1: 1,763 ±(99.9%) 0,023 us/op
+                 lockMapRead:          1,962 ±(99.9%) 0,033 us/op
+                 lockMapRead:p0.00:    ≈ 0 us/op
+                 lockMapRead:p0.50:    0,125 us/op
+                 lockMapRead:p0.90:    0,291 us/op
+                 lockMapRead:p0.95:    0,334 us/op
+                 lockMapRead:p0.99:    8,040 us/op
+                 lockMapRead:p0.999:   286,208 us/op
+                 lockMapRead:p0.9999:  425,984 us/op
+                 lockMapRead:p1.00:    5808,128 us/op
+                 lockMapWrite:         1,490 ±(99.9%) 0,033 us/op
+                 lockMapWrite:p0.00:   ≈ 0 us/op
+                 lockMapWrite:p0.50:   0,125 us/op
+                 lockMapWrite:p0.90:   0,292 us/op
+                 lockMapWrite:p0.95:   0,334 us/op
+                 lockMapWrite:p0.99:   4,084 us/op
+                 lockMapWrite:p0.999:  263,168 us/op
+                 lockMapWrite:p0.9999: 423,012 us/op
+                 lockMapWrite:p1.00:   6717,440 us/op
+                 p0.00:                ≈ 0 us/op
+                 p0.50:                0,125 us/op
+                 p0.90:                0,291 us/op
+                 p0.95:                0,334 us/op
+                 p0.99:                4,368 us/op
+                 p0.999:               278,016 us/op
+                 p0.9999:              424,960 us/op
+                 p1.00:                6717,440 us/op
+
+Iteration   2: 1,783 ±(99.9%) 0,026 us/op
+                 lockMapRead:          1,972 ±(99.9%) 0,035 us/op
+                 lockMapRead:p0.00:    ≈ 0 us/op
+                 lockMapRead:p0.50:    0,125 us/op
+                 lockMapRead:p0.90:    0,291 us/op
+                 lockMapRead:p0.95:    0,334 us/op
+                 lockMapRead:p0.99:    10,000 us/op
+                 lockMapRead:p0.999:   286,208 us/op
+                 lockMapRead:p0.9999:  430,080 us/op
+                 lockMapRead:p1.00:    7323,648 us/op
+                 lockMapWrite:         1,519 ±(99.9%) 0,040 us/op
+                 lockMapWrite:p0.00:   ≈ 0 us/op
+                 lockMapWrite:p0.50:   0,125 us/op
+                 lockMapWrite:p0.90:   0,292 us/op
+                 lockMapWrite:p0.95:   0,334 us/op
+                 lockMapWrite:p0.99:   4,120 us/op
+                 lockMapWrite:p0.999:  262,656 us/op
+                 lockMapWrite:p0.9999: 418,795 us/op
+                 lockMapWrite:p1.00:   7102,464 us/op
+                 p0.00:                ≈ 0 us/op
+                 p0.50:                0,125 us/op
+                 p0.90:                0,291 us/op
+                 p0.95:                0,334 us/op
+                 p0.99:                4,456 us/op
+                 p0.999:               277,504 us/op
+                 p0.9999:              424,960 us/op
+                 p1.00:                7323,648 us/op
+
+Iteration   3: 1,843 ±(99.9%) 0,030 us/op
+                 lockMapRead:          2,023 ±(99.9%) 0,040 us/op
+                 lockMapRead:p0.00:    ≈ 0 us/op
+                 lockMapRead:p0.50:    0,125 us/op
+                 lockMapRead:p0.90:    0,291 us/op
+                 lockMapRead:p0.95:    0,334 us/op
+                 lockMapRead:p0.99:    11,872 us/op
+                 lockMapRead:p0.999:   287,744 us/op
+                 lockMapRead:p0.9999:  458,973 us/op
+                 lockMapRead:p1.00:    8617,984 us/op
+                 lockMapWrite:         1,590 ±(99.9%) 0,046 us/op
+                 lockMapWrite:p0.00:   ≈ 0 us/op
+                 lockMapWrite:p0.50:   0,125 us/op
+                 lockMapWrite:p0.90:   0,292 us/op
+                 lockMapWrite:p0.95:   0,334 us/op
+                 lockMapWrite:p0.99:   4,160 us/op
+                 lockMapWrite:p0.999:  267,264 us/op
+                 lockMapWrite:p0.9999: 479,853 us/op
+                 lockMapWrite:p1.00:   9027,584 us/op
+                 p0.00:                ≈ 0 us/op
+                 p0.50:                0,125 us/op
+                 p0.90:                0,291 us/op
+                 p0.95:                0,334 us/op
+                 p0.99:                4,496 us/op
+                 p0.999:               280,576 us/op
+                 p0.9999:              465,920 us/op
+                 p1.00:                9027,584 us/op
+
+
+# Run progress: 81,48% complete, ETA 00:09:37
+# Fork: 2 of 3
+# Warmup Iteration   1: 2,512 ±(99.9%) 0,097 us/op
+# Warmup Iteration   2: 2,430 ±(99.9%) 0,065 us/op
+# Warmup Iteration   3: 2,431 ±(99.9%) 0,070 us/op
+# Warmup Iteration   4: 2,393 ±(99.9%) 0,068 us/op
+# Warmup Iteration   5: 2,380 ±(99.9%) 0,068 us/op
+Iteration   1: 1,775 ±(99.9%) 0,026 us/op
+                 lockMapRead:          1,940 ±(99.9%) 0,035 us/op
+                 lockMapRead:p0.00:    ≈ 0 us/op
+                 lockMapRead:p0.50:    0,125 us/op
+                 lockMapRead:p0.90:    0,250 us/op
+                 lockMapRead:p0.95:    0,334 us/op
+                 lockMapRead:p0.99:    5,160 us/op
+                 lockMapRead:p0.999:   283,136 us/op
+                 lockMapRead:p0.9999:  429,056 us/op
+                 lockMapRead:p1.00:    6545,408 us/op
+                 lockMapWrite:         1,541 ±(99.9%) 0,039 us/op
+                 lockMapWrite:p0.00:   ≈ 0 us/op
+                 lockMapWrite:p0.50:   0,125 us/op
+                 lockMapWrite:p0.90:   0,291 us/op
+                 lockMapWrite:p0.95:   0,334 us/op
+                 lockMapWrite:p0.99:   4,160 us/op
+                 lockMapWrite:p0.999:  262,656 us/op
+                 lockMapWrite:p0.9999: 422,644 us/op
+                 lockMapWrite:p1.00:   7413,760 us/op
+                 p0.00:                ≈ 0 us/op
+                 p0.50:                0,125 us/op
+                 p0.90:                0,291 us/op
+                 p0.95:                0,334 us/op
+                 p0.99:                4,368 us/op
+                 p0.999:               275,968 us/op
+                 p0.9999:              426,109 us/op
+                 p1.00:                7413,760 us/op
+
+Iteration   2: 1,768 ±(99.9%) 0,028 us/op
+                 lockMapRead:          1,934 ±(99.9%) 0,038 us/op
+                 lockMapRead:p0.00:    ≈ 0 us/op
+                 lockMapRead:p0.50:    0,125 us/op
+                 lockMapRead:p0.90:    0,250 us/op
+                 lockMapRead:p0.95:    0,334 us/op
+                 lockMapRead:p0.99:    4,912 us/op
+                 lockMapRead:p0.999:   284,672 us/op
+                 lockMapRead:p0.9999:  421,888 us/op
+                 lockMapRead:p1.00:    10092,544 us/op
+                 lockMapWrite:         1,533 ±(99.9%) 0,040 us/op
+                 lockMapWrite:p0.00:   ≈ 0 us/op
+                 lockMapWrite:p0.50:   0,125 us/op
+                 lockMapWrite:p0.90:   0,291 us/op
+                 lockMapWrite:p0.95:   0,334 us/op
+                 lockMapWrite:p0.99:   4,160 us/op
+                 lockMapWrite:p0.999:  262,656 us/op
+                 lockMapWrite:p0.9999: 418,304 us/op
+                 lockMapWrite:p1.00:   7913,472 us/op
+                 p0.00:                ≈ 0 us/op
+                 p0.50:                0,125 us/op
+                 p0.90:                0,291 us/op
+                 p0.95:                0,334 us/op
+                 p0.99:                4,328 us/op
+                 p0.999:               277,504 us/op
+                 p0.9999:              420,864 us/op
+                 p1.00:                10092,544 us/op
+
+Iteration   3: 1,757 ±(99.9%) 0,025 us/op
+                 lockMapRead:          1,930 ±(99.9%) 0,034 us/op
+                 lockMapRead:p0.00:    ≈ 0 us/op
+                 lockMapRead:p0.50:    0,125 us/op
+                 lockMapRead:p0.90:    0,250 us/op
+                 lockMapRead:p0.95:    0,334 us/op
+                 lockMapRead:p0.99:    5,288 us/op
+                 lockMapRead:p0.999:   283,648 us/op
+                 lockMapRead:p0.9999:  423,864 us/op
+                 lockMapRead:p1.00:    6201,344 us/op
+                 lockMapWrite:         1,511 ±(99.9%) 0,038 us/op
+                 lockMapWrite:p0.00:   ≈ 0 us/op
+                 lockMapWrite:p0.50:   0,125 us/op
+                 lockMapWrite:p0.90:   0,291 us/op
+                 lockMapWrite:p0.95:   0,334 us/op
+                 lockMapWrite:p0.99:   4,120 us/op
+                 lockMapWrite:p0.999:  260,608 us/op
+                 lockMapWrite:p0.9999: 418,304 us/op
+                 lockMapWrite:p1.00:   6225,920 us/op
+                 p0.00:                ≈ 0 us/op
+                 p0.50:                0,125 us/op
+                 p0.90:                0,291 us/op
+                 p0.95:                0,334 us/op
+                 p0.99:                4,368 us/op
+                 p0.999:               275,456 us/op
+                 p0.9999:              421,376 us/op
+                 p1.00:                6225,920 us/op
+
+
+# Run progress: 85,18% complete, ETA 00:07:41
+# Fork: 3 of 3
+# Warmup Iteration   1: 2,461 ±(99.9%) 0,078 us/op
+# Warmup Iteration   2: 2,512 ±(99.9%) 0,081 us/op
+# Warmup Iteration   3: 2,419 ±(99.9%) 0,070 us/op
+# Warmup Iteration   4: 2,383 ±(99.9%) 0,066 us/op
+# Warmup Iteration   5: 2,378 ±(99.9%) 0,067 us/op
+Iteration   1: 1,801 ±(99.9%) 0,026 us/op
+                 lockMapRead:          1,968 ±(99.9%) 0,035 us/op
+                 lockMapRead:p0.00:    ≈ 0 us/op
+                 lockMapRead:p0.50:    0,125 us/op
+                 lockMapRead:p0.90:    0,250 us/op
+                 lockMapRead:p0.95:    0,334 us/op
+                 lockMapRead:p0.99:    7,040 us/op
+                 lockMapRead:p0.999:   284,672 us/op
+                 lockMapRead:p0.9999:  429,056 us/op
+                 lockMapRead:p1.00:    5758,976 us/op
+                 lockMapWrite:         1,563 ±(99.9%) 0,039 us/op
+                 lockMapWrite:p0.00:   ≈ 0 us/op
+                 lockMapWrite:p0.50:   0,125 us/op
+                 lockMapWrite:p0.90:   0,292 us/op
+                 lockMapWrite:p0.95:   0,334 us/op
+                 lockMapWrite:p0.99:   4,208 us/op
+                 lockMapWrite:p0.999:  262,656 us/op
+                 lockMapWrite:p0.9999: 425,984 us/op
+                 lockMapWrite:p1.00:   5783,552 us/op
+                 p0.00:                ≈ 0 us/op
+                 p0.50:                0,125 us/op
+                 p0.90:                0,291 us/op
+                 p0.95:                0,334 us/op
+                 p0.99:                4,496 us/op
+                 p0.999:               276,992 us/op
+                 p0.9999:              427,731 us/op
+                 p1.00:                5783,552 us/op
+
+Iteration   2: 1,787 ±(99.9%) 0,025 us/op
+                 lockMapRead:          1,953 ±(99.9%) 0,034 us/op
+                 lockMapRead:p0.00:    ≈ 0 us/op
+                 lockMapRead:p0.50:    0,125 us/op
+                 lockMapRead:p0.90:    0,250 us/op
+                 lockMapRead:p0.95:    0,334 us/op
+                 lockMapRead:p0.99:    6,416 us/op
+                 lockMapRead:p0.999:   283,648 us/op
+                 lockMapRead:p0.9999:  427,520 us/op
+                 lockMapRead:p1.00:    8331,264 us/op
+                 lockMapWrite:         1,552 ±(99.9%) 0,038 us/op
+                 lockMapWrite:p0.00:   ≈ 0 us/op
+                 lockMapWrite:p0.50:   0,125 us/op
+                 lockMapWrite:p0.90:   0,292 us/op
+                 lockMapWrite:p0.95:   0,334 us/op
+                 lockMapWrite:p0.99:   4,160 us/op
+                 lockMapWrite:p0.999:  262,144 us/op
+                 lockMapWrite:p0.9999: 433,450 us/op
+                 lockMapWrite:p1.00:   8388,608 us/op
+                 p0.00:                ≈ 0 us/op
+                 p0.50:                0,125 us/op
+                 p0.90:                0,291 us/op
+                 p0.95:                0,334 us/op
+                 p0.99:                4,456 us/op
+                 p0.999:               275,968 us/op
+                 p0.9999:              429,568 us/op
+                 p1.00:                8388,608 us/op
+
+Iteration   3: 1,793 ±(99.9%) 0,025 us/op
+                 lockMapRead:          1,935 ±(99.9%) 0,033 us/op
+                 lockMapRead:p0.00:    ≈ 0 us/op
+                 lockMapRead:p0.50:    0,125 us/op
+                 lockMapRead:p0.90:    0,291 us/op
+                 lockMapRead:p0.95:    0,334 us/op
+                 lockMapRead:p0.99:    36,416 us/op
+                 lockMapRead:p0.999:   273,408 us/op
+                 lockMapRead:p0.9999:  415,927 us/op
+                 lockMapRead:p1.00:    7798,784 us/op
+                 lockMapWrite:         1,583 ±(99.9%) 0,038 us/op
+                 lockMapWrite:p0.00:   ≈ 0 us/op
+                 lockMapWrite:p0.50:   0,125 us/op
+                 lockMapWrite:p0.90:   0,292 us/op
+                 lockMapWrite:p0.95:   0,375 us/op
+                 lockMapWrite:p0.99:   4,368 us/op
+                 lockMapWrite:p0.999:  254,464 us/op
+                 lockMapWrite:p0.9999: 409,088 us/op
+                 lockMapWrite:p1.00:   6144,000 us/op
+                 p0.00:                ≈ 0 us/op
+                 p0.50:                0,125 us/op
+                 p0.90:                0,291 us/op
+                 p0.95:                0,375 us/op
+                 p0.99:                4,912 us/op
+                 p0.999:               266,752 us/op
+                 p0.9999:              412,672 us/op
+                 p1.00:                7798,784 us/op
+
+
+
+Result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap":
+  N = 72865695
+  mean =      1,786 ±(99.9%) 0,009 us/op
+
+  Histogram, us/op:
+    [    0,000,  1250,000) = 72864618
+    [ 1250,000,  2500,000) = 541
+    [ 2500,000,  3750,000) = 287
+    [ 3750,000,  5000,000) = 102
+    [ 5000,000,  6250,000) = 91
+    [ 6250,000,  7500,000) = 37
+    [ 7500,000,  8750,000) = 17
+    [ 8750,000, 10000,000) = 1
+    [10000,000, 11250,000) = 1
+    [11250,000, 12500,000) = 0
+    [12500,000, 13750,000) = 0
+    [13750,000, 15000,000) = 0
+    [15000,000, 16250,000) = 0
+    [16250,000, 17500,000) = 0
+    [17500,000, 18750,000) = 0
+
+  Percentiles, us/op:
+      p(0,0000) =        ≈ 0 us/op
+     p(50,0000) =      0,125 us/op
+     p(90,0000) =      0,291 us/op
+     p(95,0000) =      0,334 us/op
+     p(99,0000) =      4,456 us/op
+     p(99,9000) =    275,968 us/op
+     p(99,9900) =    427,008 us/op
+     p(99,9990) =   1984,512 us/op
+     p(99,9999) =   6014,028 us/op
+    p(100,0000) =  10092,544 us/op
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap:lockMapRead":
+  N = 42717652
+  mean =      1,957 ±(99.9%) 0,012 us/op
+
+  Histogram, us/op:
+    [    0,000,  1250,000) = 42717063
+    [ 1250,000,  2500,000) = 300
+    [ 2500,000,  3750,000) = 152
+    [ 3750,000,  5000,000) = 55
+    [ 5000,000,  6250,000) = 49
+    [ 6250,000,  7500,000) = 21
+    [ 7500,000,  8750,000) = 11
+    [ 8750,000, 10000,000) = 0
+    [10000,000, 11250,000) = 1
+    [11250,000, 12500,000) = 0
+    [12500,000, 13750,000) = 0
+    [13750,000, 15000,000) = 0
+    [15000,000, 16250,000) = 0
+    [16250,000, 17500,000) = 0
+    [17500,000, 18750,000) = 0
+
+  Percentiles, us/op:
+      p(0,0000) =        ≈ 0 us/op
+     p(50,0000) =      0,125 us/op
+     p(90,0000) =      0,291 us/op
+     p(95,0000) =      0,334 us/op
+     p(99,0000) =      7,000 us/op
+     p(99,9000) =    283,648 us/op
+     p(99,9900) =    428,544 us/op
+     p(99,9990) =   1817,057 us/op
+     p(99,9999) =   5974,281 us/op
+    p(100,0000) =  10092,544 us/op
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap:lockMapWrite":
+  N = 30148043
+  mean =      1,542 ±(99.9%) 0,013 us/op
+
+  Histogram, us/op:
+    [    0,000,  1000,000) = 30147464
+    [ 1000,000,  2000,000) = 244
+    [ 2000,000,  3000,000) = 151
+    [ 3000,000,  4000,000) = 83
+    [ 4000,000,  5000,000) = 36
+    [ 5000,000,  6000,000) = 31
+    [ 6000,000,  7000,000) = 21
+    [ 7000,000,  8000,000) = 8
+    [ 8000,000,  9000,000) = 4
+
+  Percentiles, us/op:
+      p(0,0000) =        ≈ 0 us/op
+     p(50,0000) =      0,125 us/op
+     p(90,0000) =      0,292 us/op
+     p(95,0000) =      0,334 us/op
+     p(99,0000) =      4,160 us/op
+     p(99,9000) =    262,144 us/op
+     p(99,9900) =    425,472 us/op
+     p(99,9990) =   2185,296 us/op
+     p(99,9999) =   6052,675 us/op
+    p(100,0000) =   9027,584 us/op
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.2, OpenJDK 64-Bit Server VM, 21.0.2+13-LTS
+# VM invoker: /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5 s each
+# Measurement: 3 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 10 threads (1 group; 5x "readWriteLockMapRead", 5x "readWriteLockMapWrite" in each group), will synchronize iterations
+# Benchmark mode: Sampling time
+# Benchmark: ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap
+# Parameters: (keysCount = 1000000)
+
+# Run progress: 88,89% complete, ETA 00:05:46
+# Fork: 1 of 3
+# Warmup Iteration   1: 0,599 ±(99.9%) 0,129 us/op
+# Warmup Iteration   2: 1,020 ±(99.9%) 0,467 us/op
+# Warmup Iteration   3: 0,716 ±(99.9%) 0,236 us/op
+# Warmup Iteration   4: 0,407 ±(99.9%) 0,063 us/op
+# Warmup Iteration   5: 0,419 ±(99.9%) 0,073 us/op
+Iteration   1: 0,375 ±(99.9%) 0,030 us/op
+                 p0.00:                         ≈ 0 us/op
+                 p0.50:                         0,125 us/op
+                 p0.90:                         0,291 us/op
+                 p0.95:                         0,375 us/op
+                 p0.99:                         0,583 us/op
+                 p0.999:                        1,790 us/op
+                 p0.9999:                       437,147 us/op
+                 p1.00:                         40173,568 us/op
+                 readWriteLockMapRead:          0,397 ±(99.9%) 0,049 us/op
+                 readWriteLockMapRead:p0.00:    ≈ 0 us/op
+                 readWriteLockMapRead:p0.50:    0,125 us/op
+                 readWriteLockMapRead:p0.90:    0,250 us/op
+                 readWriteLockMapRead:p0.95:    0,334 us/op
+                 readWriteLockMapRead:p0.99:    0,541 us/op
+                 readWriteLockMapRead:p0.999:   4,870 us/op
+                 readWriteLockMapRead:p0.9999:  547,840 us/op
+                 readWriteLockMapRead:p1.00:    30539,776 us/op
+                 readWriteLockMapWrite:         0,361 ±(99.9%) 0,037 us/op
+                 readWriteLockMapWrite:p0.00:   ≈ 0 us/op
+                 readWriteLockMapWrite:p0.50:   0,125 us/op
+                 readWriteLockMapWrite:p0.90:   0,292 us/op
+                 readWriteLockMapWrite:p0.95:   0,375 us/op
+                 readWriteLockMapWrite:p0.99:   0,584 us/op
+                 readWriteLockMapWrite:p0.999:  1,500 us/op
+                 readWriteLockMapWrite:p0.9999: 377,556 us/op
+                 readWriteLockMapWrite:p1.00:   40173,568 us/op
+
+Iteration   2: 0,401 ±(99.9%) 0,027 us/op
+                 p0.00:                         ≈ 0 us/op
+                 p0.50:                         0,125 us/op
+                 p0.90:                         0,291 us/op
+                 p0.95:                         0,375 us/op
+                 p0.99:                         0,583 us/op
+                 p0.999:                        3,040 us/op
+                 p0.9999:                       501,670 us/op
+                 p1.00:                         12812,288 us/op
+                 readWriteLockMapRead:          0,401 ±(99.9%) 0,042 us/op
+                 readWriteLockMapRead:p0.00:    ≈ 0 us/op
+                 readWriteLockMapRead:p0.50:    0,125 us/op
+                 readWriteLockMapRead:p0.90:    0,250 us/op
+                 readWriteLockMapRead:p0.95:    0,333 us/op
+                 readWriteLockMapRead:p0.99:    0,500 us/op
+                 readWriteLockMapRead:p0.999:   4,545 us/op
+                 readWriteLockMapRead:p0.9999:  514,070 us/op
+                 readWriteLockMapRead:p1.00:    9814,016 us/op
+                 readWriteLockMapWrite:         0,401 ±(99.9%) 0,036 us/op
+                 readWriteLockMapWrite:p0.00:   ≈ 0 us/op
+                 readWriteLockMapWrite:p0.50:   0,125 us/op
+                 readWriteLockMapWrite:p0.90:   0,292 us/op
+                 readWriteLockMapWrite:p0.95:   0,416 us/op
+                 readWriteLockMapWrite:p0.99:   0,584 us/op
+                 readWriteLockMapWrite:p0.999:  1,874 us/op
+                 readWriteLockMapWrite:p0.9999: 488,557 us/op
+                 readWriteLockMapWrite:p1.00:   12812,288 us/op
+
+Iteration   3: 0,450 ±(99.9%) 0,043 us/op
+                 p0.00:                         ≈ 0 us/op
+                 p0.50:                         0,125 us/op
+                 p0.90:                         0,291 us/op
+                 p0.95:                         0,375 us/op
+                 p0.99:                         0,583 us/op
+                 p0.999:                        4,750 us/op
+                 p0.9999:                       565,248 us/op
+                 p1.00:                         47251,456 us/op
+                 readWriteLockMapRead:          0,478 ±(99.9%) 0,080 us/op
+                 readWriteLockMapRead:p0.00:    ≈ 0 us/op
+                 readWriteLockMapRead:p0.50:    0,125 us/op
+                 readWriteLockMapRead:p0.90:    0,250 us/op
+                 readWriteLockMapRead:p0.95:    0,333 us/op
+                 readWriteLockMapRead:p0.99:    0,500 us/op
+                 readWriteLockMapRead:p0.999:   7,872 us/op
+                 readWriteLockMapRead:p0.9999:  615,336 us/op
+                 readWriteLockMapRead:p1.00:    47251,456 us/op
+                 readWriteLockMapWrite:         0,428 ±(99.9%) 0,045 us/op
+                 readWriteLockMapWrite:p0.00:   ≈ 0 us/op
+                 readWriteLockMapWrite:p0.50:   0,125 us/op
+                 readWriteLockMapWrite:p0.90:   0,292 us/op
+                 readWriteLockMapWrite:p0.95:   0,416 us/op
+                 readWriteLockMapWrite:p0.99:   0,584 us/op
+                 readWriteLockMapWrite:p0.999:  3,000 us/op
+                 readWriteLockMapWrite:p0.9999: 518,438 us/op
+                 readWriteLockMapWrite:p1.00:   16400,384 us/op
+
+
+# Run progress: 92,59% complete, ETA 00:03:51
+# Fork: 2 of 3
+# Warmup Iteration   1: 0,509 ±(99.9%) 0,098 us/op
+# Warmup Iteration   2: 0,536 ±(99.9%) 0,142 us/op
+# Warmup Iteration   3: 0,479 ±(99.9%) 0,083 us/op
+# Warmup Iteration   4: 0,543 ±(99.9%) 0,116 us/op
+# Warmup Iteration   5: 0,424 ±(99.9%) 0,076 us/op
+Iteration   1: 0,406 ±(99.9%) 0,029 us/op
+                 p0.00:                         ≈ 0 us/op
+                 p0.50:                         0,125 us/op
+                 p0.90:                         0,292 us/op
+                 p0.95:                         0,375 us/op
+                 p0.99:                         0,583 us/op
+                 p0.999:                        2,124 us/op
+                 p0.9999:                       495,242 us/op
+                 p1.00:                         22085,632 us/op
+                 readWriteLockMapRead:          0,441 ±(99.9%) 0,052 us/op
+                 readWriteLockMapRead:p0.00:    ≈ 0 us/op
+                 readWriteLockMapRead:p0.50:    0,125 us/op
+                 readWriteLockMapRead:p0.90:    0,250 us/op
+                 readWriteLockMapRead:p0.95:    0,334 us/op
+                 readWriteLockMapRead:p0.99:    0,500 us/op
+                 readWriteLockMapRead:p0.999:   6,160 us/op
+                 readWriteLockMapRead:p0.9999:  642,048 us/op
+                 readWriteLockMapRead:p1.00:    22085,632 us/op
+                 readWriteLockMapWrite:         0,383 ±(99.9%) 0,034 us/op
+                 readWriteLockMapWrite:p0.00:   ≈ 0 us/op
+                 readWriteLockMapWrite:p0.50:   0,125 us/op
+                 readWriteLockMapWrite:p0.90:   0,292 us/op
+                 readWriteLockMapWrite:p0.95:   0,416 us/op
+                 readWriteLockMapWrite:p0.99:   0,584 us/op
+                 readWriteLockMapWrite:p0.999:  1,500 us/op
+                 readWriteLockMapWrite:p0.9999: 402,944 us/op
+                 readWriteLockMapWrite:p1.00:   12976,128 us/op
+
+Iteration   2: 0,393 ±(99.9%) 0,028 us/op
+                 p0.00:                         ≈ 0 us/op
+                 p0.50:                         0,125 us/op
+                 p0.90:                         0,291 us/op
+                 p0.95:                         0,375 us/op
+                 p0.99:                         0,583 us/op
+                 p0.999:                        2,208 us/op
+                 p0.9999:                       469,718 us/op
+                 p1.00:                         21823,488 us/op
+                 readWriteLockMapRead:          0,410 ±(99.9%) 0,047 us/op
+                 readWriteLockMapRead:p0.00:    ≈ 0 us/op
+                 readWriteLockMapRead:p0.50:    0,125 us/op
+                 readWriteLockMapRead:p0.90:    0,250 us/op
+                 readWriteLockMapRead:p0.95:    0,334 us/op
+                 readWriteLockMapRead:p0.99:    0,541 us/op
+                 readWriteLockMapRead:p0.999:   5,416 us/op
+                 readWriteLockMapRead:p0.9999:  527,856 us/op
+                 readWriteLockMapRead:p1.00:    14106,624 us/op
+                 readWriteLockMapWrite:         0,382 ±(99.9%) 0,036 us/op
+                 readWriteLockMapWrite:p0.00:   ≈ 0 us/op
+                 readWriteLockMapWrite:p0.50:   0,125 us/op
+                 readWriteLockMapWrite:p0.90:   0,292 us/op
+                 readWriteLockMapWrite:p0.95:   0,416 us/op
+                 readWriteLockMapWrite:p0.99:   0,584 us/op
+                 readWriteLockMapWrite:p0.999:  1,548 us/op
+                 readWriteLockMapWrite:p0.9999: 429,824 us/op
+                 readWriteLockMapWrite:p1.00:   21823,488 us/op
+
+Iteration   3: 0,375 ±(99.9%) 0,025 us/op
+                 p0.00:                         ≈ 0 us/op
+                 p0.50:                         0,125 us/op
+                 p0.90:                         0,292 us/op
+                 p0.95:                         0,375 us/op
+                 p0.99:                         0,583 us/op
+                 p0.999:                        1,708 us/op
+                 p0.9999:                       454,144 us/op
+                 p1.00:                         15220,736 us/op
+                 readWriteLockMapRead:          0,379 ±(99.9%) 0,040 us/op
+                 readWriteLockMapRead:p0.00:    ≈ 0 us/op
+                 readWriteLockMapRead:p0.50:    0,125 us/op
+                 readWriteLockMapRead:p0.90:    0,250 us/op
+                 readWriteLockMapRead:p0.95:    0,334 us/op
+                 readWriteLockMapRead:p0.99:    0,500 us/op
+                 readWriteLockMapRead:p0.999:   2,832 us/op
+                 readWriteLockMapRead:p0.9999:  517,746 us/op
+                 readWriteLockMapRead:p1.00:    11747,328 us/op
+                 readWriteLockMapWrite:         0,372 ±(99.9%) 0,032 us/op
+                 readWriteLockMapWrite:p0.00:   ≈ 0 us/op
+                 readWriteLockMapWrite:p0.50:   0,125 us/op
+                 readWriteLockMapWrite:p0.90:   0,292 us/op
+                 readWriteLockMapWrite:p0.95:   0,416 us/op
+                 readWriteLockMapWrite:p0.99:   0,584 us/op
+                 readWriteLockMapWrite:p0.999:  1,582 us/op
+                 readWriteLockMapWrite:p0.9999: 397,799 us/op
+                 readWriteLockMapWrite:p1.00:   15220,736 us/op
+
+
+# Run progress: 96,29% complete, ETA 00:01:55
+# Fork: 3 of 3
+# Warmup Iteration   1: 0,578 ±(99.9%) 0,123 us/op
+# Warmup Iteration   2: 0,485 ±(99.9%) 0,105 us/op
+# Warmup Iteration   3: 0,448 ±(99.9%) 0,078 us/op
+# Warmup Iteration   4: 0,423 ±(99.9%) 0,068 us/op
+# Warmup Iteration   5: 0,457 ±(99.9%) 0,098 us/op
+Iteration   1: 0,399 ±(99.9%) 0,027 us/op
+                 p0.00:                         ≈ 0 us/op
+                 p0.50:                         0,125 us/op
+                 p0.90:                         0,292 us/op
+                 p0.95:                         0,375 us/op
+                 p0.99:                         0,583 us/op
+                 p0.999:                        2,872 us/op
+                 p0.9999:                       502,828 us/op
+                 p1.00:                         18677,760 us/op
+                 readWriteLockMapRead:          0,456 ±(99.9%) 0,051 us/op
+                 readWriteLockMapRead:p0.00:    ≈ 0 us/op
+                 readWriteLockMapRead:p0.50:    0,125 us/op
+                 readWriteLockMapRead:p0.90:    0,292 us/op
+                 readWriteLockMapRead:p0.95:    0,375 us/op
+                 readWriteLockMapRead:p0.99:    0,541 us/op
+                 readWriteLockMapRead:p0.999:   9,152 us/op
+                 readWriteLockMapRead:p0.9999:  690,439 us/op
+                 readWriteLockMapRead:p1.00:    18677,760 us/op
+                 readWriteLockMapWrite:         0,361 ±(99.9%) 0,030 us/op
+                 readWriteLockMapWrite:p0.00:   ≈ 0 us/op
+                 readWriteLockMapWrite:p0.50:   0,125 us/op
+                 readWriteLockMapWrite:p0.90:   0,292 us/op
+                 readWriteLockMapWrite:p0.95:   0,416 us/op
+                 readWriteLockMapWrite:p0.99:   0,584 us/op
+                 readWriteLockMapWrite:p0.999:  1,500 us/op
+                 readWriteLockMapWrite:p0.9999: 386,421 us/op
+                 readWriteLockMapWrite:p1.00:   11960,320 us/op
+
+Iteration   2: 0,378 ±(99.9%) 0,025 us/op
+                 p0.00:                         ≈ 0 us/op
+                 p0.50:                         0,125 us/op
+                 p0.90:                         0,292 us/op
+                 p0.95:                         0,375 us/op
+                 p0.99:                         0,583 us/op
+                 p0.999:                        1,790 us/op
+                 p0.9999:                       430,347 us/op
+                 p1.00:                         19496,960 us/op
+                 readWriteLockMapRead:          0,376 ±(99.9%) 0,037 us/op
+                 readWriteLockMapRead:p0.00:    ≈ 0 us/op
+                 readWriteLockMapRead:p0.50:    0,125 us/op
+                 readWriteLockMapRead:p0.90:    0,292 us/op
+                 readWriteLockMapRead:p0.95:    0,375 us/op
+                 readWriteLockMapRead:p0.99:    0,541 us/op
+                 readWriteLockMapRead:p0.999:   4,646 us/op
+                 readWriteLockMapRead:p0.9999:  454,917 us/op
+                 readWriteLockMapRead:p1.00:    12648,448 us/op
+                 readWriteLockMapWrite:         0,379 ±(99.9%) 0,034 us/op
+                 readWriteLockMapWrite:p0.00:   ≈ 0 us/op
+                 readWriteLockMapWrite:p0.50:   0,125 us/op
+                 readWriteLockMapWrite:p0.90:   0,292 us/op
+                 readWriteLockMapWrite:p0.95:   0,417 us/op
+                 readWriteLockMapWrite:p0.99:   0,625 us/op
+                 readWriteLockMapWrite:p0.999:  1,500 us/op
+                 readWriteLockMapWrite:p0.9999: 422,194 us/op
+                 readWriteLockMapWrite:p1.00:   19496,960 us/op
+
+Iteration   3: 0,421 ±(99.9%) 0,034 us/op
+                 p0.00:                         ≈ 0 us/op
+                 p0.50:                         0,125 us/op
+                 p0.90:                         0,292 us/op
+                 p0.95:                         0,375 us/op
+                 p0.99:                         0,583 us/op
+                 p0.999:                        1,792 us/op
+                 p0.9999:                       499,017 us/op
+                 p1.00:                         23199,744 us/op
+                 readWriteLockMapRead:          0,432 ±(99.9%) 0,057 us/op
+                 readWriteLockMapRead:p0.00:    ≈ 0 us/op
+                 readWriteLockMapRead:p0.50:    0,125 us/op
+                 readWriteLockMapRead:p0.90:    0,292 us/op
+                 readWriteLockMapRead:p0.95:    0,375 us/op
+                 readWriteLockMapRead:p0.99:    0,542 us/op
+                 readWriteLockMapRead:p0.999:   6,704 us/op
+                 readWriteLockMapRead:p0.9999:  462,795 us/op
+                 readWriteLockMapRead:p1.00:    19333,120 us/op
+                 readWriteLockMapWrite:         0,413 ±(99.9%) 0,042 us/op
+                 readWriteLockMapWrite:p0.00:   ≈ 0 us/op
+                 readWriteLockMapWrite:p0.50:   0,125 us/op
+                 readWriteLockMapWrite:p0.90:   0,292 us/op
+                 readWriteLockMapWrite:p0.95:   0,416 us/op
+                 readWriteLockMapWrite:p0.99:   0,584 us/op
+                 readWriteLockMapWrite:p0.999:  1,416 us/op
+                 readWriteLockMapWrite:p0.9999: 531,655 us/op
+                 readWriteLockMapWrite:p1.00:   23199,744 us/op
+
+
+
+Result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap":
+  N = 72921608
+  mean =      0,399 ±(99.9%) 0,010 us/op
+
+  Histogram, us/op:
+    [    0,000,  5000,000) = 72921269
+    [ 5000,000, 10000,000) = 290
+    [10000,000, 15000,000) = 33
+    [15000,000, 20000,000) = 9
+    [20000,000, 25000,000) = 3
+    [25000,000, 30000,000) = 0
+    [30000,000, 35000,000) = 2
+    [35000,000, 40000,000) = 0
+    [40000,000, 45000,000) = 1
+
+  Percentiles, us/op:
+      p(0,0000) =        ≈ 0 us/op
+     p(50,0000) =      0,125 us/op
+     p(90,0000) =      0,292 us/op
+     p(95,0000) =      0,375 us/op
+     p(99,0000) =      0,583 us/op
+     p(99,9000) =      2,292 us/op
+     p(99,9900) =    480,768 us/op
+     p(99,9990) =   3579,019 us/op
+     p(99,9999) =   8883,981 us/op
+    p(100,0000) =  47251,456 us/op
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap:readWriteLockMapRead":
+  N = 29850766
+  mean =      0,419 ±(99.9%) 0,017 us/op
+
+  Histogram, us/op:
+    [    0,000,  5000,000) = 29850601
+    [ 5000,000, 10000,000) = 137
+    [10000,000, 15000,000) = 19
+    [15000,000, 20000,000) = 5
+    [20000,000, 25000,000) = 1
+    [25000,000, 30000,000) = 0
+    [30000,000, 35000,000) = 2
+    [35000,000, 40000,000) = 0
+    [40000,000, 45000,000) = 0
+
+  Percentiles, us/op:
+      p(0,0000) =        ≈ 0 us/op
+     p(50,0000) =      0,125 us/op
+     p(90,0000) =      0,291 us/op
+     p(95,0000) =      0,334 us/op
+     p(99,0000) =      0,541 us/op
+     p(99,9000) =      5,576 us/op
+     p(99,9900) =    551,857 us/op
+     p(99,9990) =   3794,913 us/op
+     p(99,9999) =   9818,906 us/op
+    p(100,0000) =  47251,456 us/op
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite":
+  N = 43070842
+  mean =      0,386 ±(99.9%) 0,012 us/op
+
+  Histogram, us/op:
+    [    0,000,  5000,000) = 43070668
+    [ 5000,000, 10000,000) = 153
+    [10000,000, 15000,000) = 14
+    [15000,000, 20000,000) = 4
+    [20000,000, 25000,000) = 2
+    [25000,000, 30000,000) = 0
+    [30000,000, 35000,000) = 0
+    [35000,000, 40000,000) = 0
+    [40000,000, 45000,000) = 1
+
+  Percentiles, us/op:
+      p(0,0000) =        ≈ 0 us/op
+     p(50,0000) =      0,125 us/op
+     p(90,0000) =      0,292 us/op
+     p(95,0000) =      0,416 us/op
+     p(99,0000) =      0,584 us/op
+     p(99,9000) =      1,542 us/op
+     p(99,9900) =    432,640 us/op
+     p(99,9990) =   3351,722 us/op
+     p(99,9999) =   8496,332 us/op
+    p(100,0000) =  40173,568 us/op
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.2, OpenJDK 64-Bit Server VM, 21.0.2+13-LTS
+# VM invoker: /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5 s each
+# Measurement: 3 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 10 threads (1 group; 5x "concurrentHashMapRead", 5x "concurrentHashMapWrite" in each group)
+# Benchmark mode: Single shot invocation time
+# Benchmark: ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap
+# Parameters: (keysCount = 1000000)
+
+# Run progress: 100,00% complete, ETA 00:00:00
+# Fork: 1 of 3
+# Warmup Iteration   1: 111,433 ±(99.9%) 14,220 us/op
+# Warmup Iteration   2: 4,725 ±(99.9%) 7,257 us/op
+# Warmup Iteration   3: 1,908 ±(99.9%) 1,415 us/op
+# Warmup Iteration   4: 4,996 ±(99.9%) 8,652 us/op
+# Warmup Iteration   5: 2,512 ±(99.9%) 1,734 us/op
+Iteration   1: 2,417 ±(99.9%) 1,724 us/op
+                 concurrentHashMapRead:  2,092 ±(99.9%) 3,685 us/op
+                 concurrentHashMapWrite: 2,742 ±(99.9%) 5,086 us/op
+
+Iteration   2: 3,317 ±(99.9%) 3,569 us/op
+                 concurrentHashMapRead:  2,692 ±(99.9%) 5,028 us/op
+                 concurrentHashMapWrite: 3,942 ±(99.9%) 12,091 us/op
+
+Iteration   3: 1,696 ±(99.9%) 0,802 us/op
+                 concurrentHashMapRead:  1,866 ±(99.9%) 2,846 us/op
+                 concurrentHashMapWrite: 1,525 ±(99.9%) 0,462 us/op
+
+
+# Run progress: 100,00% complete, ETA 00:00:00
+# Fork: 2 of 3
+# Warmup Iteration   1: 122,375 ±(99.9%) 45,182 us/op
+# Warmup Iteration   2: 3,550 ±(99.9%) 1,977 us/op
+# Warmup Iteration   3: 2,717 ±(99.9%) 1,561 us/op
+# Warmup Iteration   4: 2,562 ±(99.9%) 4,705 us/op
+# Warmup Iteration   5: 2,092 ±(99.9%) 1,346 us/op
+Iteration   1: 3,133 ±(99.9%) 3,363 us/op
+                 concurrentHashMapRead:  2,300 ±(99.9%) 5,439 us/op
+                 concurrentHashMapWrite: 3,967 ±(99.9%) 10,476 us/op
+
+Iteration   2: 4,442 ±(99.9%) 8,136 us/op
+                 concurrentHashMapRead:  1,992 ±(99.9%) 3,289 us/op
+                 concurrentHashMapWrite: 6,892 ±(99.9%) 27,070 us/op
+
+Iteration   3: 1,904 ±(99.9%) 1,032 us/op
+                 concurrentHashMapRead:  1,816 ±(99.9%) 2,933 us/op
+                 concurrentHashMapWrite: 1,991 ±(99.9%) 2,581 us/op
+
+
+# Run progress: 100,00% complete, ETA 00:00:00
+# Fork: 3 of 3
+# Warmup Iteration   1: 83,971 ±(99.9%) 39,753 us/op
+# Warmup Iteration   2: 3,138 ±(99.9%) 4,056 us/op
+# Warmup Iteration   3: 2,000 ±(99.9%) 1,249 us/op
+# Warmup Iteration   4: 1,788 ±(99.9%) 1,048 us/op
+# Warmup Iteration   5: 1,854 ±(99.9%) 1,260 us/op
+Iteration   1: 1,962 ±(99.9%) 1,117 us/op
+                 concurrentHashMapRead:  1,467 ±(99.9%) 1,281 us/op
+                 concurrentHashMapWrite: 2,458 ±(99.9%) 2,730 us/op
+
+Iteration   2: 2,000 ±(99.9%) 1,538 us/op
+                 concurrentHashMapRead:  1,300 ±(99.9%) 0,383 us/op
+                 concurrentHashMapWrite: 2,700 ±(99.9%) 4,026 us/op
+
+Iteration   3: 1,458 ±(99.9%) 0,624 us/op
+                 concurrentHashMapRead:  1,492 ±(99.9%) 2,233 us/op
+                 concurrentHashMapWrite: 1,425 ±(99.9%) 0,806 us/op
+
+
+
+Result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap":
+  N = 9
+  mean =      2,481 ±(99.9%) 1,624 us/op
+
+  Histogram, us/op:
+    [1,000, 1,250) = 0
+    [1,250, 1,500) = 1
+    [1,500, 1,750) = 1
+    [1,750, 2,000) = 2
+    [2,000, 2,250) = 1
+    [2,250, 2,500) = 1
+    [2,500, 2,750) = 0
+    [2,750, 3,000) = 0
+    [3,000, 3,250) = 1
+    [3,250, 3,500) = 1
+    [3,500, 3,750) = 0
+    [3,750, 4,000) = 0
+    [4,000, 4,250) = 0
+    [4,250, 4,500) = 1
+    [4,500, 4,750) = 0
+
+  Percentiles, us/op:
+      p(0,0000) =      1,458 us/op
+     p(50,0000) =      2,000 us/op
+     p(90,0000) =      4,442 us/op
+     p(95,0000) =      4,442 us/op
+     p(99,0000) =      4,442 us/op
+     p(99,9000) =      4,442 us/op
+     p(99,9900) =      4,442 us/op
+     p(99,9990) =      4,442 us/op
+     p(99,9999) =      4,442 us/op
+    p(100,0000) =      4,442 us/op
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap:concurrentHashMapRead":
+  N = 9
+  mean =      1,891 ±(99.9%) 0,741 us/op
+
+  Histogram, us/op:
+    [1,000, 1,125) = 0
+    [1,125, 1,250) = 0
+    [1,250, 1,375) = 1
+    [1,375, 1,500) = 2
+    [1,500, 1,625) = 0
+    [1,625, 1,750) = 0
+    [1,750, 1,875) = 2
+    [1,875, 2,000) = 1
+    [2,000, 2,125) = 1
+    [2,125, 2,250) = 0
+    [2,250, 2,375) = 1
+    [2,375, 2,500) = 0
+    [2,500, 2,625) = 0
+    [2,625, 2,750) = 1
+    [2,750, 2,875) = 0
+
+  Percentiles, us/op:
+      p(0,0000) =      1,300 us/op
+     p(50,0000) =      1,866 us/op
+     p(90,0000) =      2,692 us/op
+     p(95,0000) =      2,692 us/op
+     p(99,0000) =      2,692 us/op
+     p(99,9000) =      2,692 us/op
+     p(99,9900) =      2,692 us/op
+     p(99,9990) =      2,692 us/op
+     p(99,9999) =      2,692 us/op
+    p(100,0000) =      2,692 us/op
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite":
+  N = 9
+  mean =      3,071 ±(99.9%) 2,852 us/op
+
+  Histogram, us/op:
+    [1,000, 1,500) = 1
+    [1,500, 2,000) = 2
+    [2,000, 2,500) = 1
+    [2,500, 3,000) = 2
+    [3,000, 3,500) = 0
+    [3,500, 4,000) = 2
+    [4,000, 4,500) = 0
+    [4,500, 5,000) = 0
+    [5,000, 5,500) = 0
+    [5,500, 6,000) = 0
+    [6,000, 6,500) = 0
+
+  Percentiles, us/op:
+      p(0,0000) =      1,425 us/op
+     p(50,0000) =      2,700 us/op
+     p(90,0000) =      6,892 us/op
+     p(95,0000) =      6,892 us/op
+     p(99,0000) =      6,892 us/op
+     p(99,9000) =      6,892 us/op
+     p(99,9900) =      6,892 us/op
+     p(99,9990) =      6,892 us/op
+     p(99,9999) =      6,892 us/op
+    p(100,0000) =      6,892 us/op
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.2, OpenJDK 64-Bit Server VM, 21.0.2+13-LTS
+# VM invoker: /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5 s each
+# Measurement: 3 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 10 threads (1 group; 5x "lockMapRead", 5x "lockMapWrite" in each group)
+# Benchmark mode: Single shot invocation time
+# Benchmark: ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap
+# Parameters: (keysCount = 1000000)
+
+# Run progress: 100,00% complete, ETA 00:00:00
+# Fork: 1 of 3
+# Warmup Iteration   1: 183,371 ±(99.9%) 35,957 us/op
+# Warmup Iteration   2: 3,950 ±(99.9%) 4,341 us/op
+# Warmup Iteration   3: 2,721 ±(99.9%) 2,432 us/op
+# Warmup Iteration   4: 124,925 ±(99.9%) 237,698 us/op
+# Warmup Iteration   5: 24,004 ±(99.9%) 34,676 us/op
+Iteration   1: 2,608 ±(99.9%) 1,791 us/op
+                 lockMapRead:  2,100 ±(99.9%) 4,313 us/op
+                 lockMapWrite: 3,117 ±(99.9%) 4,319 us/op
+
+Iteration   2: 2,000 ±(99.9%) 1,837 us/op
+                 lockMapRead:  1,733 ±(99.9%) 2,714 us/op
+                 lockMapWrite: 2,267 ±(99.9%) 6,264 us/op
+
+Iteration   3: 3,250 ±(99.9%) 1,760 us/op
+                 lockMapRead:  3,166 ±(99.9%) 5,228 us/op
+                 lockMapWrite: 3,333 ±(99.9%) 4,195 us/op
+
+
+# Run progress: 100,00% complete, ETA 00:00:00
+# Fork: 2 of 3
+# Warmup Iteration   1: 255,442 ±(99.9%) 84,743 us/op
+# Warmup Iteration   2: 4,088 ±(99.9%) 2,690 us/op
+# Warmup Iteration   3: 2,733 ±(99.9%) 1,948 us/op
+# Warmup Iteration   4: 2,184 ±(99.9%) 1,406 us/op
+# Warmup Iteration   5: 2,800 ±(99.9%) 1,335 us/op
+Iteration   1: 2,854 ±(99.9%) 1,529 us/op
+                 lockMapRead:  2,542 ±(99.9%) 2,426 us/op
+                 lockMapWrite: 3,167 ±(99.9%) 4,963 us/op
+
+Iteration   2: 2,629 ±(99.9%) 1,713 us/op
+                 lockMapRead:  2,733 ±(99.9%) 5,139 us/op
+                 lockMapWrite: 2,525 ±(99.9%) 4,003 us/op
+
+Iteration   3: 1,988 ±(99.9%) 0,755 us/op
+                 lockMapRead:  2,017 ±(99.9%) 2,313 us/op
+                 lockMapWrite: 1,958 ±(99.9%) 1,717 us/op
+
+
+# Run progress: 100,00% complete, ETA 00:00:00
+# Fork: 3 of 3
+# Warmup Iteration   1: 205,517 ±(99.9%) 57,371 us/op
+# Warmup Iteration   2: 5,946 ±(99.9%) 7,847 us/op
+# Warmup Iteration   3: 3,133 ±(99.9%) 2,374 us/op
+# Warmup Iteration   4: 2,746 ±(99.9%) 2,326 us/op
+# Warmup Iteration   5: 2,929 ±(99.9%) 2,239 us/op
+Iteration   1: 4,966 ±(99.9%) 7,409 us/op
+                 lockMapRead:  5,383 ±(99.9%) 21,552 us/op
+                 lockMapWrite: 4,550 ±(99.9%) 18,176 us/op
+
+Iteration   2: 3,425 ±(99.9%) 6,959 us/op
+                 lockMapRead:  2,392 ±(99.9%) 8,222 us/op
+                 lockMapWrite: 4,458 ±(99.9%) 24,486 us/op
+
+Iteration   3: 2,575 ±(99.9%) 1,350 us/op
+                 lockMapRead:  2,083 ±(99.9%) 2,505 us/op
+                 lockMapWrite: 3,067 ±(99.9%) 3,372 us/op
+
+
+
+Result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap":
+  N = 9
+  mean =      2,922 ±(99.9%) 1,523 us/op
+
+  Histogram, us/op:
+    [1,000, 1,250) = 0
+    [1,250, 1,500) = 0
+    [1,500, 1,750) = 0
+    [1,750, 2,000) = 2
+    [2,000, 2,250) = 0
+    [2,250, 2,500) = 0
+    [2,500, 2,750) = 3
+    [2,750, 3,000) = 1
+    [3,000, 3,250) = 1
+    [3,250, 3,500) = 1
+    [3,500, 3,750) = 0
+    [3,750, 4,000) = 0
+    [4,000, 4,250) = 0
+    [4,250, 4,500) = 0
+    [4,500, 4,750) = 0
+
+  Percentiles, us/op:
+      p(0,0000) =      1,988 us/op
+     p(50,0000) =      2,629 us/op
+     p(90,0000) =      4,966 us/op
+     p(95,0000) =      4,966 us/op
+     p(99,0000) =      4,966 us/op
+     p(99,9000) =      4,966 us/op
+     p(99,9900) =      4,966 us/op
+     p(99,9990) =      4,966 us/op
+     p(99,9999) =      4,966 us/op
+    p(100,0000) =      4,966 us/op
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap:lockMapRead":
+  N = 9
+  mean =      2,683 ±(99.9%) 1,848 us/op
+
+  Histogram, us/op:
+    [1,000, 1,500) = 0
+    [1,500, 2,000) = 1
+    [2,000, 2,500) = 4
+    [2,500, 3,000) = 2
+    [3,000, 3,500) = 1
+    [3,500, 4,000) = 0
+    [4,000, 4,500) = 0
+    [4,500, 5,000) = 0
+    [5,000, 5,500) = 1
+
+  Percentiles, us/op:
+      p(0,0000) =      1,733 us/op
+     p(50,0000) =      2,392 us/op
+     p(90,0000) =      5,383 us/op
+     p(95,0000) =      5,383 us/op
+     p(99,0000) =      5,383 us/op
+     p(99,9000) =      5,383 us/op
+     p(99,9900) =      5,383 us/op
+     p(99,9990) =      5,383 us/op
+     p(99,9999) =      5,383 us/op
+    p(100,0000) =      5,383 us/op
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.lockMap:lockMapWrite":
+  N = 9
+  mean =      3,160 ±(99.9%) 1,492 us/op
+
+  Histogram, us/op:
+    [1,000, 1,250) = 0
+    [1,250, 1,500) = 0
+    [1,500, 1,750) = 0
+    [1,750, 2,000) = 1
+    [2,000, 2,250) = 0
+    [2,250, 2,500) = 1
+    [2,500, 2,750) = 1
+    [2,750, 3,000) = 0
+    [3,000, 3,250) = 3
+    [3,250, 3,500) = 1
+    [3,500, 3,750) = 0
+    [3,750, 4,000) = 0
+    [4,000, 4,250) = 0
+    [4,250, 4,500) = 1
+    [4,500, 4,750) = 1
+
+  Percentiles, us/op:
+      p(0,0000) =      1,958 us/op
+     p(50,0000) =      3,117 us/op
+     p(90,0000) =      4,550 us/op
+     p(95,0000) =      4,550 us/op
+     p(99,0000) =      4,550 us/op
+     p(99,9000) =      4,550 us/op
+     p(99,9900) =      4,550 us/op
+     p(99,9990) =      4,550 us/op
+     p(99,9999) =      4,550 us/op
+    p(100,0000) =      4,550 us/op
+
+
+# JMH version: 1.37
+# VM version: JDK 21.0.2, OpenJDK 64-Bit Server VM, 21.0.2+13-LTS
+# VM invoker: /Library/Java/JavaVirtualMachines/amazon-corretto-21.jdk/Contents/Home/bin/java
+# VM options: <none>
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 5 iterations, 5 s each
+# Measurement: 3 iterations, 30 s each
+# Timeout: 10 min per iteration
+# Threads: 10 threads (1 group; 5x "readWriteLockMapRead", 5x "readWriteLockMapWrite" in each group)
+# Benchmark mode: Single shot invocation time
+# Benchmark: ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap
+# Parameters: (keysCount = 1000000)
+
+# Run progress: 100,00% complete, ETA 00:00:00
+# Fork: 1 of 3
+# Warmup Iteration   1: 150,221 ±(99.9%) 34,674 us/op
+# Warmup Iteration   2: 4,563 ±(99.9%) 5,020 us/op
+# Warmup Iteration   3: 3,191 ±(99.9%) 2,505 us/op
+# Warmup Iteration   4: 4,346 ±(99.9%) 5,966 us/op
+# Warmup Iteration   5: 3,383 ±(99.9%) 4,851 us/op
+Iteration   1: 2,396 ±(99.9%) 1,793 us/op
+                 readWriteLockMapRead:  2,467 ±(99.9%) 5,959 us/op
+                 readWriteLockMapWrite: 2,325 ±(99.9%) 3,355 us/op
+
+Iteration   2: 3,025 ±(99.9%) 2,000 us/op
+                 readWriteLockMapRead:  3,017 ±(99.9%) 4,023 us/op
+                 readWriteLockMapWrite: 3,034 ±(99.9%) 6,496 us/op
+
+Iteration   3: 2,279 ±(99.9%) 1,425 us/op
+                 readWriteLockMapRead:  2,383 ±(99.9%) 3,843 us/op
+                 readWriteLockMapWrite: 2,175 ±(99.9%) 3,804 us/op
+
+
+# Run progress: 100,00% complete, ETA 00:00:00
+# Fork: 2 of 3
+# Warmup Iteration   1: 123,667 ±(99.9%) 17,087 us/op
+# Warmup Iteration   2: 3,542 ±(99.9%) 2,738 us/op
+# Warmup Iteration   3: 3,017 ±(99.9%) 1,212 us/op
+# Warmup Iteration   4: 2,300 ±(99.9%) 1,028 us/op
+# Warmup Iteration   5: 1,767 ±(99.9%) 1,035 us/op
+Iteration   1: 2,825 ±(99.9%) 2,156 us/op
+                 readWriteLockMapRead:  2,809 ±(99.9%) 6,736 us/op
+                 readWriteLockMapWrite: 2,842 ±(99.9%) 4,741 us/op
+
+Iteration   2: 2,529 ±(99.9%) 1,377 us/op
+                 readWriteLockMapRead:  2,158 ±(99.9%) 3,079 us/op
+                 readWriteLockMapWrite: 2,900 ±(99.9%) 3,616 us/op
+
+Iteration   3: 2,163 ±(99.9%) 1,123 us/op
+                 readWriteLockMapRead:  2,292 ±(99.9%) 3,563 us/op
+                 readWriteLockMapWrite: 2,033 ±(99.9%) 2,253 us/op
+
+
+# Run progress: 100,00% complete, ETA 00:00:00
+# Fork: 3 of 3
+# Warmup Iteration   1: 118,354 ±(99.9%) 20,272 us/op
+# Warmup Iteration   2: 3,954 ±(99.9%) 4,814 us/op
+# Warmup Iteration   3: 3,667 ±(99.9%) 5,310 us/op
+# Warmup Iteration   4: 2,196 ±(99.9%) 1,532 us/op
+# Warmup Iteration   5: 4,829 ±(99.9%) 5,111 us/op
+Iteration   1: 3,171 ±(99.9%) 1,570 us/op
+                 readWriteLockMapRead:  3,158 ±(99.9%) 3,665 us/op
+                 readWriteLockMapWrite: 3,183 ±(99.9%) 4,747 us/op
+
+Iteration   2: 5,175 ±(99.9%) 9,729 us/op
+                 readWriteLockMapRead:  3,967 ±(99.9%) 9,959 us/op
+                 readWriteLockMapWrite: 6,383 ±(99.9%) 35,046 us/op
+
+Iteration   3: 3,071 ±(99.9%) 2,471 us/op
+                 readWriteLockMapRead:  2,608 ±(99.9%) 3,705 us/op
+                 readWriteLockMapWrite: 3,533 ±(99.9%) 8,213 us/op
+
+
+
+Result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap":
+  N = 9
+  mean =      2,959 ±(99.9%) 1,525 us/op
+
+  Histogram, us/op:
+    [2,000, 2,250) = 1
+    [2,250, 2,500) = 2
+    [2,500, 2,750) = 1
+    [2,750, 3,000) = 1
+    [3,000, 3,250) = 3
+    [3,250, 3,500) = 0
+    [3,500, 3,750) = 0
+    [3,750, 4,000) = 0
+    [4,000, 4,250) = 0
+    [4,250, 4,500) = 0
+    [4,500, 4,750) = 0
+    [4,750, 5,000) = 0
+    [5,000, 5,250) = 1
+    [5,250, 5,500) = 0
+    [5,500, 5,750) = 0
+
+  Percentiles, us/op:
+      p(0,0000) =      2,163 us/op
+     p(50,0000) =      2,825 us/op
+     p(90,0000) =      5,175 us/op
+     p(95,0000) =      5,175 us/op
+     p(99,0000) =      5,175 us/op
+     p(99,9000) =      5,175 us/op
+     p(99,9900) =      5,175 us/op
+     p(99,9990) =      5,175 us/op
+     p(99,9999) =      5,175 us/op
+    p(100,0000) =      5,175 us/op
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap:readWriteLockMapRead":
+  N = 9
+  mean =      2,762 ±(99.9%) 0,942 us/op
+
+  Histogram, us/op:
+    [2,000, 2,125) = 0
+    [2,125, 2,250) = 1
+    [2,250, 2,375) = 1
+    [2,375, 2,500) = 2
+    [2,500, 2,625) = 1
+    [2,625, 2,750) = 0
+    [2,750, 2,875) = 1
+    [2,875, 3,000) = 0
+    [3,000, 3,125) = 1
+    [3,125, 3,250) = 1
+    [3,250, 3,375) = 0
+    [3,375, 3,500) = 0
+    [3,500, 3,625) = 0
+    [3,625, 3,750) = 0
+    [3,750, 3,875) = 0
+
+  Percentiles, us/op:
+      p(0,0000) =      2,158 us/op
+     p(50,0000) =      2,608 us/op
+     p(90,0000) =      3,967 us/op
+     p(95,0000) =      3,967 us/op
+     p(99,0000) =      3,967 us/op
+     p(99,9000) =      3,967 us/op
+     p(99,9900) =      3,967 us/op
+     p(99,9990) =      3,967 us/op
+     p(99,9999) =      3,967 us/op
+    p(100,0000) =      3,967 us/op
+
+Secondary result "ru.otus.courses.java.advanced.shooter.server.common.jmh.cache.benchmarks.HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite":
+  N = 9
+  mean =      3,157 ±(99.9%) 2,195 us/op
+
+  Histogram, us/op:
+    [2,000, 2,500) = 3
+    [2,500, 3,000) = 2
+    [3,000, 3,500) = 2
+    [3,500, 4,000) = 1
+    [4,000, 4,500) = 0
+    [4,500, 5,000) = 0
+    [5,000, 5,500) = 0
+    [5,500, 6,000) = 0
+    [6,000, 6,500) = 1
+
+  Percentiles, us/op:
+      p(0,0000) =      2,033 us/op
+     p(50,0000) =      2,900 us/op
+     p(90,0000) =      6,383 us/op
+     p(95,0000) =      6,383 us/op
+     p(99,0000) =      6,383 us/op
+     p(99,9000) =      6,383 us/op
+     p(99,9900) =      6,383 us/op
+     p(99,9990) =      6,383 us/op
+     p(99,9999) =      6,383 us/op
+    p(100,0000) =      6,383 us/op
+
+
+# Run complete. Total time: 00:52:00
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+NOTE: Current JVM experimentally supports Compiler Blackholes, and they are in use. Please exercise
+extra caution when trusting the results, look into the generated code to check the benchmark still
+works, and factor in a small probability of new VM bugs. Additionally, while comparisons between
+different JVMs are already problematic, the performance difference caused by different Blackhole
+modes can be very significant. Please make sure you use the consistent Blackhole mode for comparisons.
+
+Benchmark                                                           (keysCount)    Mode       Cnt      Score    Error   Units
+HashingBenchmarks.concurrentHashMap                                     1000000   thrpt         9    141,008 ±  1,833  ops/us
+HashingBenchmarks.concurrentHashMap:concurrentHashMapRead               1000000   thrpt         9     93,628 ±  1,764  ops/us
+HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite              1000000   thrpt         9     47,381 ±  0,723  ops/us
+HashingBenchmarks.lockMap                                               1000000   thrpt         9      8,736 ±  0,108  ops/us
+HashingBenchmarks.lockMap:lockMapRead                                   1000000   thrpt         9      4,053 ±  0,220  ops/us
+HashingBenchmarks.lockMap:lockMapWrite                                  1000000   thrpt         9      4,683 ±  0,201  ops/us
+HashingBenchmarks.readWriteLockMap                                      1000000   thrpt         9    172,849 ± 20,939  ops/us
+HashingBenchmarks.readWriteLockMap:readWriteLockMapRead                 1000000   thrpt         9    112,221 ± 22,436  ops/us
+HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite                1000000   thrpt         9     60,627 ±  1,647  ops/us
+HashingBenchmarks.concurrentHashMap                                     1000000    avgt         9      0,090 ±  0,018   us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapRead               1000000    avgt         9      0,057 ±  0,007   us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite              1000000    avgt         9      0,123 ±  0,033   us/op
+HashingBenchmarks.lockMap                                               1000000    avgt         9      1,339 ±  0,015   us/op
+HashingBenchmarks.lockMap:lockMapRead                                   1000000    avgt         9      1,385 ±  0,030   us/op
+HashingBenchmarks.lockMap:lockMapWrite                                  1000000    avgt         9      1,293 ±  0,023   us/op
+HashingBenchmarks.readWriteLockMap                                      1000000    avgt         9      0,069 ±  0,001   us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapRead                 1000000    avgt         9      0,046 ±  0,001   us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite                1000000    avgt         9      0,092 ±  0,001   us/op
+HashingBenchmarks.concurrentHashMap                                     1000000  sample  68120698      0,427 ±  0,011   us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapRead               1000000  sample  29942142      0,428 ±  0,017   us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapRead:p0.00         1000000  sample                  ≈ 0            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapRead:p0.50         1000000  sample                0,125            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapRead:p0.90         1000000  sample                0,250            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapRead:p0.95         1000000  sample                0,333            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapRead:p0.99         1000000  sample                0,542            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapRead:p0.999        1000000  sample                8,288            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapRead:p0.9999       1000000  sample              632,832            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapRead:p1.00         1000000  sample            52494,336            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite              1000000  sample  38178556      0,426 ±  0,013   us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite:p0.00        1000000  sample                  ≈ 0            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite:p0.50        1000000  sample                0,166            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite:p0.90        1000000  sample                0,292            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite:p0.95        1000000  sample                0,458            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite:p0.99        1000000  sample                0,625            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite:p0.999       1000000  sample                3,416            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite:p0.9999      1000000  sample              516,608            us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite:p1.00        1000000  sample            31293,440            us/op
+HashingBenchmarks.concurrentHashMap:p0.00                               1000000  sample                  ≈ 0            us/op
+HashingBenchmarks.concurrentHashMap:p0.50                               1000000  sample                0,125            us/op
+HashingBenchmarks.concurrentHashMap:p0.90                               1000000  sample                0,292            us/op
+HashingBenchmarks.concurrentHashMap:p0.95                               1000000  sample                0,375            us/op
+HashingBenchmarks.concurrentHashMap:p0.99                               1000000  sample                0,625            us/op
+HashingBenchmarks.concurrentHashMap:p0.999                              1000000  sample                5,328            us/op
+HashingBenchmarks.concurrentHashMap:p0.9999                             1000000  sample              572,416            us/op
+HashingBenchmarks.concurrentHashMap:p1.00                               1000000  sample            52494,336            us/op
+HashingBenchmarks.lockMap                                               1000000  sample  72865695      1,786 ±  0,009   us/op
+HashingBenchmarks.lockMap:lockMapRead                                   1000000  sample  42717652      1,957 ±  0,012   us/op
+HashingBenchmarks.lockMap:lockMapRead:p0.00                             1000000  sample                  ≈ 0            us/op
+HashingBenchmarks.lockMap:lockMapRead:p0.50                             1000000  sample                0,125            us/op
+HashingBenchmarks.lockMap:lockMapRead:p0.90                             1000000  sample                0,291            us/op
+HashingBenchmarks.lockMap:lockMapRead:p0.95                             1000000  sample                0,334            us/op
+HashingBenchmarks.lockMap:lockMapRead:p0.99                             1000000  sample                7,000            us/op
+HashingBenchmarks.lockMap:lockMapRead:p0.999                            1000000  sample              283,648            us/op
+HashingBenchmarks.lockMap:lockMapRead:p0.9999                           1000000  sample              428,544            us/op
+HashingBenchmarks.lockMap:lockMapRead:p1.00                             1000000  sample            10092,544            us/op
+HashingBenchmarks.lockMap:lockMapWrite                                  1000000  sample  30148043      1,542 ±  0,013   us/op
+HashingBenchmarks.lockMap:lockMapWrite:p0.00                            1000000  sample                  ≈ 0            us/op
+HashingBenchmarks.lockMap:lockMapWrite:p0.50                            1000000  sample                0,125            us/op
+HashingBenchmarks.lockMap:lockMapWrite:p0.90                            1000000  sample                0,292            us/op
+HashingBenchmarks.lockMap:lockMapWrite:p0.95                            1000000  sample                0,334            us/op
+HashingBenchmarks.lockMap:lockMapWrite:p0.99                            1000000  sample                4,160            us/op
+HashingBenchmarks.lockMap:lockMapWrite:p0.999                           1000000  sample              262,144            us/op
+HashingBenchmarks.lockMap:lockMapWrite:p0.9999                          1000000  sample              425,472            us/op
+HashingBenchmarks.lockMap:lockMapWrite:p1.00                            1000000  sample             9027,584            us/op
+HashingBenchmarks.lockMap:p0.00                                         1000000  sample                  ≈ 0            us/op
+HashingBenchmarks.lockMap:p0.50                                         1000000  sample                0,125            us/op
+HashingBenchmarks.lockMap:p0.90                                         1000000  sample                0,291            us/op
+HashingBenchmarks.lockMap:p0.95                                         1000000  sample                0,334            us/op
+HashingBenchmarks.lockMap:p0.99                                         1000000  sample                4,456            us/op
+HashingBenchmarks.lockMap:p0.999                                        1000000  sample              275,968            us/op
+HashingBenchmarks.lockMap:p0.9999                                       1000000  sample              427,008            us/op
+HashingBenchmarks.lockMap:p1.00                                         1000000  sample            10092,544            us/op
+HashingBenchmarks.readWriteLockMap                                      1000000  sample  72921608      0,399 ±  0,010   us/op
+HashingBenchmarks.readWriteLockMap:p0.00                                1000000  sample                  ≈ 0            us/op
+HashingBenchmarks.readWriteLockMap:p0.50                                1000000  sample                0,125            us/op
+HashingBenchmarks.readWriteLockMap:p0.90                                1000000  sample                0,292            us/op
+HashingBenchmarks.readWriteLockMap:p0.95                                1000000  sample                0,375            us/op
+HashingBenchmarks.readWriteLockMap:p0.99                                1000000  sample                0,583            us/op
+HashingBenchmarks.readWriteLockMap:p0.999                               1000000  sample                2,292            us/op
+HashingBenchmarks.readWriteLockMap:p0.9999                              1000000  sample              480,768            us/op
+HashingBenchmarks.readWriteLockMap:p1.00                                1000000  sample            47251,456            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapRead                 1000000  sample  29850766      0,419 ±  0,017   us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapRead:p0.00           1000000  sample                  ≈ 0            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapRead:p0.50           1000000  sample                0,125            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapRead:p0.90           1000000  sample                0,291            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapRead:p0.95           1000000  sample                0,334            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapRead:p0.99           1000000  sample                0,541            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapRead:p0.999          1000000  sample                5,576            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapRead:p0.9999         1000000  sample              551,857            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapRead:p1.00           1000000  sample            47251,456            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite                1000000  sample  43070842      0,386 ±  0,012   us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite:p0.00          1000000  sample                  ≈ 0            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite:p0.50          1000000  sample                0,125            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite:p0.90          1000000  sample                0,292            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite:p0.95          1000000  sample                0,416            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite:p0.99          1000000  sample                0,584            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite:p0.999         1000000  sample                1,542            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite:p0.9999        1000000  sample              432,640            us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite:p1.00          1000000  sample            40173,568            us/op
+HashingBenchmarks.concurrentHashMap                                     1000000      ss         9      2,481 ±  1,624   us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapRead               1000000      ss         9      1,891 ±  0,741   us/op
+HashingBenchmarks.concurrentHashMap:concurrentHashMapWrite              1000000      ss         9      3,071 ±  2,852   us/op
+HashingBenchmarks.lockMap                                               1000000      ss         9      2,922 ±  1,523   us/op
+HashingBenchmarks.lockMap:lockMapRead                                   1000000      ss         9      2,683 ±  1,848   us/op
+HashingBenchmarks.lockMap:lockMapWrite                                  1000000      ss         9      3,160 ±  1,492   us/op
+HashingBenchmarks.readWriteLockMap                                      1000000      ss         9      2,959 ±  1,525   us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapRead                 1000000      ss         9      2,762 ±  0,942   us/op
+HashingBenchmarks.readWriteLockMap:readWriteLockMapWrite                1000000      ss         9      3,157 ±  2,195   us/op
